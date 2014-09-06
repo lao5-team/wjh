@@ -24,10 +24,14 @@ public class DianpingDataHelper {
 	public static String App_Secret = "72b35e24d55748af8f065fe381ea8d7c";
 	private static DianpingDataHelper mInstance = null;
 	
-	private TreeData mCacheContentData = null;
+
 	private String ROOT_DIR = Environment.getExternalStorageDirectory().getPath() + File.separator + "Weijuhui";
 	private String CACHE_DIR = ROOT_DIR + File.separator + "cache";
 	private Boolean OFFLINE_DEBUG = true;
+	
+	private TreeData mCacheContentData = null;
+	private TreeData mCacheLocationData = null;
+	
 	public static DianpingDataHelper getInstance()
 	{
 		if(null==mInstance)
@@ -156,13 +160,89 @@ public class DianpingDataHelper {
 		
 	}
 	
-	public String[] getPlaceCategories()
+	public String[] getLocationCategories()
 	{
-		return null;
+		if(null != mCacheLocationData)
+		{
+			String[] results = new String[mCacheLocationData.categories.size()];
+			for(int i=0; i<mCacheLocationData.categories.size(); i++)
+			{
+				results[i] = mCacheLocationData.categories.get(i).name;
+			}
+			return results;
+		}
+		else
+		{
+			String result = null;
+			if(OFFLINE_DEBUG)
+			{
+				result = readLocationCategoriesData();
+			}
+			else
+			{
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("city", "北京");
+				result = DianpingApiTool.requestApi("http://api.dianping.com/v1/metadata/get_regions_with_businesses", 
+						App_Key, App_Secret, map);
+				cacheLocationCategoriesData(result);
+			}
+			try {
+				mCacheLocationData = new DianpingDao.TreeData();
+				mCacheLocationData.name = "location";
+				JSONObject json = new JSONObject( result);
+				JSONArray jsonArray = json.getJSONArray("cities");
+				String[] results = new String[jsonArray.length()];
+				for(int i=0; i<jsonArray.length(); i++)
+				{
+					String str = jsonArray.getString(i);
+					JSONObject jsonCategory = new JSONObject(str);
+					JSONArray jsonSubArray = jsonCategory.getJSONArray("districts");
+					for(int j=0; j<jsonSubArray.length(); j++)
+					{
+						str = jsonSubArray.getString(j);
+						JSONObject district = new JSONObject(str);
+						DianpingDao.Category category = new Category();
+						category.name = district.getString("district_name");
+						results[i] = category.name;
+						mCacheLocationData.categories.add(category);
+						JSONArray jsonNeighborhoods = district.getJSONArray("neighborhoods");
+						for(int k=0; k<jsonNeighborhoods.length(); k++)
+						{
+							str = jsonNeighborhoods.getString(k);
+							//JSONObject jsonSubCategory = new JSONObject(str);
+							DianpingDao.SubCategory subCategory = new SubCategory();
+							subCategory.name = str;
+							category.subCategories.add(subCategory);
+						}
+					}
+					
+				}
+				return results;
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}  
+			return null;
+		}
 	}
 	
-	public String[] getPlaceSubCategories(String category)
+	public String[] getLocationSubCategories(String category)
 	{
+		if(null == mCacheLocationData)
+		{
+			getLocationCategories();
+		}
+		for(int i=0; i<mCacheLocationData.categories.size(); i++)
+		{
+			if(category.equals(mCacheLocationData.categories.get(i).name))
+			{
+				String[] result = new String[mCacheLocationData.categories.get(i).subCategories.size()];
+				for(int j=0; j<result.length; j++)
+				{
+					result[j] = mCacheLocationData.categories.get(i).subCategories.get(j).name;
+				}
+				return result;
+			}
+		}
 		return null;
 	}
 	
@@ -205,6 +285,43 @@ public class DianpingDataHelper {
 		return result;
 	}
 	
+	private void cacheLocationCategoriesData(String result)
+	{
+		if(null!=result)
+		{
+			try {
+				FileWriter fw = new FileWriter(CACHE_DIR + File.separator + "LocationCategoriesData.txt");
+				fw.write(result);
+				fw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	
+	private String readLocationCategoriesData()
+	{
+		String result = "";
+		try {
+			FileReader fr = new FileReader(CACHE_DIR + File.separator + "LocationCategoriesData.txt");
+			int readNum = 0;
+			do
+			{
+				char[] buffer = new char[1024]; 
+				try {
+					readNum = fr.read(buffer);
+					result += new String(buffer);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			while(readNum == 1024);
+			fr.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}	
 
 }

@@ -22,18 +22,19 @@ private ListView selfList;
     private String[] mData = {};
     private ItemFragment mItemFragment;
     private TabFragment mTabFragment;
-    public CategoryFragment(String[] data, TabFragment tabFragment)
+    private String mType = "";
+    public CategoryFragment(String[] data, TabFragment tabFragment, String type)
     {
     	mData = data;
     	mTabFragment = tabFragment;
     	mItemFragment = new ItemFragment(tabFragment);
+    	mType = type;
     }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
             Bundle savedInstanceState) {
     	LinearLayout layout = (LinearLayout)inflater.inflate(R.layout.fragment_category, container, false);
-        layout.setWeightSum(0.5f);
         
     	return layout;
     }
@@ -52,10 +53,11 @@ private ListView selfList;
     public void onDestroy()
     {
     	super.onDestroy();
-    	FragmentManager ftm = getFragmentManager();
-    	FragmentTransaction ft = ftm.beginTransaction();
-    	ft.remove(mItemFragment);
-    	ft.commit();
+//    	FragmentManager ftm = getFragmentManager();
+//    	FragmentTransaction ft = ftm.beginTransaction();
+//    	ft.remove(mItemFragment);
+//    	ft.remove(this);
+//    	ft.commit();
     	
     }
     
@@ -63,20 +65,32 @@ private ListView selfList;
     public void	onListItemClick(ListView l, View v, int position, long id)
     {
     	FragmentManager ftm = getFragmentManager();
+    	String[] subData = {};
+    	if(mType.equals("category"))
+    	{
+    		subData = DianpingDataHelper.getInstance().getContentSubCategories(mData[position]);
+    	}
+    	else if(mType.equals("location"))
+    	{
+    		subData = DianpingDataHelper.getInstance().getLocationSubCategories(mData[position]);
+    	}
         if(null == ftm.findFragmentByTag("item"))
         {
-            
             FragmentTransaction ft = ftm.beginTransaction();
-            String[] subCategories = DianpingDataHelper.getInstance().getContentSubCategories(mData[position]);
-        	mItemFragment.setData(subCategories);
-        	ft.add(R.id.tab_container, mItemFragment, "item");
+            
+        	mItemFragment.setData(subData);
+        	ft.add(R.id.layout_middle, mItemFragment, "item");
         	ft.commit();   
         }
         else
         {
-        	 String[] subCategories = DianpingDataHelper.getInstance().getContentSubCategories(mData[position]);
-        	mItemFragment.setData(subCategories);
+        	mItemFragment.setData(subData);
         }
+    }
+    
+    public void setData(String[] data)
+    {
+    	mData = data;
     }
 
 }

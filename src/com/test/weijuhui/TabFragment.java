@@ -104,7 +104,7 @@ public class TabFragment extends Fragment {
             FragmentTransaction ft = ftm.beginTransaction();
             if(null==mCategoryFragment)
             {
-            	mCategoryFragment = new CategoryFragment(DianpingDataHelper.getInstance().getContentCategories(), this);
+            	//mCategoryFragment = new CategoryFragment(DianpingDataHelper.getInstance().getContentCategories(), this);
             }
            
             ft.add(R.id.tab_container, mCategoryFragment, "category");
