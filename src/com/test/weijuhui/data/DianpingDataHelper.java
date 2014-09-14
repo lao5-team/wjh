@@ -12,6 +12,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.test.weijuhui.data.DianpingDao.Category;
+import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
+import com.test.weijuhui.data.DianpingDao.SimpleBusiness;
 import com.test.weijuhui.data.DianpingDao.SubCategory;
 import com.test.weijuhui.data.DianpingDao.TreeData;
 
@@ -136,7 +138,7 @@ public class DianpingDataHelper {
 		return null;
 	}
 	
-	public String[] searchBusiness(HashMap<String,String> paramMap)
+	public SimpleBusiness[] searchBusiness(HashMap<String,String> paramMap)
 	{
 		String result = "" ;
 		result = DianpingApiTool.requestApi("http://api.dianping.com/v1/business/find_businesses", 
@@ -146,10 +148,18 @@ public class DianpingDataHelper {
 			JSONObject json;
 			json = new JSONObject(result);
 			JSONArray jsonArray = json.getJSONArray("businesses");
-			String[] results = new String[jsonArray.length()];
+			//String[] results = new String[jsonArray.length()];
+			SimpleBusiness[] results = new SimpleBusiness[jsonArray.length()];
 			for(int i=0; i<results.length; i++)
 			{
-				results[i] = jsonArray.getString(i);
+				//results[i] = jsonArray.getString(i);
+				JSONObject business = new JSONObject(jsonArray.getString(i));
+				SimpleBusiness sb = new SimpleBusiness();
+				sb.mName = business.getString("name");
+				sb.mAddress = business.getString("address");
+				sb.mSmallImgUrl = business.getString("s_photo_url");
+				sb.mBusinessID = business.getString("business_id");
+				results[i] = sb;
 			}
 			return results;
 		} catch (JSONException e) {
@@ -244,6 +254,40 @@ public class DianpingDataHelper {
 			}
 		}
 		return null;
+	}
+	
+	public ComplexBusiness getBusinessByID(String businessID)
+	{
+	    HashMap<String, String> map = new HashMap<String, String>();
+	    map.put("business_id", businessID);
+	    map.put("platform", "2");
+	    String result = DianpingApiTool.requestApi("http://api.dianping.com/v1/business/get_single_business", 
+				App_Key, App_Secret, map);
+	    try {
+			JSONObject jsonResult = new JSONObject(result);
+			JSONArray array = jsonResult.getJSONArray("businesses");
+			jsonResult = array.getJSONObject(0);
+			ComplexBusiness cb = new ComplexBusiness();
+			cb.mName = jsonResult.getString("name");
+			cb.mImgUrl = jsonResult.getString("photo_url");
+			if(jsonResult.has("branch_name"))
+			{
+				cb.mBranchName = jsonResult.getString("branch_name");
+			}
+			if(jsonResult.has("address"))
+			{
+				cb.mAddress = jsonResult.getString("address");
+			}
+			if(jsonResult.has("telephone"))
+			{
+				cb.mPhoneNumber = jsonResult.getString("telephone");
+			}
+			return cb;
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	    return null;
 	}
 	
 	private void cacheContentCategoriesData(String result)

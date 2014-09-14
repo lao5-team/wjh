@@ -60,7 +60,6 @@
         android1:layout_height="match_parent"
         android1:layout_below="@+id/layout_middle"
         android1:layout_marginTop="5dp"
-        android1:background="@color/Blue"
          >
 
         <ListView
