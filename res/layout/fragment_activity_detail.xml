@@ -137,4 +137,12 @@
         android:layout_alignParentBottom="true"
         android:text="@string/cancel" />
 
+    <RelativeLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/relativeLayout_friends"
+        android:layout_above="@+id/button_confirm" >
+    </RelativeLayout>
+
 </RelativeLayout>

@@ -9,23 +9,60 @@
         android:targetSdkVersion="19" />
 
     <application
+        android:name="DemoApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:icon="@drawable/logo_uidemo"
+        android:label="@string/app_name" >
         <activity
             android:name="com.test.weijuhui.activity.MainActivity"
             android:label="@string/app_name" >
+        </activity>
+        
+        <activity android:name=".activity.CreateActivityActivity"
+            android:theme="@style/horizontal_slide"></activity>
+        
+        <activity android:name=".activity.EntryActivity">
+            
+        </activity>
+        
+        <activity android:name=".activity.RegisterActivity"
+            android:theme="@style/horizontal_slide" >
+            
+        </activity>
+        
+        <activity android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="CreateActivityActivity"></activity>
-        <activity android:name="ActivityDetailActivity"></activity>
+        <!-- 设置环信应用的appkey -->
+        <meta-data
+            android:name="EASEMOB_APPKEY"
+            android:value="weijuhui#weijuhui" />
+        <!-- 声明sdk所需的service -->
+        <service android:name="com.easemob.chat.EMChatService" />
+        <activity android:name=".activity.ActivityDetailActivity"
+            android:theme="@style/horizontal_slide"></activity>
+        <activity android:name=".activity.AddContactActivity"></activity>
+        <activity android:name=".activity.NewFriendsMsgActivity"></activity>
     </application>
 
         <uses-permission android:name="android.permission.INTERNET"/>
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.VIBRATE" />
+		<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+		<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+		<uses-permission android:name="android.permission.CALL_PHONE" />
+		<uses-permission android:name="android.permission.GET_TASKS" />
+		<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+		<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+		<uses-permission android:name="android.permission.WAKE_LOCK" />
+		<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+		<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+		
+		
+
 </manifest>

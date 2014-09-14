@@ -2,18 +2,27 @@ package com.test.weijuhui.activity;
 
 import java.util.ArrayList;
 
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMConversation;
+import com.easemob.chat.EMMessage;
+import com.easemob.chat.TextMessageBody;
+import com.easemob.exceptions.EaseMobException;
 import com.squareup.picasso.Picasso;
 import com.test.weijuhui.R;
 import com.test.weijuhui.R.id;
 import com.test.weijuhui.R.layout;
+import com.test.weijuhui.data.ActivityData;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.data.DianpingDataHelper;
+import com.test.weijuhui.data.User;
+import com.test.weijuhui.domain.ActivityManager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -31,7 +40,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 	//data
 	private ComplexBusiness mCBData;
 	private String mBusinessID;
-	private ArrayList<String> mFriends = new ArrayList<String>( );
+	private ArrayList<User> mFriends = new ArrayList<User>( );
 	//UI
 	private RelativeLayout mView;
 	private TextView mTvName;
@@ -47,6 +56,31 @@ public class ActivityDetailActivity extends FragmentActivity {
 	
 	//Handler
 	private Handler mUIHandler;
+	
+	public void addFriend(com.test.weijuhui.domain.User user)
+	{
+		User user1 = new User();
+		user1.mName = user.getNick();
+		mFriends.add(user1);
+		updateFriendsUI();
+	}
+	
+	private void updateFriendsUI()
+	{
+		String result = "";
+		for(int i=0; i<mFriends.size(); i++)
+		{
+			if(i==mFriends.size()-1)
+			{
+				result += mFriends.get(i).mName;
+			}
+			else
+			{
+				result += mFriends.get(i).mName + " , ";
+			}
+		}
+		mTvFriends.setText(result);
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstance)
@@ -109,10 +143,48 @@ public class ActivityDetailActivity extends FragmentActivity {
 		mTvPhone = (TextView) layout.findViewById(R.id.textView_phone);
 		
 		mBtnAddFriends = (Button) layout.findViewById(R.id.button_addFriends);
+		mBtnAddFriends.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				FragmentTransaction ftx = getSupportFragmentManager().beginTransaction();
+				ContactlistFragment fragment = new ContactlistFragment();
+				ftx.add(R.id.fragment_container, fragment);
+				ftx.commit();
+			}
+		});
 		
 		mTvFriends = (TextView) layout.findViewById(R.id.textView_friends);
 		
 		mBtnConfirm = (Button) layout.findViewById(R.id.button_confirm);
+		mBtnConfirm.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ActivityData data = new ActivityData();
+				data.mCB = mCBData;
+				data.mUsers = mFriends;
+				ActivityManager.getInstance().addActivity(data);
+				EMConversation  conversation = EMChatManager.getInstance().getConversation(mFriends.get(0).mName);
+				
+				EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
+				// 如果是群聊，设置chattype,默认是单聊
+				TextMessageBody txtBody = new TextMessageBody(data.mCB.mName);
+				// 设置消息body
+				message.addBody(txtBody);
+				// 设置要发给谁,用户username或者群聊groupid
+				message.setReceipt(mFriends.get(0).mName);
+				// 把messgage加到conversation中
+				//conversation.addMessage(message);
+				
+				try {
+					EMChatManager.getInstance().sendMessage(message);
+				} catch (EaseMobException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		mBtnCancel = (Button)layout.findViewById(R.id.button_cancel);
 		mBtnCancel.setOnClickListener(new OnClickListener() {
