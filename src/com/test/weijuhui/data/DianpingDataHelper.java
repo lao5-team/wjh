@@ -29,11 +29,11 @@ public class DianpingDataHelper {
 
 	private String ROOT_DIR = Environment.getExternalStorageDirectory().getPath() + File.separator + "Weijuhui";
 	private String CACHE_DIR = ROOT_DIR + File.separator + "cache";
-	private Boolean OFFLINE_DEBUG = true;
+	private Boolean OFFLINE_DEBUG = false;
 	
 	private TreeData mCacheContentData = null;
 	private TreeData mCacheLocationData = null;
-	
+	private Object mLock = new Object();
 	public static DianpingDataHelper getInstance()
 	{
 		if(null==mInstance)
@@ -54,6 +54,8 @@ public class DianpingDataHelper {
 		}
 	}
 	
+	String result;
+	
 	public String[] getContentCategories()
 	{
 		if(null != mCacheContentData)
@@ -67,18 +69,39 @@ public class DianpingDataHelper {
 		}
 		else
 		{
-			String result = null;
 			if(OFFLINE_DEBUG)
 			{
 				result = readContentCategoriesData();
 			}
 			else
 			{
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("city", "北京");
-				result = DianpingApiTool.requestApi("http://api.dianping.com/v1/metadata/get_categories_with_businesses", 
-						App_Key, App_Secret, map);
-				cacheContentCategoriesData(result);
+				Thread t = new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						HashMap<String, String> map = new HashMap<String, String>();
+						map.put("city", "北京");
+						result = DianpingApiTool.requestApi("http://api.dianping.com/v1/metadata/get_categories_with_businesses", 
+								App_Key, App_Secret, map);
+						cacheContentCategoriesData(result);
+						synchronized (mLock) {
+							mLock.notifyAll();
+						}
+						
+					}
+				});
+				t.start();
+				synchronized (mLock) {
+					try {
+						mLock.wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				
+
 			}
 
 			

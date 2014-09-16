@@ -46,7 +46,8 @@
         <service android:name="com.easemob.chat.EMChatService" />
         <activity android:name=".activity.ActivityDetailActivity"
             android:theme="@style/horizontal_slide"></activity>
-        <activity android:name=".activity.AddContactActivity"></activity>
+        <activity android:name=".activity.AddContactActivity"
+            android:theme="@style/horizontal_slide"></activity>
         <activity android:name=".activity.NewFriendsMsgActivity"></activity>
     </application>
 

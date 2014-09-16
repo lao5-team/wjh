@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMConversation;
+import com.easemob.chat.EMGroup;
+import com.easemob.chat.EMGroupManager;
 import com.easemob.chat.EMMessage;
+import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.squareup.picasso.Picasso;
@@ -161,27 +164,14 @@ public class ActivityDetailActivity extends FragmentActivity {
 			
 			@Override
 			public void onClick(View v) {
-				ActivityData data = new ActivityData();
-				data.mCB = mCBData;
-				data.mUsers = mFriends;
-				ActivityManager.getInstance().addActivity(data);
-				EMConversation  conversation = EMChatManager.getInstance().getConversation(mFriends.get(0).mName);
-				
-				EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
-				// 如果是群聊，设置chattype,默认是单聊
-				TextMessageBody txtBody = new TextMessageBody(data.mCB.mName);
-				// 设置消息body
-				message.addBody(txtBody);
-				// 设置要发给谁,用户username或者群聊groupid
-				message.setReceipt(mFriends.get(0).mName);
-				// 把messgage加到conversation中
-				//conversation.addMessage(message);
-				
-				try {
-					EMChatManager.getInstance().sendMessage(message);
-				} catch (EaseMobException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				ActivityData data = new ActivityData.ActivityBuilder().setComplexBusiness(mCBData).setUsers(mFriends).create();
+				if(mFriends.size() == 1)
+				{
+					sendActivityToSingle(data);
+				}
+				else if(mFriends.size() > 1)
+				{
+					sendActivityToGroup(data);
 				}
 			}
 		});
@@ -222,7 +212,6 @@ public class ActivityDetailActivity extends FragmentActivity {
 			for(int i=0; i<mFriends.size() - 1; i++)
 			{
 				buffer += mFriends.get(i) + " , ";
-				
 			}			
 		}
 
@@ -236,7 +225,48 @@ public class ActivityDetailActivity extends FragmentActivity {
 		
 	}
 	
+	private void sendActivityToSingle(ActivityData data)
+	{
+		ActivityManager.getInstance().addActivity(data);
+		EMConversation conversation = EMChatManager.getInstance().getConversation(data.mUsers.get(0).mName);
+		
+		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
+		// 如果是群聊，设置chattype,默认是单聊
+		TextMessageBody txtBody = new TextMessageBody(data.mCB.mName);
+		// 设置消息body
+		message.addBody(txtBody);
+		// 设置要发给谁,用户username或者群聊groupid
+		message.setReceipt(mFriends.get(0).mName);
+		conversation.addMessage(message);
+//		try {
+//			//EMChatManager.getInstance().sendMessage(message);
+//		} catch (EaseMobException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	}
 	
+	private void sendActivityToGroup(ActivityData data)
+	{
+		String[] userNames = new String[data.mUsers.size()];
+		EMGroup group;
+		try {
+			group = EMGroupManager.getInstance().createPrivateGroup("", "", (String[]) data.mUsers.toArray(), false);
+			EMConversation conversation = EMChatManager.getInstance().getConversation(group.getGroupId());										
+			EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
+			message.setChatType(ChatType.GroupChat);
+		    message.setReceipt(group.getGroupId());
+		    // 把messgage加到conversation中
+		    conversation.addMessage(message);
+		} catch (EaseMobException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+
+
+	}
 	
 	
 	
