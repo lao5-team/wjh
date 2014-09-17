@@ -138,6 +138,7 @@ public class EntryActivity extends FragmentActivity {
 		}
 		if (currentTabIndex != index) {
 			FragmentTransaction trx = getSupportFragmentManager().beginTransaction();
+			//getSupportFragmentManager().getFragments().clear();
 			trx.hide(fragments[currentTabIndex]);
 			if (!fragments[index].isAdded()) {
 				trx.add(R.id.fragment_container, fragments[index]);

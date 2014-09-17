@@ -25,10 +25,14 @@ public class ActivityAdapter extends BaseAdapter {
 	private static class SBItemViewHolder
 	{
 		public TextView mTvName;
+		public TextView mFromUser;
+		public ImageView mImgPic;
 		
 		public void createFromView(View view)
 		{
 			mTvName = (TextView)view.findViewById(R.id.textView_activity);
+			mFromUser = (TextView)view.findViewById(R.id.textView_from);
+			mImgPic = (ImageView)view.findViewById(R.id.imageView_pic);
 		}
 		
 	}
@@ -105,6 +109,8 @@ public class ActivityAdapter extends BaseAdapter {
 			holder = (SBItemViewHolder)convertView.getTag();
 		}
 		holder.mTvName.setText(mActivities.get(position).mCB.mName);
+		holder.mFromUser.setText("组织者: " + mActivities.get(position).mCreator.mName);
+		Picasso.with(mActivity).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
 		return convertView;
 	}
 

@@ -11,6 +11,7 @@ import com.test.weijuhui.adapter.ActivityAdapter;
 import com.test.weijuhui.data.ActivityData;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.domain.ActivityManager;
+import com.test.weijuhui.domain.ActivityManager.DataChangedListener;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,17 +30,17 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class ActivityListFragment extends Fragment {
 	//Data
-	private ArrayList<ActivityData> mActivities;
 	private ActivityAdapter mAdapter;
 	
 	//UI
-	ImageButton mBtnAdd;
+	ImageView mIvAdd;
 	ListView mListActivities;
 	
 	//
@@ -60,16 +61,19 @@ public class ActivityListFragment extends Fragment {
 			// EMChatManager.getInstance().getConversation(toChatUsername);
 			// 通知adapter有新消息，更新ui
 			// 记得把广播给终结掉
-			ActivityData data = new ActivityData();
-			data.mCB = new ComplexBusiness();
+			ActivityData data;
             if(message.getType() == EMMessage.Type.TXT)
             {
-            	data.mCB.mName = ((TextMessageBody)message.getBody()).getMessage();
+            	//data.mCB.mName = ((TextMessageBody)message.getBody()).getMessage();
+            	ComplexBusiness cb = new ComplexBusiness();
+            	cb.mName = ((TextMessageBody)message.getBody()).getMessage();
+            	data = new ActivityData.ActivityBuilder().setComplexBusiness(cb).create();
+    			ActivityManager.getInstance().addActivity(data);
+    			abortBroadcast();
             }
-			ActivityManager.getInstance().addActivity(data);
-			abortBroadcast();
-			mAdapter.setData(ActivityManager.getInstance().getActivities());
-			mAdapter.notifyDataSetChanged();
+
+//			mAdapter.setData(ActivityManager.getInstance().getActivities());
+//			mAdapter.notifyDataSetChanged();
 		}
 	}
 	
@@ -93,7 +97,15 @@ public class ActivityListFragment extends Fragment {
 	private void initData()
 	{
 		mAdapter = new ActivityAdapter(getActivity());
-		mAdapter.setData(mActivities);
+		mAdapter.setData(ActivityManager.getInstance().getActivities());
+		ActivityManager.getInstance().registerDataChangedListener(new DataChangedListener() {
+			
+			@Override
+			public void onDataChanged() {
+				mAdapter.setData(ActivityManager.getInstance().getActivities());
+				mAdapter.notifyDataSetChanged();
+			}
+		});
 		
 		NewMessageBroadcastReceiver receiver;
 		receiver = new NewMessageBroadcastReceiver();
@@ -105,9 +117,9 @@ public class ActivityListFragment extends Fragment {
 	
 	private View initUI(LayoutInflater inflater)
 	{
-		RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.activitylist_activity, null);
-		mBtnAdd = (ImageButton) layout.findViewById(R.id.imageButton_add);
-		mBtnAdd.setOnClickListener(new OnClickListener() {
+		LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_activity_list, null);
+		mIvAdd = (ImageView) layout.findViewById(R.id.iv_new_activity);
+		mIvAdd.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -116,7 +128,7 @@ public class ActivityListFragment extends Fragment {
 				ActivityListFragment.this.startActivity(intent);
 			}
 		});
-		mListActivities = (ListView) layout.findViewById(R.id.listView_activity);
+		mListActivities = (ListView) layout.findViewById(R.id.list);
 		mListActivities.setAdapter(mAdapter);
 		return layout;
 	}

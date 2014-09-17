@@ -1,7 +1,7 @@
 package com.test.weijuhui.activity;
 
 import com.test.weijuhui.BuildConfig;
-import com.weijuhui.test.video.util.Utils;
+import com.test.weijuhui.video.util.Utils;
 
 import android.content.Intent;
 import android.os.Bundle;

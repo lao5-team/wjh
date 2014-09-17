@@ -1,4 +1,4 @@
-package com.weijuhui.test.video.util;
+package com.test.weijuhui.video.util;
 
 import java.util.ArrayDeque;
 import java.util.concurrent.BlockingQueue;

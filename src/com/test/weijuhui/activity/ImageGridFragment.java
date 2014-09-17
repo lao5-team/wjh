@@ -36,10 +36,10 @@ import com.easemob.util.TextFormater;
 import com.test.weijuhui.BuildConfig;
 import com.test.weijuhui.R;
 import com.test.weijuhui.domain.VideoEntity;
+import com.test.weijuhui.video.util.ImageCache;
+import com.test.weijuhui.video.util.ImageResizer;
+import com.test.weijuhui.video.util.Utils;
 import com.test.weijuhui.widget.RecyclingImageView;
-import com.weijuhui.test.video.util.ImageCache;
-import com.weijuhui.test.video.util.ImageResizer;
-import com.weijuhui.test.video.util.Utils;
 
 public class ImageGridFragment extends Fragment implements OnItemClickListener {
 

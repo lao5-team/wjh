@@ -11,6 +11,7 @@ import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.squareup.picasso.Picasso;
+import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
 import com.test.weijuhui.R.id;
 import com.test.weijuhui.R.layout;
@@ -164,7 +165,9 @@ public class ActivityDetailActivity extends FragmentActivity {
 			
 			@Override
 			public void onClick(View v) {
-				ActivityData data = new ActivityData.ActivityBuilder().setComplexBusiness(mCBData).setUsers(mFriends).create();
+				User currentUser = new User();
+				currentUser.mName = DemoApplication.getInstance().getUserName();
+				ActivityData data = new ActivityData.ActivityBuilder().setComplexBusiness(mCBData).setUsers(mFriends).setCreator(currentUser).create();
 				if(mFriends.size() == 1)
 				{
 					sendActivityToSingle(data);

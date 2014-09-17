@@ -16,7 +16,7 @@
 
 package com.test.weijuhui.widget;
 
-import com.weijuhui.test.video.util.RecyclingBitmapDrawable;
+import com.test.weijuhui.video.util.RecyclingBitmapDrawable;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

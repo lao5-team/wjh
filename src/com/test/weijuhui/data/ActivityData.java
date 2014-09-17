@@ -33,6 +33,7 @@ public class ActivityData implements Serializable {
 	public ArrayList<User> mUsers;
 	public int mSpent;
 	public int mState;
+	public User mCreator;
 	
 	private ActivityData()
 	{
@@ -54,8 +55,8 @@ public class ActivityData implements Serializable {
 			obj.put("users", array);
 			obj.put("spent", cb.mSpent);
 			obj.put("state", cb.mState);
+			obj.put("creator", User.toJSON(cb.mCreator));
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -69,6 +70,7 @@ public class ActivityData implements Serializable {
 			data.mCB = ComplexBusiness.fromJSON(obj.getJSONObject("business"));
 			data.mSpent = obj.getInt("spent");
 			data.mState = obj.getInt("state");
+			data.mCreator = User.fromJSON(obj.getJSONObject("creator"));
 			JSONArray array = obj.getJSONArray("users");
 			for(int i=0; i<array.length(); i++)
 			{
@@ -103,6 +105,12 @@ public class ActivityData implements Serializable {
 		public ActivityBuilder setUsers(ArrayList<User> users)
 		{
 			mData.mUsers = (ArrayList<User>)users.clone();
+			return this;
+		}
+		
+		public ActivityBuilder setCreator(User user)
+		{
+			mData.mCreator = user;
 			return this;
 		}
 		
