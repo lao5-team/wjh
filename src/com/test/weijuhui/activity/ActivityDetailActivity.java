@@ -21,12 +21,14 @@ import com.test.weijuhui.data.DianpingDataHelper;
 import com.test.weijuhui.data.User;
 import com.test.weijuhui.domain.ActivityManager;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -176,7 +178,10 @@ public class ActivityDetailActivity extends FragmentActivity {
 				{
 					sendActivityToGroup(data);
 				}
+				ActivityDetailActivity.this.setResult(Activity.RESULT_OK);
+				ActivityDetailActivity.this.finish();
 			}
+			
 		});
 		
 		mBtnCancel = (Button)layout.findViewById(R.id.button_cancel);
@@ -235,18 +240,20 @@ public class ActivityDetailActivity extends FragmentActivity {
 		
 		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
 		// 如果是群聊，设置chattype,默认是单聊
-		TextMessageBody txtBody = new TextMessageBody(data.mCB.mName);
+		
+		Log.v("weijuhui", ActivityData.toJSON(data).toString());
+		TextMessageBody txtBody = new TextMessageBody(ActivityData.toJSON(data).toString());
 		// 设置消息body
 		message.addBody(txtBody);
 		// 设置要发给谁,用户username或者群聊groupid
 		message.setReceipt(mFriends.get(0).mName);
 		conversation.addMessage(message);
-//		try {
-//			//EMChatManager.getInstance().sendMessage(message);
-//		} catch (EaseMobException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			EMChatManager.getInstance().sendMessage(message);
+		} catch (EaseMobException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void sendActivityToGroup(ActivityData data)

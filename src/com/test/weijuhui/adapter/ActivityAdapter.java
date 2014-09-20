@@ -100,7 +100,7 @@ public class ActivityAdapter extends BaseAdapter {
 					Intent intent = new Intent();
 					intent.putExtra("business", mActivities.get(pos).mCB);
 					intent.setClass(mActivity, ActivityDetailActivity.class);
-					mActivity.startActivity(intent);
+					mActivity.startActivityForResult(intent, 0);
 				}
 			});
 		}

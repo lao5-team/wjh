@@ -33,7 +33,7 @@ public class User implements Serializable {
 		try {
 			User user = new User();
 			user.mName = obj.getString("name");
-			user.mSex = obj.getString("sex");
+			//user.mSex = obj.getString("sex");
 			return user;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

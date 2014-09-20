@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.easemob.chat.ConnectionListener;
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
@@ -22,20 +25,31 @@ import com.test.weijuhui.Constant;
 import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
 import com.test.weijuhui.activity.MainActivity;
+import com.test.weijuhui.data.ActivityData;
 import com.test.weijuhui.data.InviteMessgeDao;
 import com.test.weijuhui.data.UserDao;
+import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
+import com.test.weijuhui.domain.ActivityManager;
 import com.test.weijuhui.domain.InviteMessage;
 import com.test.weijuhui.domain.User;
 import com.test.weijuhui.domain.InviteMessage.InviteMesageStatus;
+import com.test.weijuhui.service.ActivityService;
 import com.test.weijuhui.utils.CommonUtils;
 import com.easemob.util.HanziToPinyin;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -46,6 +60,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EntryActivity extends FragmentActivity {
 	protected static final String TAG = "MainActivity";
@@ -102,6 +117,8 @@ public class EntryActivity extends FragmentActivity {
 		EMGroupManager.getInstance().addGroupChangeListener(new MyGroupChangeListener());
 		// 通知sdk，UI 已经初始化完毕，注册了相应的receiver和listener, 可以接受broadcast了
 		EMChat.getInstance().setAppInited();
+		
+		//doBindService();
 	}
 
 	/**
@@ -168,6 +185,7 @@ public class EntryActivity extends FragmentActivity {
 			conflictBuilder.create().dismiss();
 			conflictBuilder = null;
 		}
+		doUnbindService();
 
 	}
 
@@ -234,22 +252,36 @@ public class EntryActivity extends FragmentActivity {
 	private class NewMessageBroadcastReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// 消息id
-			String msgId = intent.getStringExtra("msgid");
+			String username = intent.getStringExtra("from");
+			String msgid = intent.getStringExtra("msgid");
 			// 收到这个广播的时候，message已经在db和内存里了，可以通过id获取mesage对象
-			// EMMessage message =
-			// EMChatManager.getInstance().getMessage(msgId);
-
-			// 刷新bottom bar消息未读数
-			updateUnreadLabel();
-			if (currentTabIndex == 0) {
-				// 当前页面如果为聊天历史页面，刷新此页面
-//				if (chatHistoryFragment != null) {
-//					chatHistoryFragment.refresh();
-//				}
+			EMMessage message = EMChatManager.getInstance().getMessage(msgid);
+			// 如果是群聊消息，获取到group id
+			if (message.getChatType() == ChatType.GroupChat) {
+				username = message.getTo();
 			}
-			// 注销广播，否则在ChatActivity中会收到这个广播
-			abortBroadcast();
+			// conversation =
+			// EMChatManager.getInstance().getConversation(toChatUsername);
+			// 通知adapter有新消息，更新ui
+			// 记得把广播给终结掉
+			ActivityData data;
+            if(message.getType() == EMMessage.Type.TXT)
+            {
+            	//data.mCB.mName = ((TextMessageBody)message.getBody()).getMessage();
+            	ComplexBusiness cb = new ComplexBusiness();
+            	try {
+					JSONObject obj = new JSONObject(((TextMessageBody)message.getBody()).getMessage());
+	            	data = ActivityData.fromJSON(obj);
+	    			ActivityManager.getInstance().addActivity(data);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            	//cb.mName = ;
+
+    			//showNotification(cb.mName);
+    			abortBroadcast();
+            }
 		}
 	}
 
@@ -643,5 +675,116 @@ public class EntryActivity extends FragmentActivity {
 		super.onNewIntent(intent);
 		if(getIntent().getBooleanExtra("conflict", false) && !isConflictDialogShow)
 			showConflictDialog();
+	}
+	
+	/** Messenger for communicating with service. */
+	Messenger mService = null;
+	/** Flag indicating whether we have called bind on the service. */
+	boolean mIsBound;
+	/** Some text view we are using to show state information. */
+	TextView mCallbackText;
+
+	/**
+	 * Handler of incoming messages from service.
+	 */
+	class IncomingHandler extends Handler {
+	    @Override
+	    public void handleMessage(Message msg) {
+	        switch (msg.what) {
+	            case ActivityService.MSG_SET_VALUE:
+	                mCallbackText.setText("Received from service: " + msg.arg1);
+	                break;
+	            default:
+	                super.handleMessage(msg);
+	        }
+	    }
+	}
+
+	/**
+	 * Target we publish for clients to send messages to IncomingHandler.
+	 */
+	final Messenger mMessenger = new Messenger(new IncomingHandler());
+
+	/**
+	 * Class for interacting with the main interface of the service.
+	 */
+	private ServiceConnection mConnection = new ServiceConnection() {
+	    public void onServiceConnected(ComponentName className,
+	            IBinder service) {
+	        // This is called when the connection with the service has been
+	        // established, giving us the service object we can use to
+	        // interact with the service.  We are communicating with our
+	        // service through an IDL interface, so get a client-side
+	        // representation of that from the raw service object.
+	        mService = new Messenger(service);
+	        mCallbackText.setText("Attached.");
+
+	        // We want to monitor the service for as long as we are
+	        // connected to it.
+	        try {
+	            Message msg = Message.obtain(null,
+	                    ActivityService.MSG_REGISTER_CLIENT);
+	            msg.replyTo = mMessenger;
+	            mService.send(msg);
+
+	            // Give it some value as an example.
+	            msg = Message.obtain(null,
+	            		ActivityService.MSG_SET_VALUE, this.hashCode(), 0);
+	            mService.send(msg);
+	        } catch (RemoteException e) {
+	            // In this case the service has crashed before we could even
+	            // do anything with it; we can count on soon being
+	            // disconnected (and then reconnected if it can be restarted)
+	            // so there is no need to do anything here.
+	        }
+
+	        // As part of the sample, tell the user what happened.
+	       // Toast.makeText(this, R.string.remote_service_connected,
+	       //         Toast.LENGTH_SHORT).show();
+	    }
+
+	    public void onServiceDisconnected(ComponentName className) {
+	        // This is called when the connection with the service has been
+	        // unexpectedly disconnected -- that is, its process crashed.
+	        mService = null;
+	        mCallbackText.setText("Disconnected.");
+
+	        // As part of the sample, tell the user what happened.
+	        //Toast.makeText(this, R.string.remote_service_disconnected,
+	        //        Toast.LENGTH_SHORT).show();
+	    }
+	};
+
+	void doBindService() {
+	    // Establish a connection with the service.  We use an explicit
+	    // class name because there is no reason to be able to let other
+	    // applications replace our component.
+	    bindService(new Intent(this, 
+	    		ActivityService.class), mConnection, Context.BIND_AUTO_CREATE);
+	    mIsBound = true;
+	    mCallbackText.setText("Binding.");
+	}
+
+	void doUnbindService() {
+	    if (mIsBound) {
+	        // If we have received the service, and hence registered with
+	        // it, then now is the time to unregister.
+	        if (mService != null) {
+	            try {
+	                Message msg = Message.obtain(null,
+	                		ActivityService.MSG_UNREGISTER_CLIENT);
+	                msg.replyTo = mMessenger;
+	                mService.send(msg);
+	            } catch (RemoteException e) {
+	                // There is nothing special we need to do if the service
+	                // has crashed.
+	            }
+	        }
+
+	        // Detach our existing connection.
+	        unbindService(mConnection);
+	        mIsBound = false;
+	        mCallbackText.setText("Unbinding.");
+	    }
 	}
 }

@@ -99,7 +99,7 @@ public class SimpleBusinessAdapter extends BaseAdapter {
 					Intent intent = new Intent();
 					intent.putExtra("businessID", mData[pos].mBusinessID);
 					intent.setClass(mActivity, ActivityDetailActivity.class);
-					mActivity.startActivity(intent);
+					mActivity.startActivityForResult(intent, 0);
 				}
 			});
 		}

@@ -2,6 +2,9 @@ package com.test.weijuhui.activity;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
@@ -61,14 +64,18 @@ public class ActivityListFragment extends Fragment {
 			// EMChatManager.getInstance().getConversation(toChatUsername);
 			// 通知adapter有新消息，更新ui
 			// 记得把广播给终结掉
-			ActivityData data;
             if(message.getType() == EMMessage.Type.TXT)
             {
-            	//data.mCB.mName = ((TextMessageBody)message.getBody()).getMessage();
             	ComplexBusiness cb = new ComplexBusiness();
-            	cb.mName = ((TextMessageBody)message.getBody()).getMessage();
-            	data = new ActivityData.ActivityBuilder().setComplexBusiness(cb).create();
-    			ActivityManager.getInstance().addActivity(data);
+            	ActivityData data;
+				try {
+					data = ActivityData.fromJSON(new JSONObject(((TextMessageBody)message.getBody()).getMessage()));
+					ActivityManager.getInstance().addActivity(data);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			
     			abortBroadcast();
             }
 
@@ -107,12 +114,12 @@ public class ActivityListFragment extends Fragment {
 			}
 		});
 		
-		NewMessageBroadcastReceiver receiver;
-		receiver = new NewMessageBroadcastReceiver();
-		IntentFilter intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());
+		//NewMessageBroadcastReceiver receiver;
+		//receiver = new NewMessageBroadcastReceiver();
+		//IntentFilter intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());
 		// 设置广播的优先级别大于Mainacitivity,这样如果消息来的时候正好在chat页面，直接显示消息，而不是提示消息未读
-		intentFilter.setPriority(5);
-		getActivity().registerReceiver(receiver, intentFilter);
+		//intentFilter.setPriority(5);
+		//getActivity().registerReceiver(receiver, intentFilter);
 	}
 	
 	private View initUI(LayoutInflater inflater)
@@ -125,12 +132,20 @@ public class ActivityListFragment extends Fragment {
 			public void onClick(View v) {
 				Intent intent =new  Intent();
 				intent.setClass(getActivity(), CreateActivityActivity.class);
-				ActivityListFragment.this.startActivity(intent);
+				ActivityListFragment.this.startActivityForResult(intent, 0);
 			}
 		});
 		mListActivities = (ListView) layout.findViewById(R.id.list);
 		mListActivities.setAdapter(mAdapter);
 		return layout;
+	}
+	
+	@Override
+	public void onResume ()
+	{
+		mAdapter.setData(ActivityManager.getInstance().getActivities());
+		mAdapter.notifyDataSetChanged();
+		super.onResume();
 	}
 	
 	private void updateUI()

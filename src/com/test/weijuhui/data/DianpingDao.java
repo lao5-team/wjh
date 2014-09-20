@@ -83,7 +83,7 @@ public class DianpingDao {
 				e.printStackTrace();
 			}
 			
-			return null;
+			return cb;
 		}
 	}
 	

@@ -17,6 +17,7 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -318,5 +319,14 @@ public class CreateActivityActivity extends FragmentActivity{
 	    {
 	    	mSelectedCategory = category;
 	    	mBtnCategory.setText("内容/" + mSelectedCategory);
+	    }
+	    
+	    @Override
+	    protected void onActivityResult (int requestCode, int resultCode, Intent data)
+	    {
+	    	if(resultCode == Activity.RESULT_OK)
+	    	{
+	    		this.finish();
+	    	}
 	    }
 }

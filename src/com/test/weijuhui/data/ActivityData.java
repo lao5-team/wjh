@@ -2,6 +2,7 @@ package com.test.weijuhui.data;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -38,6 +39,7 @@ public class ActivityData implements Serializable {
 	private ActivityData()
 	{
 		mUsers = new ArrayList<User>();
+		mBeginDate = new Date(System.currentTimeMillis());
 	}
 	
 	public static JSONObject toJSON(ActivityData cb)
@@ -45,8 +47,11 @@ public class ActivityData implements Serializable {
 		JSONObject obj = new JSONObject();
 		try {
 			obj.put("business", ComplexBusiness.toJSON(cb.mCB));
-			obj.put("date", DateFormat.format("yyyy年MM月dd日HH时", cb.mBeginDate));
-			
+			if(null != cb.mBeginDate)
+			{
+				obj.put("date", DateFormat.format("yyyy年MM月dd日HH时", cb.mBeginDate));				
+			}
+
 			JSONArray array = new JSONArray();
 			for(int i = 0; i < cb.mUsers.size(); i++)
 			{
@@ -59,14 +64,14 @@ public class ActivityData implements Serializable {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return obj;
 	}
 	
 	public static ActivityData fromJSON(JSONObject obj)
 	{
 		ActivityData data = new ActivityData();
 		try {
-			data.mBeginDate = java.text.DateFormat.getDateTimeInstance().parse(obj.getString("date"));
+			data.mBeginDate = new SimpleDateFormat("yyyy年MM月dd日HH时").parse(obj.getString("date"));//java.text.DateFormat.getDateTimeInstance().parse();
 			data.mCB = ComplexBusiness.fromJSON(obj.getJSONObject("business"));
 			data.mSpent = obj.getInt("spent");
 			data.mState = obj.getInt("state");
@@ -85,7 +90,7 @@ public class ActivityData implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return data;
 	}
 
 	public static class ActivityBuilder
