@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.test.weijuhui"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="19" />
+
+    <application
+        android:name="DemoApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/logo_uidemo"
+        android:label="@string/app_name" >
+        <activity
+            android:name="com.test.weijuhui.activity.MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+        
+        <activity android:name=".activity.CreateActivityActivity"
+            android:theme="@style/horizontal_slide"></activity>
+        
+        <activity android:name=".activity.EntryActivity">
+            
+        </activity>
+        
+        <activity android:name=".activity.RegisterActivity"
+            android:theme="@style/horizontal_slide" >
+            
+        </activity>
+        
+        <activity android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <service android:name=".service.ActivityService"
+        android:process=":remote" />
+        <!-- 设置环信应用的appkey -->
+        <meta-data
+            android:name="EASEMOB_APPKEY"
+            android:value="weijuhui#weijuhui" />
+        <!-- 声明sdk所需的service -->
+        <service android:name="com.easemob.chat.EMChatService" />
+        <activity android:name=".activity.ActivityDetailActivity"
+            android:theme="@style/horizontal_slide"></activity>
+        <activity android:name=".activity.AddContactActivity"
+            android:theme="@style/horizontal_slide"></activity>
+        <activity android:name=".activity.NewFriendsMsgActivity"></activity>
+        
+        <uses-library android:name="android.test.runner" />
+        <activity android:name=".activity.ActivityMembersActivity"  android:theme="@style/horizontal_slide"></activity>
+    </application>
+
+        <uses-permission android:name="android.permission.INTERNET"/>
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.VIBRATE" />
+		<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+		<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+		<uses-permission android:name="android.permission.CALL_PHONE" />
+		<uses-permission android:name="android.permission.GET_TASKS" />
+		<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+		<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+		<uses-permission android:name="android.permission.WAKE_LOCK" />
+		<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+		<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+		
+	    <instrumentation android:targetPackage="com.test.weijuhui"
+
+       android:label="Test Activty" android:name="android.test.InstrumentationTestRunner" />	
+
+</manifest>
