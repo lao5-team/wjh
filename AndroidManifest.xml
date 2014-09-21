@@ -52,6 +52,9 @@
         <activity android:name=".activity.AddContactActivity"
             android:theme="@style/horizontal_slide"></activity>
         <activity android:name=".activity.NewFriendsMsgActivity"></activity>
+        
+        <uses-library android:name="android.test.runner" />
+        <activity android:name=".activity.ActivityMembersActivity"  android:theme="@style/horizontal_slide"></activity>
     </application>
 
         <uses-permission android:name="android.permission.INTERNET"/>
@@ -67,6 +70,8 @@
 		<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 		<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 		
-		
+	    <instrumentation android:targetPackage="com.test.weijuhui"
+
+       android:label="Test Activty" android:name="android.test.InstrumentationTestRunner" />	
 
 </manifest>

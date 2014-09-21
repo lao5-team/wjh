@@ -35,6 +35,7 @@ import com.test.weijuhui.domain.User;
 import com.test.weijuhui.domain.InviteMessage.InviteMesageStatus;
 import com.test.weijuhui.service.ActivityService;
 import com.test.weijuhui.utils.CommonUtils;
+import com.test.weijuhui.utils.CrashLogHandler;
 import com.easemob.util.HanziToPinyin;
 
 import android.content.BroadcastReceiver;
@@ -71,7 +72,7 @@ public class EntryActivity extends FragmentActivity {
 
 	private Button[] mTabs;
 	private ActivityListFragment mActivityListFragment;
-	//private SettingsFragment settingFragment;
+	private SettingsFragment mSettingFragment;
 	private ContactlistFragment mContactListFragment;
 	private Fragment[] fragments;
 	private int index;
@@ -91,9 +92,8 @@ public class EntryActivity extends FragmentActivity {
 		userDao = new UserDao(this);
 		mActivityListFragment = new ActivityListFragment();
 		mContactListFragment = new ContactlistFragment();
-//		settingFragment = new SettingsFragment();
-		fragments = new Fragment[] { mActivityListFragment, mContactListFragment };
-//		// 添加显示第一个fragment
+		mSettingFragment = new SettingsFragment();
+		fragments = new Fragment[] { mActivityListFragment, mContactListFragment, mSettingFragment };
 		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mActivityListFragment)
 				.show(mActivityListFragment).commit();
 
@@ -119,6 +119,7 @@ public class EntryActivity extends FragmentActivity {
 		EMChat.getInstance().setAppInited();
 		
 		//doBindService();
+		CrashLogHandler.createHandler(this); 
 	}
 
 	/**

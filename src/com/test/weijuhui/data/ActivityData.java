@@ -35,6 +35,7 @@ public class ActivityData implements Serializable {
 	public int mSpent;
 	public int mState;
 	public User mCreator;
+	public final static String dataPattern = "yyyy年MM月dd日HH时";
 	
 	private ActivityData()
 	{
@@ -49,7 +50,7 @@ public class ActivityData implements Serializable {
 			obj.put("business", ComplexBusiness.toJSON(cb.mCB));
 			if(null != cb.mBeginDate)
 			{
-				obj.put("date", DateFormat.format("yyyy年MM月dd日HH时", cb.mBeginDate));				
+				obj.put("date", DateFormat.format(dataPattern, cb.mBeginDate));				
 			}
 
 			JSONArray array = new JSONArray();
@@ -71,7 +72,7 @@ public class ActivityData implements Serializable {
 	{
 		ActivityData data = new ActivityData();
 		try {
-			data.mBeginDate = new SimpleDateFormat("yyyy年MM月dd日HH时").parse(obj.getString("date"));//java.text.DateFormat.getDateTimeInstance().parse();
+			////java.text.DateFormat.getDateTimeInstance().parse();
 			data.mCB = ComplexBusiness.fromJSON(obj.getJSONObject("business"));
 			data.mSpent = obj.getInt("spent");
 			data.mState = obj.getInt("state");
@@ -83,6 +84,7 @@ public class ActivityData implements Serializable {
 				user.mName = array.getString(i);
 				data.mUsers.add(user);
 			}
+			data.mBeginDate = new SimpleDateFormat(dataPattern).parse(obj.getString("date"));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

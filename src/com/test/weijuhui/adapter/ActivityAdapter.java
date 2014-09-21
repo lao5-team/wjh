@@ -8,7 +8,9 @@ import com.test.weijuhui.activity.ActivityDetailActivity;
 import com.test.weijuhui.data.ActivityData;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -20,7 +22,7 @@ import android.widget.TextView;
 public class ActivityAdapter extends BaseAdapter {
 
 	private ArrayList<ActivityData> mActivities = null;
-	private Activity mActivity = null;
+	private Fragment mFragment = null;
 	
 	private static class SBItemViewHolder
 	{
@@ -37,9 +39,9 @@ public class ActivityAdapter extends BaseAdapter {
 		
 	}
 	
-	public ActivityAdapter(Activity activity)
+	public ActivityAdapter(Fragment context)
 	{
-		mActivity = activity;
+		mFragment = context;
 	}
 	
 	public void setData(ArrayList<ActivityData> activities)
@@ -88,7 +90,7 @@ public class ActivityAdapter extends BaseAdapter {
 		SBItemViewHolder holder;
 		if(null == convertView)
 		{
-			RelativeLayout layout = (RelativeLayout)mActivity.getLayoutInflater().inflate(R.layout.listitem_activity, null);
+			RelativeLayout layout = (RelativeLayout)mFragment.getActivity().getLayoutInflater().inflate(R.layout.listitem_activity, null);
 			holder = new SBItemViewHolder();
 			holder.createFromView(layout);
 			convertView = layout;
@@ -98,9 +100,10 @@ public class ActivityAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent();
-					intent.putExtra("business", mActivities.get(pos).mCB);
-					intent.setClass(mActivity, ActivityDetailActivity.class);
-					mActivity.startActivityForResult(intent, 0);
+					//intent.putExtra("business", mActivities.get(pos).mCB);
+					intent.putExtra("activityIndex", pos);
+					intent.setClass(mFragment.getActivity(), ActivityDetailActivity.class);
+					mFragment.startActivityForResult(intent, 0);
 				}
 			});
 		}
@@ -110,7 +113,7 @@ public class ActivityAdapter extends BaseAdapter {
 		}
 		holder.mTvName.setText(mActivities.get(position).mCB.mName);
 		holder.mFromUser.setText("组织者: " + mActivities.get(position).mCreator.mName);
-		Picasso.with(mActivity).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
+		Picasso.with(mFragment.getActivity()).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
 		return convertView;
 	}
 

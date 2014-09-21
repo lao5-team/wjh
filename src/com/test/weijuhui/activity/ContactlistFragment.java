@@ -60,6 +60,8 @@ import com.easemob.exceptions.EaseMobException;
  * 
  */
 public class ContactlistFragment extends Fragment {
+	public static final String CONTACTS = "contacts";
+	public static final String ACTIVITY = "activity";
 	private ContactAdapter adapter;
 	private List<User> contactList;
 	private ListView listView;
@@ -67,8 +69,20 @@ public class ContactlistFragment extends Fragment {
 	private Sidebar sidebar;
 	private InputMethodManager inputMethodManager;
 	
+	private String mType = CONTACTS;
 	
 	private ActivityDetailActivity mDetailActivity;
+	
+	public ContactlistFragment()
+	{
+		new ContactlistFragment(CONTACTS);
+	}
+	
+	public ContactlistFragment(String type)
+    {
+		mType = type;
+    }	
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_contact_list, container, false);
@@ -103,9 +117,9 @@ public class ContactlistFragment extends Fragment {
 				} else {
 					// demo中直接进入聊天页面，实际一般是进入用户详情页
 					//startActivity(new Intent(getActivity(), ChatActivity.class).putExtra("userId", adapter.getItem(position).getUsername()));
-					if(getActivity() instanceof ActivityDetailActivity)
+					if(getActivity() instanceof ActivityMembersActivity)
 					{
-						((ActivityDetailActivity)getActivity()).addFriend(adapter.getItem(position));
+						((ActivityMembersActivity)getActivity()).addFriend(adapter.getItem(position));
 					}
 				}
 			}
@@ -262,9 +276,13 @@ public class ContactlistFragment extends Fragment {
 			}
 		});
 
-		// 加入"申请与通知"和"群聊"
-		contactList.add(0, users.get(Constant.GROUP_USERNAME));
-		// 把"申请与通知"添加到首位
-		contactList.add(0, users.get(Constant.NEW_FRIENDS_USERNAME));
+		if(!mType.equals(ACTIVITY) )
+		{
+			// 加入"申请与通知"和"群聊"
+			contactList.add(0, users.get(Constant.GROUP_USERNAME));
+			// 把"申请与通知"添加到首位
+			contactList.add(0, users.get(Constant.NEW_FRIENDS_USERNAME));			
+		}
+
 	}
 }

@@ -64,5 +64,8 @@
       <string name="connect_conflict">同一帐号已在其他设备登录</string>
      <string name="text_ack_msg">已读</string>
     <string name="back">返回</string>
-    <string name="save">保存</string>     
+    <string name="save">保存</string>   
+    <string name="select_activity_members">选择聚会好友</string> 
+    <string name="application_crashed">抱歉，应用崩溃了，通过邮件发送崩溃日志到服务器，仅会占用少量流量^_^</string>
+    <string name="send_crash_report"></string>
 </resources>

@@ -45,8 +45,8 @@ public class ActivityDetailActivity extends FragmentActivity {
 
 	//data
 	private ComplexBusiness mCBData;
-	private String mBusinessID;
-	private ArrayList<User> mFriends = new ArrayList<User>( );
+	private int mActivityIndex;
+	
 	//UI
 	private RelativeLayout mView;
 	private TextView mTvName;
@@ -62,14 +62,8 @@ public class ActivityDetailActivity extends FragmentActivity {
 	
 	//Handler
 	private Handler mUIHandler;
-	
-	public void addFriend(com.test.weijuhui.domain.User user)
-	{
-		User user1 = new User();
-		user1.mName = user.getNick();
-		mFriends.add(user1);
-		updateFriendsUI();
-	}
+	private ArrayList<User> mFriends = new ArrayList<User>();
+
 	
 	private void updateFriendsUI()
 	{
@@ -92,9 +86,15 @@ public class ActivityDetailActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstance)
 	{
 		super.onCreate(savedInstance);
+
 		initData();
 		initUI();
 		
+
+	}
+	
+	private void initData()
+	{
 		mUIHandler = new Handler()
 		{
 			@Override
@@ -103,18 +103,17 @@ public class ActivityDetailActivity extends FragmentActivity {
 				updateUI();
 			}
 		};
-	}
-	
-	private void initData()
-	{
-		Intent intent = getIntent();
-		mBusinessID = intent.getStringExtra("businessID");
-		if(null != mBusinessID)
+		final Intent intent = getIntent();
+		mActivityIndex = intent.getIntExtra("activityIndex", -1);
+		
+		if(-1 != mActivityIndex)
 		{
 			Thread t = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					mCBData = DianpingDataHelper.getInstance().getBusinessByID(mBusinessID);
+					ActivityData data = ActivityManager.getInstance().getActivities().get(mActivityIndex);
+					//mCBData = DianpingDataHelper.getInstance().getBusinessByID(mBusinessID);
+					mCBData = data.mCB;
 					if(null != mCBData)
 					{
 						Message msg = mUIHandler.obtainMessage();
@@ -126,8 +125,26 @@ public class ActivityDetailActivity extends FragmentActivity {
 		}
 		else
 		{
-			finish();
+
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					String businessID = intent.getStringExtra("businessID");
+					mCBData = DianpingDataHelper.getInstance().getBusinessByID(businessID);
+					if(null != mCBData)
+					{
+						Message msg = mUIHandler.obtainMessage();
+						mUIHandler.sendMessage(msg);
+					}
+				}
+			});
+			t.start();
 		}
+		
+		/*else
+		{
+			finish();
+		}*/
 	}
 	
 	private void initUI()
@@ -153,10 +170,8 @@ public class ActivityDetailActivity extends FragmentActivity {
 			
 			@Override
 			public void onClick(View v) {
-				FragmentTransaction ftx = getSupportFragmentManager().beginTransaction();
-				ContactlistFragment fragment = new ContactlistFragment();
-				ftx.add(R.id.fragment_container, fragment);
-				ftx.commit();
+				Intent intent = new Intent(ActivityDetailActivity.this, ActivityMembersActivity.class);
+				startActivityForResult(intent, 0);
 			}
 		});
 		
@@ -178,6 +193,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 				{
 					sendActivityToGroup(data);
 				}
+				ActivityManager.getInstance().addActivity(data);
 				ActivityDetailActivity.this.setResult(Activity.RESULT_OK);
 				ActivityDetailActivity.this.finish();
 			}
@@ -192,6 +208,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 				ActivityDetailActivity.this.finish();
 			}
 		});
+		
 	}
 	
 	private void updateUI()
@@ -235,7 +252,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 	
 	private void sendActivityToSingle(ActivityData data)
 	{
-		ActivityManager.getInstance().addActivity(data);
+		
 		EMConversation conversation = EMChatManager.getInstance().getConversation(data.mUsers.get(0).mName);
 		
 		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
@@ -261,20 +278,42 @@ public class ActivityDetailActivity extends FragmentActivity {
 		String[] userNames = new String[data.mUsers.size()];
 		EMGroup group;
 		try {
-			group = EMGroupManager.getInstance().createPrivateGroup("", "", (String[]) data.mUsers.toArray(), false);
+			String[] names = new String[data.mUsers.size()];
+			for(int i=0; i<data.mUsers.size(); i++)
+			{
+				names[i] = data.mUsers.get(i).mName;
+			}
+			group = EMGroupManager.getInstance().createPrivateGroup("", "", names, false);
 			EMConversation conversation = EMChatManager.getInstance().getConversation(group.getGroupId());										
 			EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
 			message.setChatType(ChatType.GroupChat);
+			TextMessageBody txtBody = new TextMessageBody(ActivityData.toJSON(data).toString());
+			// 设置消息body
+			message.addBody(txtBody);
 		    message.setReceipt(group.getGroupId());
 		    // 把messgage加到conversation中
 		    conversation.addMessage(message);
+			try {
+				EMChatManager.getInstance().sendMessage(message);
+			} catch (EaseMobException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (EaseMobException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if(data!=null)
+		{
+			Bundle bundle = data.getBundleExtra("members");
+			mFriends = (ArrayList<User>)bundle.getSerializable("members");
+			updateFriendsUI();			
+		}
 
 	}
 	

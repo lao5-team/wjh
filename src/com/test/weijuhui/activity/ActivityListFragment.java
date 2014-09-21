@@ -103,7 +103,7 @@ public class ActivityListFragment extends Fragment {
 	
 	private void initData()
 	{
-		mAdapter = new ActivityAdapter(getActivity());
+		mAdapter = new ActivityAdapter(this);
 		mAdapter.setData(ActivityManager.getInstance().getActivities());
 		ActivityManager.getInstance().registerDataChangedListener(new DataChangedListener() {
 			
