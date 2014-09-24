@@ -17,28 +17,41 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
+import android.app.NotificationManager;
 import com.easemob.chat.ConnectionListener;
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMChatOptions;
+import com.easemob.chat.EMContactListener;
+import com.easemob.chat.EMContactManager;
 import com.easemob.chat.EMMessage;
+import com.easemob.chat.OnMessageNotifyListener;
+import com.easemob.chat.TextMessageBody;
 import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.chat.OnNotificationClickListener;
 import com.test.weijuhui.activity.ChatActivity;
+import com.test.weijuhui.activity.EntryActivity;
 import com.test.weijuhui.activity.MainActivity;
+import com.test.weijuhui.data.ActivityData;
 //import com.easemob.chatuidemo.activity.ChatActivity;
 //import com.easemob.chatuidemo.activity.MainActivity;
 import com.test.weijuhui.data.DbOpenHelper;
 import com.test.weijuhui.data.UserDao;
+import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.domain.User;
 import com.test.weijuhui.utils.PreferenceUtils;
 import com.umeng.analytics.MobclickAgent;
@@ -91,25 +104,58 @@ public class DemoApplication extends Application {
 		options.setNoticedByVibrate(PreferenceUtils.getInstance(applicationContext).getSettingMsgVibrate());
 		// 设置语音消息播放是否设置为扬声器播放 默认为true
 		options.setUseSpeaker(PreferenceUtils.getInstance(applicationContext).getSettingMsgSpeaker());
-		
+		//options.setShowNotificationInBackgroud(true);
 		//设置notification消息点击时，跳转的intent为自定义的intent
 		options.setOnNotificationClickListener(new OnNotificationClickListener() {
 			
 			@Override
 			public Intent onNotificationClick(EMMessage message) {
-				Intent intent = new Intent(applicationContext, ChatActivity.class);
-				ChatType chatType = message.getChatType();
-				if(chatType == ChatType.Chat){ //单聊信息
-					intent.putExtra("userId", message.getFrom());
-					intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
-				}else{ //群聊信息
-					//message.getTo()为群聊id
-					intent.putExtra("groupId", message.getTo());
-					intent.putExtra("chatType", ChatActivity.CHATTYPE_GROUP);
-				}
+				Intent intent = new Intent(applicationContext, EntryActivity.class);
+//				ChatType chatType = message.getChatType();
+//				if(chatType == ChatType.Chat){ //单聊信息
+//					intent.putExtra("userId", message.getFrom());
+//					intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
+//				}else{ //群聊信息
+//					//message.getTo()为群聊id
+//					intent.putExtra("groupId", message.getTo());
+//					intent.putExtra("chatType", ChatActivity.CHATTYPE_GROUP);
+//				}
 				return intent;
 			}
 		});
+		options.setNotifyText(new OnMessageNotifyListener() {
+			
+			@Override
+			public String onNewMessageNotify(EMMessage arg0) {
+				
+				if(arg0.getType() == EMMessage.Type.TXT)
+		        {
+					ActivityData data;
+		        	ComplexBusiness cb = new ComplexBusiness();
+		        	try {
+						JSONObject obj = new JSONObject(((TextMessageBody)arg0.getBody()).getMessage());
+		            	data = ActivityData.fromJSON(obj);
+		    			com.test.weijuhui.domain.ActivityManager.getInstance().addActivity(data);
+		    			return String.format("%s发来一条新的聚会邀请", data.mCreator.mName);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return null;
+					}
+		        }
+				return null;
+				
+			}
+			
+			@Override
+			public String onLatestMessageNotify(EMMessage arg0, int arg1, int arg2) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
+		
+		options.setUseRoster(true);
+		
 		//设置一个connectionlistener监听账户重复登陆
 		EMChatManager.getInstance().addConnectionListener(new MyConnectionListener());
 		//取消注释，app在后台，有新消息来时，状态栏的消息提示换成自己写的
@@ -129,6 +175,40 @@ public class DemoApplication extends Application {
 		
 		
 		MobclickAgent.onError(applicationContext);
+		
+//		EMContactManager.getInstance().setContactListener(new EMContactListener() {
+//			
+//			@Override
+//			public void onContactRefused(String arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void onContactInvited(String arg0, String arg1) {
+//				showInvitedNotification(arg0);
+//			}
+//			
+//			@Override
+//			public void onContactDeleted(List<String> arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void onContactAgreed(String arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void onContactAdded(List<String> arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
+		EMChat.getInstance().setAppInited();
+
 	}
 
 	public static DemoApplication getInstance() {
@@ -282,5 +362,23 @@ public class DemoApplication extends Application {
 		@Override
 		public void onConnected() {
 		}
+	}
+	
+	private void showInvitedNotification(String str)
+	{
+		Notification notification = new Notification(R.drawable.logo_uidemo,
+				"新的好友邀请", System.currentTimeMillis());
+
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+				new Intent(this, EntryActivity.class), 0);
+
+		// Set the info for the views that show in the notification panel.
+		notification.setLatestEventInfo(this,
+				"新的好友邀请", String.format("%s请求添加您为好友", str), contentIntent);
+
+		// Send the notification.
+		// We use a string id because it is a unique number. We use it later to
+		// cancel.
+		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
 	}
 }

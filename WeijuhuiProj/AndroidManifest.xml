@@ -39,8 +39,8 @@
             </intent-filter>
         </activity>
         
-        <service android:name=".service.ActivityService"
-        android:process=":remote" />
+        <service android:name=".service.ContactChangeService"
+         />
         <!-- 设置环信应用的appkey -->
         <meta-data
             android:name="EASEMOB_APPKEY"
