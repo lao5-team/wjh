@@ -99,7 +99,7 @@ public class ContactlistFragment extends Fragment {
 		// 获取设置contactlist
 		getContactList();
 		// 设置adapter
-		adapter = new ContactAdapter(getActivity(), R.layout.row_contact, contactList, sidebar);
+		adapter = new ContactAdapter(getActivity(), R.layout.row_contact, contactList, sidebar, mType);
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -111,16 +111,6 @@ public class ContactlistFragment extends Fragment {
 					User user = DemoApplication.getInstance().getContactList().get(Constant.NEW_FRIENDS_USERNAME);
 					user.setUnreadMsgCount(0);
 					startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
-				} else if (Constant.GROUP_USERNAME.equals(username)) {
-					// 进入群聊列表页面
-					//startActivity(new Intent(getActivity(), GroupsActivity.class));
-				} else {
-					// demo中直接进入聊天页面，实际一般是进入用户详情页
-					//startActivity(new Intent(getActivity(), ChatActivity.class).putExtra("userId", adapter.getItem(position).getUsername()));
-					if(getActivity() instanceof ActivityMembersActivity)
-					{
-						((ActivityMembersActivity)getActivity()).addFriend(adapter.getItem(position));
-					}
 				}
 			}
 		});
@@ -148,6 +138,7 @@ public class ContactlistFragment extends Fragment {
 			}
 		});
 		registerForContextMenu(listView);
+		
 
 	}
 
@@ -260,11 +251,13 @@ public class ContactlistFragment extends Fragment {
 
 	private void getContactList() {
 		contactList.clear();
-		Map<String, User> users = DemoApplication.getInstance().getContactList();
+		Map<String, User> users = DemoApplication.getInstance()
+				.getContactList();
 		Iterator<Entry<String, User>> iterator = users.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<String, User> entry = iterator.next();
-			if (!entry.getKey().equals(Constant.NEW_FRIENDS_USERNAME) && !entry.getKey().equals(Constant.GROUP_USERNAME))
+			if (!entry.getKey().equals(Constant.NEW_FRIENDS_USERNAME)
+					&& !entry.getKey().equals(Constant.GROUP_USERNAME))
 				contactList.add(entry.getValue());
 		}
 		// 排序
@@ -276,13 +269,10 @@ public class ContactlistFragment extends Fragment {
 			}
 		});
 
-		if(!mType.equals(ACTIVITY) )
-		{
-			// 加入"申请与通知"和"群聊"
-			contactList.add(0, users.get(Constant.GROUP_USERNAME));
-			// 把"申请与通知"添加到首位
-			contactList.add(0, users.get(Constant.NEW_FRIENDS_USERNAME));			
-		}
+		// 加入"申请与通知"和"群聊"
+		contactList.add(0, users.get(Constant.GROUP_USERNAME));
+		// 把"申请与通知"添加到首位
+		contactList.add(0, users.get(Constant.NEW_FRIENDS_USERNAME));
 
 	}
 }

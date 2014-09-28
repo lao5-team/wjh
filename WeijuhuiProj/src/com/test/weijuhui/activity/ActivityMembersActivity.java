@@ -1,9 +1,19 @@
 package com.test.weijuhui.activity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import com.test.weijuhui.Constant;
+import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
+import com.test.weijuhui.adapter.ActivityMemberAdapter;
 import com.test.weijuhui.data.User;
+import com.test.weijuhui.widget.Sidebar;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,15 +23,23 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * @author yh
+ * 聚会成员选择Activity,记得intent.getBundleExtra("members").getSerializable("members")
+ */
 public class ActivityMembersActivity extends FragmentActivity {
 
 	private ArrayList<User> mFriends = new ArrayList<User>( );
 	private Button mBtnOK;
 	private Button mBtnCancel;
 	private TextView mTvMembers;
-	
+	private ActivityMemberAdapter mAdapter;
+	private List<com.test.weijuhui.domain.User> mContactList = new ArrayList<com.test.weijuhui.domain.User>();;
+	private ListView listView;
+	private Sidebar sidebar;
 	@Override
 	public void onCreate(Bundle savedInstance)
 	{
@@ -30,11 +48,14 @@ public class ActivityMembersActivity extends FragmentActivity {
 		mTvMembers = (TextView)this.findViewById(R.id.textView_members);
 		mBtnOK = (Button) this.findViewById(R.id.button_ok);
 		mBtnCancel = (Button) this.findViewById(R.id.button_cancel);
-		FragmentTransaction ftx = getSupportFragmentManager().beginTransaction();
-		ContactlistFragment fragment = new ContactlistFragment(ContactlistFragment.ACTIVITY);
-		ftx.add(R.id.fragment_container, fragment);
-		ftx.commit();
-		
+		listView = (ListView) findViewById(R.id.list);
+		sidebar = (Sidebar) findViewById(R.id.sidebar);
+		sidebar.setListView(listView);
+		Intent intent = getIntent();
+		mFriends = (ArrayList<User>) intent.getBundleExtra("members").getSerializable("members");
+		getContactList();
+		mAdapter = new ActivityMemberAdapter(this, R.layout.row_contact, mContactList, mFriends, sidebar);
+		listView.setAdapter(mAdapter);
 		mBtnOK.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -57,33 +78,76 @@ public class ActivityMembersActivity extends FragmentActivity {
 		});
 	}
 	
-	public void addFriend(com.test.weijuhui.domain.User user)
-	{
-		for(int i=0; i<mFriends.size(); i++)
-		{
-			if(mFriends.get(i).mName.equals(user.getNick()))
-			{
-				return;
-			}
+//	public void addFriend(com.test.weijuhui.domain.User user)
+//	{
+//		for(int i=0; i<mFriends.size(); i++)
+//		{
+//			if(mFriends.get(i).mName.equals(user.getNick()))
+//			{
+//				return;
+//			}
+//		}
+//		User user1 = new User();
+//		user1.mName = user.getNick();
+//		mFriends.add(user1);
+//		String buffer = "";
+//		for(int i=0; i<mFriends.size(); i++)
+//		{
+//			if(i==mFriends.size() - 1)
+//			{
+//				buffer += mFriends.get(i).mName;
+//			}
+//			else
+//			{
+//				buffer += mFriends.get(i).mName + " , ";
+//			}
+//		}
+//		mTvMembers.setText(getString(R.string.select_activity_members) + " : " + buffer);
+//		
+//	}
+//	
+//	public void removeFriend(com.test.weijuhui.domain.User user)
+//	{
+//		for(int i=0; i<mFriends.size(); i++)
+//		{
+//			if(mFriends.get(i).mName.equals(user.getNick()))
+//			{
+//				mFriends.remove(i);
+//			}
+//		}
+//		String buffer = "";
+//		for(int i=0; i<mFriends.size(); i++)
+//		{
+//			if(i==mFriends.size() - 1)
+//			{
+//				buffer += mFriends.get(i).mName;
+//			}
+//			else
+//			{
+//				buffer += mFriends.get(i).mName + " , ";
+//			}
+//		}
+//		mTvMembers.setText(getString(R.string.select_activity_members) + " : " + buffer);
+//		
+//	}	
+	private void getContactList() {
+		mContactList.clear();
+		Map<String, com.test.weijuhui.domain.User> users = DemoApplication.getInstance().getContactList();
+		Iterator<Entry<String, com.test.weijuhui.domain.User>> iterator = users.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<String, com.test.weijuhui.domain.User> entry = iterator.next();
+			if (!entry.getKey().equals(Constant.NEW_FRIENDS_USERNAME) && !entry.getKey().equals(Constant.GROUP_USERNAME))
+				mContactList.add(entry.getValue());
 		}
-		User user1 = new User();
-		user1.mName = user.getNick();
-		mFriends.add(user1);
-		String buffer = "";
-		for(int i=0; i<mFriends.size(); i++)
-		{
-			if(i==mFriends.size() - 1)
-			{
-				buffer += mFriends.get(i).mName;
+		// 排序
+		Collections.sort(mContactList, new Comparator<com.test.weijuhui.domain.User>() {
+
+			@Override
+			public int compare(com.test.weijuhui.domain.User lhs, com.test.weijuhui.domain.User rhs) {
+				return lhs.getUsername().compareTo(rhs.getUsername());
 			}
-			else
-			{
-				buffer += mFriends.get(i).mName + " , ";
-			}
-		}
-		mTvMembers.setText(getString(R.string.select_activity_members) + " : " + buffer);
-		
+		});
+
+
 	}
-	
-	
 }

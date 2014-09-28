@@ -46,57 +46,11 @@ public class ActivityListFragment extends Fragment {
 	ImageView mIvAdd;
 	ListView mListActivities;
 	
-	//
-	private Handler mUIHandler;
-	
-	private class NewMessageBroadcastReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String username = intent.getStringExtra("from");
-			String msgid = intent.getStringExtra("msgid");
-			// 收到这个广播的时候，message已经在db和内存里了，可以通过id获取mesage对象
-			EMMessage message = EMChatManager.getInstance().getMessage(msgid);
-			// 如果是群聊消息，获取到group id
-			if (message.getChatType() == ChatType.GroupChat) {
-				username = message.getTo();
-			}
-			// conversation =
-			// EMChatManager.getInstance().getConversation(toChatUsername);
-			// 通知adapter有新消息，更新ui
-			// 记得把广播给终结掉
-            if(message.getType() == EMMessage.Type.TXT)
-            {
-            	ComplexBusiness cb = new ComplexBusiness();
-            	ActivityData data;
-				try {
-					data = ActivityData.fromJSON(new JSONObject(((TextMessageBody)message.getBody()).getMessage()));
-					ActivityManager.getInstance().addActivity(data);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    			
-    			abortBroadcast();
-            }
-
-//			mAdapter.setData(ActivityManager.getInstance().getActivities());
-//			mAdapter.notifyDataSetChanged();
-		}
-	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
 	{
 		initData();
-		
-		mUIHandler = new Handler()
-		{
-			@Override
-			public void handleMessage(Message msg)
-			{
-				updateUI();
-			}
-		};
 		
 		return initUI(inflater);
 	}
@@ -113,13 +67,6 @@ public class ActivityListFragment extends Fragment {
 				mAdapter.notifyDataSetChanged();
 			}
 		});
-		
-		//NewMessageBroadcastReceiver receiver;
-		//receiver = new NewMessageBroadcastReceiver();
-		//IntentFilter intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());
-		// 设置广播的优先级别大于Mainacitivity,这样如果消息来的时候正好在chat页面，直接显示消息，而不是提示消息未读
-		//intentFilter.setPriority(5);
-		//getActivity().registerReceiver(receiver, intentFilter);
 	}
 	
 	private View initUI(LayoutInflater inflater)
@@ -148,8 +95,4 @@ public class ActivityListFragment extends Fragment {
 		super.onResume();
 	}
 	
-	private void updateUI()
-	{
-		
-	}
 }

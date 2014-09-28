@@ -405,14 +405,6 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 				listView.setSelection(data.getIntExtra("position", adapter.getCount()) - 1);
 				break;
 
-			case RESULT_CODE_FORWARD: // 转发消息
-				EMMessage forwardMsg = (EMMessage) adapter.getItem(data.getIntExtra("position", 0));
-				Intent intent = new Intent(this, ForwardMessageActivity.class);
-				intent.putExtra("forward_msg_id", forwardMsg.getMsgId());
-				startActivity(intent);
-
-				break;
-
 			default:
 				break;
 			}

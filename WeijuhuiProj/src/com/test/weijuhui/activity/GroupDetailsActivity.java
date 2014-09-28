@@ -383,10 +383,6 @@ public class GroupDetailsActivity extends BaseActivity {
 						@Override
 						public void onClick(View v) {
 							EMLog.d(TAG, "添加按钮被点击");
-							// 进入选人页面
-							startActivityForResult(
-									(new Intent(GroupDetailsActivity.this, GroupPickContactsActivity.class).putExtra("groupId", groupId)),
-									REQUEST_CODE_ADD_USER);
 						}
 					});
 				}

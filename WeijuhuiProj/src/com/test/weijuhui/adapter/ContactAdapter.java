@@ -18,6 +18,8 @@ import java.util.List;
 
 import com.test.weijuhui.Constant;
 import com.test.weijuhui.R;
+import com.test.weijuhui.activity.ActivityMembersActivity;
+import com.test.weijuhui.activity.ContactlistFragment;
 import com.test.weijuhui.domain.User;
 import com.test.weijuhui.widget.Sidebar;
 
@@ -33,6 +35,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -53,12 +58,27 @@ public class ContactAdapter extends ArrayAdapter<User>  implements SectionIndexe
 	private SparseIntArray sectionOfPosition;
 	private Sidebar sidebar;
 	private int res;
+	private String mType;
 
-	public ContactAdapter(Context context, int resource, List<User> objects,Sidebar sidebar) {
+	/**
+	 * @param context
+	 * @param resource
+	 * @param objects
+	 * @param sidebar
+	 * @param type  联系人的使用类型 ContactlistFragment.CONTACTS ,ContactlistFragment.ACTIVITY 
+	 */
+	public ContactAdapter(Context context, int resource, List<User> objects,Sidebar sidebar, String type) {
 		super(context, resource, objects);
 		this.res = resource;
 		this.sidebar=sidebar;
 		layoutInflater = LayoutInflater.from(context);
+		
+		if(!type.equals(ContactlistFragment.ACTIVITY)&&!type.equals(ContactlistFragment.CONTACTS))
+		{
+			throw new IllegalArgumentException("Wrong ContactAdpater type");
+		}
+		mType = type;
+		
 	}
 	
 	@Override
@@ -119,6 +139,8 @@ public class ContactAdapter extends ArrayAdapter<User>  implements SectionIndexe
 			TextView unreadMsgView = (TextView) convertView.findViewById(R.id.unread_msg_number);
 			TextView nameTextview = (TextView) convertView.findViewById(R.id.name);
 			TextView tvHeader = (TextView) convertView.findViewById(R.id.header);
+			CheckBox cbSelect = (CheckBox)convertView.findViewById(R.id.checkBox_selected);
+			
 			User user = getItem(position);
 			//设置nick，demo里不涉及到完整user，用username代替nick显示
 			String username = user.getUsername();
@@ -143,10 +165,12 @@ public class ContactAdapter extends ArrayAdapter<User>  implements SectionIndexe
 				}else{
 					unreadMsgView.setVisibility(View.INVISIBLE);
 				}
+				cbSelect.setVisibility(View.INVISIBLE);
 			}else if(username.equals(Constant.GROUP_USERNAME)){
 				//群聊item
 				nameTextview.setText(user.getNick());
 				avatar.setImageResource(R.drawable.groups_icon);
+				cbSelect.setVisibility(View.INVISIBLE);
 			}else{
 				nameTextview.setText(username);
 				if(unreadMsgView != null)

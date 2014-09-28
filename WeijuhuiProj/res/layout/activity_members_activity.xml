@@ -38,6 +38,7 @@
         android:layout_above="@+id/button_ok"
         android:layout_marginTop="5dip"
         android:orientation="vertical" >
+        <include android:id="@+id/contact_list" layout="@layout/fragment_contact_list" /> 
     </LinearLayout>
 
 </RelativeLayout>

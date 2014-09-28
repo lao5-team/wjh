@@ -21,7 +21,7 @@
         <activity android:name=".activity.CreateActivityActivity"
             android:theme="@style/horizontal_slide"></activity>
         
-        <activity android:name=".activity.EntryActivity">
+        <activity android:name=".activity.EntryActivity" android:theme="@style/horizontal_slide">
             
         </activity>
         
@@ -48,13 +48,13 @@
         <!-- 声明sdk所需的service -->
         <service android:name="com.easemob.chat.EMChatService" />
         <activity android:name=".activity.ActivityDetailActivity"
-            android:theme="@style/horizontal_slide"></activity>
+            android:theme="@style/horizontal_slide" android:configChanges="orientation|keyboardHidden"></activity>
         <activity android:name=".activity.AddContactActivity"
             android:theme="@style/horizontal_slide"></activity>
         <activity android:name=".activity.NewFriendsMsgActivity"></activity>
         
         <uses-library android:name="android.test.runner" />
-        <activity android:name=".activity.ActivityMembersActivity"  android:theme="@style/horizontal_slide"></activity>
+        <activity android:configChanges="orientation|keyboardHidden" android:name=".activity.ActivityMembersActivity"  android:theme="@style/horizontal_slide"></activity>
     </application>
 
         <uses-permission android:name="android.permission.INTERNET"/>

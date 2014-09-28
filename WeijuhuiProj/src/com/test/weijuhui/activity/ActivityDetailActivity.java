@@ -171,6 +171,9 @@ public class ActivityDetailActivity extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(ActivityDetailActivity.this, ActivityMembersActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("members", mFriends);
+				intent.putExtra("members", bundle);
 				startActivityForResult(intent, 0);
 			}
 		});
@@ -275,7 +278,6 @@ public class ActivityDetailActivity extends FragmentActivity {
 	
 	private void sendActivityToGroup(ActivityData data)
 	{
-		String[] userNames = new String[data.mUsers.size()];
 		EMGroup group;
 		try {
 			String[] names = new String[data.mUsers.size()];

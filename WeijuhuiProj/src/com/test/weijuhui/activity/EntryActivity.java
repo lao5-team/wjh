@@ -77,7 +77,6 @@ public class EntryActivity extends FragmentActivity {
 	private ContactlistFragment mContactListFragment;
 	private Fragment[] fragments;
 	private int index;
-	private RelativeLayout[] tab_containers;
 	// 当前fragment的index
 	private int currentTabIndex;
 	private NewActivityBroadcastReceiver msgReceiver;
@@ -252,46 +251,6 @@ public class EntryActivity extends FragmentActivity {
 		return unreadMsgCountTotal;
 	}
 
-	/**
-	 * 新消息广播接收者
-	 * 
-	 * 
-	 */
-	private class NewMessageBroadcastReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String username = intent.getStringExtra("from");
-			String msgid = intent.getStringExtra("msgid");
-			// 收到这个广播的时候，message已经在db和内存里了，可以通过id获取mesage对象
-			EMMessage message = EMChatManager.getInstance().getMessage(msgid);
-			// 如果是群聊消息，获取到group id
-			if (message.getChatType() == ChatType.GroupChat) {
-				username = message.getTo();
-			}
-			// conversation =
-			// EMChatManager.getInstance().getConversation(toChatUsername);
-			// 通知adapter有新消息，更新ui
-			// 记得把广播给终结掉
-			ActivityData data;
-            if(message.getType() == EMMessage.Type.TXT)
-            {
-            	//data.mCB.mName = ((TextMessageBody)message.getBody()).getMessage();
-            	ComplexBusiness cb = new ComplexBusiness();
-            	try {
-					JSONObject obj = new JSONObject(((TextMessageBody)message.getBody()).getMessage());
-	            	data = ActivityData.fromJSON(obj);
-	    			ActivityManager.getInstance().addActivity(data);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            	//cb.mName = ;
-
-    			//showNotification(cb.mName);
-    			abortBroadcast();
-            }
-		}
-	}
 
 	/**
 	 * 消息回执BroadcastReceiver
@@ -317,112 +276,6 @@ public class EntryActivity extends FragmentActivity {
 	private InviteMessgeDao inviteMessgeDao;
 	private UserDao userDao;
 
-	/***
-	 * 联系人变化listener
-	 * 
-	 */
-	private class MyContactListener implements EMContactListener {
-
-		@Override
-		public void onContactAdded(List<String> usernameList) {
-			// 保存增加的联系人
-			Map<String, User> localUsers = DemoApplication.getInstance().getContactList();
-			Map<String, User> toAddUsers = new HashMap<String, User>();
-			for (String username : usernameList) {
-				User user = new User();
-				user.setUsername(username);
-				String headerName = null;
-				if (!TextUtils.isEmpty(user.getNick())) {
-					headerName = user.getNick();
-				} else {
-					headerName = user.getUsername();
-				}
-				if (username.equals(Constant.NEW_FRIENDS_USERNAME)) {
-					user.setHeader("");
-				} else if (Character.isDigit(headerName.charAt(0))) {
-					user.setHeader("#");
-				} else {
-					user.setHeader(HanziToPinyin.getInstance().get(headerName.substring(0, 1)).get(0).target.substring(
-							0, 1).toUpperCase());
-					char header = user.getHeader().toLowerCase().charAt(0);
-					if (header < 'a' || header > 'z') {
-						user.setHeader("#");
-					}
-				}
-				// 暂时有个bug，添加好友时可能会回调added方法两次
-				if (!localUsers.containsKey(username)) {
-					userDao.saveContact(user);
-				}
-				toAddUsers.put(username, user);
-			}
-			localUsers.putAll(toAddUsers);
-			// 刷新ui
-			//if (currentTabIndex == 1)
-				//contactListFragment.refresh();
-
-		}
-
-		@Override
-		public void onContactDeleted(List<String> usernameList) {
-			// 被删除
-			Map<String, User> localUsers = DemoApplication.getInstance().getContactList();
-			for (String username : usernameList) {
-				localUsers.remove(username);
-				userDao.deleteContact(username);
-				inviteMessgeDao.deleteMessage(username);
-			}
-			// 刷新ui
-			if (currentTabIndex == 1)
-				//contactListFragment.refresh();
-			updateUnreadLabel();
-
-		}
-
-		@Override
-		public void onContactInvited(String username, String reason) {
-			// 接到邀请的消息，如果不处理(同意或拒绝)，掉线后，服务器会自动再发过来，所以客户端不要重复提醒
-			List<InviteMessage> msgs = inviteMessgeDao.getMessagesList();
-			for (InviteMessage inviteMessage : msgs) {
-				if (inviteMessage.getGroupId() == null && inviteMessage.getFrom().equals(username)) {
-					return;
-				}
-			}
-			// 自己封装的javabean
-			InviteMessage msg = new InviteMessage();
-			msg.setFrom(username);
-			msg.setTime(System.currentTimeMillis());
-			msg.setReason(reason);
-			Log.d(TAG, username + "请求加你为好友,reason: " + reason);
-			// 设置相应status
-			msg.setStatus(InviteMesageStatus.BEINVITEED);
-			notifyNewIviteMessage(msg);
-
-		}
-
-		@Override
-		public void onContactAgreed(String username) {
-			List<InviteMessage> msgs = inviteMessgeDao.getMessagesList();
-			for (InviteMessage inviteMessage : msgs) {
-				if (inviteMessage.getFrom().equals(username)) {
-					return;
-				}
-			}
-			// 自己封装的javabean
-			InviteMessage msg = new InviteMessage();
-			msg.setFrom(username);
-			msg.setTime(System.currentTimeMillis());
-			Log.d(TAG, username + "同意了你的好友请求");
-			msg.setStatus(InviteMesageStatus.BEAGREED);
-			notifyNewIviteMessage(msg);
-		}
-
-		@Override
-		public void onContactRefused(String username) {
-			// 参考同意，被邀请实现此功能,demo未实现
-
-		}
-
-	}
 
 	/**
 	 * 保存提示新消息
