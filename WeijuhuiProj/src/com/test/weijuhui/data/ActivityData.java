@@ -33,21 +33,32 @@ public class ActivityData implements Serializable {
 	public Date mBeginDate;
 	public ArrayList<User> mUsers;
 	public int mSpent;
+	/**
+	 * 活动状态
+	 */
 	public int mState;
 	public User mCreator;
-	public final static String dataPattern = "yyyy年MM月dd日HH时";
-	
+	public final static String dataPattern = "yyyy年MM月dd日 hh时";
+	public String mTitle;
+	public String mContent;
 	private ActivityData()
 	{
 		mUsers = new ArrayList<User>();
-		mBeginDate = new Date(System.currentTimeMillis());
+		mBeginDate = null;
+		mTitle = "";
+		mContent = "";
+		mCreator = new User();
+		mCB = null;
 	}
 	
 	public static JSONObject toJSON(ActivityData cb)
 	{
 		JSONObject obj = new JSONObject();
 		try {
-			obj.put("business", ComplexBusiness.toJSON(cb.mCB));
+			if(null != cb.mCB)
+			{
+				obj.put("business", ComplexBusiness.toJSON(cb.mCB));
+			}
 			if(null != cb.mBeginDate)
 			{
 				obj.put("date", DateFormat.format(dataPattern, cb.mBeginDate));				
@@ -62,6 +73,8 @@ public class ActivityData implements Serializable {
 			obj.put("spent", cb.mSpent);
 			obj.put("state", cb.mState);
 			obj.put("creator", User.toJSON(cb.mCreator));
+			obj.put("title", cb.mTitle);
+			obj.put("content", cb.mContent);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -72,11 +85,15 @@ public class ActivityData implements Serializable {
 	{
 		ActivityData data = new ActivityData();
 		try {
-			////java.text.DateFormat.getDateTimeInstance().parse();
-			data.mCB = ComplexBusiness.fromJSON(obj.getJSONObject("business"));
+			if(obj.has("business"))
+			{
+				data.mCB = ComplexBusiness.fromJSON(obj.getJSONObject("business"));
+			}
 			data.mSpent = obj.getInt("spent");
 			data.mState = obj.getInt("state");
 			data.mCreator = User.fromJSON(obj.getJSONObject("creator"));
+			data.mContent = obj.getString("content");
+			data.mTitle = obj.getString("title");
 			JSONArray array = obj.getJSONArray("users");
 			for(int i=0; i<array.length(); i++)
 			{
@@ -139,6 +156,18 @@ public class ActivityData implements Serializable {
 			mData.mBeginDate = beginTime;
 			return this;
 		}
+		
+		public ActivityBuilder setContent(String content)
+		{
+			mData.mContent = content;
+			return this;
+		}
+
+		public ActivityBuilder setTitle(String title)
+		{
+			mData.mTitle = title;
+			return this;
+		}		
 		
 		public ActivityData create()
 		{

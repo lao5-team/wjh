@@ -17,61 +17,90 @@
             android:name="com.test.weijuhui.activity.MainActivity"
             android:label="@string/app_name" >
         </activity>
-        
-        <activity android:name=".activity.CreateActivityActivity"
-            android:theme="@style/horizontal_slide"></activity>
-        
-        <activity android:name=".activity.EntryActivity" android:theme="@style/horizontal_slide">
-            
-        </activity>
-        
-        <activity android:name=".activity.RegisterActivity"
+        <activity
+            android:name=".activity.CreateActivityActivity"
             android:theme="@style/horizontal_slide" >
-            
         </activity>
-        
-        <activity android:name=".activity.LoginActivity"
+        <activity
+            android:name=".activity.EntryActivity"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity
+            android:name=".activity.AlertDialog"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity
+            android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/horizontal_slide">
+            android:theme="@style/horizontal_slide" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <service android:name=".service.ContactChangeService"
-         />
+
+        <service android:name=".service.ContactChangeService" />
         <!-- 设置环信应用的appkey -->
         <meta-data
             android:name="EASEMOB_APPKEY"
             android:value="weijuhui#weijuhui" />
         <!-- 声明sdk所需的service -->
         <service android:name="com.easemob.chat.EMChatService" />
-        <activity android:name=".activity.ActivityDetailActivity"
-            android:theme="@style/horizontal_slide" android:configChanges="orientation|keyboardHidden"></activity>
-        <activity android:name=".activity.AddContactActivity"
-            android:theme="@style/horizontal_slide"></activity>
-        <activity android:name=".activity.NewFriendsMsgActivity"></activity>
-        
+
+        <activity
+            android:name=".activity.ActivityDetailActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity
+            android:name=".activity.AddContactActivity"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity android:name=".activity.NewFriendsMsgActivity" >
+        </activity>
+
         <uses-library android:name="android.test.runner" />
-        <activity android:configChanges="orientation|keyboardHidden" android:name=".activity.ActivityMembersActivity"  android:theme="@style/horizontal_slide"></activity>
+
+        <activity
+            android:name=".activity.ActivityMembersActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity
+            android:name=".activity.CreateActivityActivity2"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity
+            android:name=".activity.CustomActivityActivity"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity
+            android:name=".activity.DateActivity"
+            android:theme="@style/horizontal_slide" >
+        </activity>
     </application>
 
-        <uses-permission android:name="android.permission.INTERNET"/>
-        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.VIBRATE" />
-		<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-		<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-		<uses-permission android:name="android.permission.CALL_PHONE" />
-		<uses-permission android:name="android.permission.GET_TASKS" />
-		<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-		<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-		<uses-permission android:name="android.permission.WAKE_LOCK" />
-		<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-		<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-		
-	    <instrumentation android:targetPackage="com.test.weijuhui"
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-       android:label="Test Activty" android:name="android.test.InstrumentationTestRunner" />	
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:label="Test Activty"
+        android:targetPackage="com.test.weijuhui" />
 
 </manifest>

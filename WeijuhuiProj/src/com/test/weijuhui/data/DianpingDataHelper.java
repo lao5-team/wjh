@@ -99,12 +99,7 @@ public class DianpingDataHelper {
 						e.printStackTrace();
 					}
 				}
-
-				
-
 			}
-
-			
 			try {
 				mCacheContentData = new DianpingDao.TreeData();
 				mCacheContentData.name = "content";

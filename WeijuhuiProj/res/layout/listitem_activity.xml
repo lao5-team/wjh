@@ -9,16 +9,8 @@
         android:layout_width="72dip"
         android:layout_height="72dip" 
         android:layout_alignParentLeft="true"
+        android:visibility="gone"
         />
-
-    <TextView
-        android:id="@+id/textView_activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/imageView_pic"
-        android:text="TextView" />
 
     <TextView
         android:id="@+id/textView_from"
@@ -26,6 +18,17 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView_activity"
         android:layout_alignParentTop="true"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textSize="@dimen/normal_font_size" />
+    
+        <TextView
+            android:id="@+id/textView_activity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/textView_from"
+            android:layout_toRightOf="@+id/imageView_pic"
+            android:text="TextView"
+            android:textSize="@dimen/normal_font_size" />
 
 </RelativeLayout>

@@ -25,23 +25,24 @@
             android1:id="@+id/button_category"
             android1:layout_width="wrap_content"
             android1:layout_height="wrap_content"
-            android1:text="内容" />
+            android1:text="@string/content" />
 
         <Button
             android1:id="@+id/button_location"
             android1:layout_width="wrap_content"
             android1:layout_height="wrap_content"
-            android1:layout_alignParentTop="true"
-            android1:layout_toRightOf="@+id/button_category"
-            android1:text="地点" />
+            android1:layout_alignParentTop="false"
+            android1:layout_centerHorizontal="true"
+            android1:layout_centerInParent="true"
+            android1:text="@string/location" />
 
         <Button
             android1:id="@+id/button_search"
             android1:layout_width="wrap_content"
             android1:layout_height="wrap_content"
             android1:layout_alignParentTop="true"
-            android1:layout_toRightOf="@+id/button_location"
-            android1:text="搜索" />
+            android1:layout_alignParentRight="true"
+            android1:text="@string/search" />
 
     </RelativeLayout>
 

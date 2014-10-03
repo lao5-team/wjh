@@ -45,6 +45,7 @@ public class CreateActivityActivity extends FragmentActivity{
     private Button mBtnCategory;
     private Button mBtnSearch;
     private ListView mListViewContent;
+    //private Button mBtnCustomActivity;
     
     //Fragments
     private CategoryFragment mFragCategory;
@@ -57,19 +58,21 @@ public class CreateActivityActivity extends FragmentActivity{
     private SimpleBusinessAdapter mSBAdapter;
     //data
     private SimpleBusiness[] mListData = null;
-    //private TabFragmentPagerAdapter mAdapter;  
-	  @Override  
-	    protected void onCreate(Bundle savedInstanceState) {  
-	        super.onCreate(savedInstanceState);  
-	        setContentView(R.layout.activity_newactivity);
-	        mFragCategory = new CategoryFragment(null, null, "category");
-	        mFragLocation = new CategoryFragment(null, null, "location");
-	        mSBAdapter = new SimpleBusinessAdapter(this);
-	        initView();
-	        loadDataTest();
-	  }
-	  
-	private void initView() {
+    public static int INTENT_DETAIL = 0;
+    public static int INTENT_CUSTOM = 1;
+	// private TabFragmentPagerAdapter mAdapter;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_newactivity);
+		mFragCategory = new CategoryFragment(null, null, "category");
+		mFragLocation = new CategoryFragment(null, null, "location");
+		mSBAdapter = new SimpleBusinessAdapter(this);
+		initUI();
+		loadDataTest();
+	}
+ 
+	private void initUI() {
 		mBtnLocaction = (Button) this.findViewById(R.id.button_location);
 		mBtnCategory = (Button) this.findViewById(R.id.button_category);
 		mBtnSearch = (Button) this.findViewById(R.id.button_search);
@@ -155,6 +158,16 @@ public class CreateActivityActivity extends FragmentActivity{
 				ft.commit();
 			}
 		});
+		
+//		mBtnCustomActivity = (Button)findViewById(R.id.button_customActivity);
+//		mBtnCustomActivity.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				Intent intent = new Intent(CreateActivityActivity.this, CustomActivityActivity.class);
+//				startActivityForResult(intent, INTENT_CUSTOM);
+//			}
+//		});
 
 		mHandler = new Handler() {
 			@Override
@@ -211,9 +224,21 @@ public class CreateActivityActivity extends FragmentActivity{
 	    @Override
 	    protected void onActivityResult (int requestCode, int resultCode, Intent data)
 	    {
-	    	if(resultCode == Activity.RESULT_OK)
+	    	if(requestCode == INTENT_DETAIL)
 	    	{
-	    		this.finish();
+		    	if(resultCode == Activity.RESULT_OK)
+		    	{
+		    		this.finish();
+		    	}	    		
 	    	}
+	    	else if(requestCode == INTENT_CUSTOM)
+	    	{
+		    	if(resultCode == Activity.RESULT_OK)
+		    	{
+		    		this.finish();
+		    	}	 	    		
+	    	}
+	    	
+
 	    }
 }

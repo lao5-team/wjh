@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.squareup.picasso.Picasso;
 import com.test.weijuhui.R;
 import com.test.weijuhui.activity.ActivityDetailActivity;
+import com.test.weijuhui.activity.CreateActivityActivity2;
 import com.test.weijuhui.data.ActivityData;
 
 import android.app.Activity;
@@ -28,13 +29,13 @@ public class ActivityAdapter extends BaseAdapter {
 	{
 		public TextView mTvName;
 		public TextView mFromUser;
-		public ImageView mImgPic;
+		//public ImageView mImgPic;
 		
 		public void createFromView(View view)
 		{
 			mTvName = (TextView)view.findViewById(R.id.textView_activity);
 			mFromUser = (TextView)view.findViewById(R.id.textView_from);
-			mImgPic = (ImageView)view.findViewById(R.id.imageView_pic);
+			//mImgPic = (ImageView)view.findViewById(R.id.imageView_pic);
 		}
 		
 	}
@@ -102,7 +103,8 @@ public class ActivityAdapter extends BaseAdapter {
 					Intent intent = new Intent();
 					//intent.putExtra("business", mActivities.get(pos).mCB);
 					intent.putExtra("activityIndex", pos);
-					intent.setClass(mFragment.getActivity(), ActivityDetailActivity.class);
+					intent.putExtra("use", CreateActivityActivity2.INTENT_EDIT);
+					intent.setClass(mFragment.getActivity(), CreateActivityActivity2.class);
 					mFragment.startActivityForResult(intent, 0);
 				}
 			});
@@ -111,9 +113,9 @@ public class ActivityAdapter extends BaseAdapter {
 		{
 			holder = (SBItemViewHolder)convertView.getTag();
 		}
-		holder.mTvName.setText(mActivities.get(position).mCB.mName);
+		holder.mTvName.setText(mActivities.get(position).mTitle);
 		holder.mFromUser.setText("组织者: " + mActivities.get(position).mCreator.mName);
-		Picasso.with(mFragment.getActivity()).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
+		//Picasso.with(mFragment.getActivity()).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
 		return convertView;
 	}
 

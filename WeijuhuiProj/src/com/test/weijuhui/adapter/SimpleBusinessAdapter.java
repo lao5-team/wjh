@@ -3,6 +3,7 @@ package com.test.weijuhui.adapter;
 import com.squareup.picasso.Picasso;
 import com.test.weijuhui.R;
 import com.test.weijuhui.activity.ActivityDetailActivity;
+import com.test.weijuhui.activity.CreateActivityActivity;
 import com.test.weijuhui.data.DianpingDao.SimpleBusiness;
 
 import android.app.Activity;
@@ -99,7 +100,7 @@ public class SimpleBusinessAdapter extends BaseAdapter {
 					Intent intent = new Intent();
 					intent.putExtra("businessID", mData[pos].mBusinessID);
 					intent.setClass(mActivity, ActivityDetailActivity.class);
-					mActivity.startActivityForResult(intent, 0);
+					mActivity.startActivityForResult(intent, CreateActivityActivity.INTENT_DETAIL);
 				}
 			});
 		}

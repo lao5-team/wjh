@@ -32,7 +32,7 @@ import android.widget.TextView;
  */
 public class ActivityMembersActivity extends FragmentActivity {
 
-	private ArrayList<User> mFriends = new ArrayList<User>( );
+	private ArrayList<User> mFriends;//
 	private Button mBtnOK;
 	private Button mBtnCancel;
 	private TextView mTvMembers;
@@ -52,7 +52,15 @@ public class ActivityMembersActivity extends FragmentActivity {
 		sidebar = (Sidebar) findViewById(R.id.sidebar);
 		sidebar.setListView(listView);
 		Intent intent = getIntent();
-		mFriends = (ArrayList<User>) intent.getBundleExtra("members").getSerializable("members");
+		//Parent Activity 可能会传递已选择的用户
+		if(null != intent&&intent.hasExtra("members"))
+		{
+			mFriends = (ArrayList<User>) intent.getSerializableExtra("members");
+		}
+		else
+		{
+			mFriends = new ArrayList<User>( );
+		}
 		getContactList();
 		mAdapter = new ActivityMemberAdapter(this, R.layout.row_contact, mContactList, mFriends, sidebar);
 		listView.setAdapter(mAdapter);
@@ -61,10 +69,10 @@ public class ActivityMembersActivity extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
-				Bundle bundle = new Bundle();
-				bundle.putSerializable("members", mFriends);
-				intent.putExtra("members", bundle);
-				setResult(0, intent);
+//				Bundle bundle = new Bundle();
+//				bundle.putSerializable("members", mFriends);
+				intent.putExtra("members", mFriends);
+				setResult(RESULT_OK, intent);
 				finish();
 			}
 		});

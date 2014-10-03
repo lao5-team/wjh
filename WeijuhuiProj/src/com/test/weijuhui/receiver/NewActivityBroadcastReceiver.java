@@ -30,7 +30,6 @@ public class NewActivityBroadcastReceiver extends BroadcastReceiver {
 		ActivityData data;
         if(message.getType() == EMMessage.Type.TXT)
         {
-        	ComplexBusiness cb = new ComplexBusiness();
         	try {
 				JSONObject obj = new JSONObject(((TextMessageBody)message.getBody()).getMessage());
             	data = ActivityData.fromJSON(obj);

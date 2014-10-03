@@ -54,6 +54,7 @@ public class Sidebar extends View{
 		paint.setColor(Color.DKGRAY);
 		paint.setTextAlign(Align.CENTER);
 		paint.setTextSize(DensityUtil.sp2px(context, 10));
+		
 	}
 	
 	
@@ -106,7 +107,7 @@ public class Sidebar extends View{
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:{
 			if(header == null){
-				//header = (TextView) ((View)getParent()).findViewById(R.id.floating_header);
+				header = (TextView) ((View)getParent()).findViewById(R.id.floating_header);
 				return true;
 			}
 			setHeaderTextAndscroll(event);

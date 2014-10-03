@@ -89,8 +89,6 @@ public class ActivityDetailActivity extends FragmentActivity {
 
 		initData();
 		initUI();
-		
-
 	}
 	
 	private void initData()
@@ -263,15 +261,12 @@ public class ActivityDetailActivity extends FragmentActivity {
 		
 		Log.v("weijuhui", ActivityData.toJSON(data).toString());
 		TextMessageBody txtBody = new TextMessageBody(ActivityData.toJSON(data).toString());
-		// 设置消息body
 		message.addBody(txtBody);
-		// 设置要发给谁,用户username或者群聊groupid
 		message.setReceipt(mFriends.get(0).mName);
 		conversation.addMessage(message);
 		try {
 			EMChatManager.getInstance().sendMessage(message);
 		} catch (EaseMobException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -290,19 +285,15 @@ public class ActivityDetailActivity extends FragmentActivity {
 			EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
 			message.setChatType(ChatType.GroupChat);
 			TextMessageBody txtBody = new TextMessageBody(ActivityData.toJSON(data).toString());
-			// 设置消息body
 			message.addBody(txtBody);
 		    message.setReceipt(group.getGroupId());
-		    // 把messgage加到conversation中
 		    conversation.addMessage(message);
 			try {
 				EMChatManager.getInstance().sendMessage(message);
 			} catch (EaseMobException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (EaseMobException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
