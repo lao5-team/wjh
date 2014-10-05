@@ -1,5 +1,6 @@
 package com.test.weijuhui.activity;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -9,6 +10,7 @@ import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.chat.EMMessage.ChatType;
+import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
 import com.test.weijuhui.adapter.ActivityAdapter;
 import com.test.weijuhui.data.ActivityData;
@@ -45,7 +47,7 @@ public class ActivityListFragment extends Fragment {
 	//UI
 	ImageView mIvAdd;
 	ListView mListActivities;
-	
+	ImageView mIvClear;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
@@ -58,12 +60,12 @@ public class ActivityListFragment extends Fragment {
 	private void initData()
 	{
 		mAdapter = new ActivityAdapter(this);
-		mAdapter.setData(ActivityManager.getInstance().getActivities());
+		//mAdapter.setData(ActivityManager.getInstance().getActivities());
 		ActivityManager.getInstance().registerDataChangedListener(new DataChangedListener() {
 			
 			@Override
 			public void onDataChanged() {
-				mAdapter.setData(ActivityManager.getInstance().getActivities());
+				//mAdapter.setData(ActivityManager.getInstance().getActivities());
 				mAdapter.notifyDataSetChanged();
 			}
 		});
@@ -85,13 +87,22 @@ public class ActivityListFragment extends Fragment {
 		});
 		mListActivities = (ListView) layout.findViewById(R.id.list);
 		mListActivities.setAdapter(mAdapter);
+		
+		mIvClear = (ImageView) layout.findViewById(R.id.iv_clear_activity);
+		mIvClear.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ActivityManager.getInstance().clearActivityTest();
+			}
+		});		
 		return layout;
 	}
 	
 	@Override
 	public void onResume ()
 	{
-		mAdapter.setData(ActivityManager.getInstance().getActivities());
+		//mAdapter.setData(ActivityManager.getInstance().getActivities());
 		mAdapter.notifyDataSetChanged();
 		super.onResume();
 	}

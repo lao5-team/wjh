@@ -28,7 +28,7 @@ import com.test.weijuhui.domain.ActivityManager;
 import com.test.weijuhui.domain.InviteMessage;
 import com.test.weijuhui.domain.User;
 import com.test.weijuhui.domain.InviteMessage.InviteMesageStatus;
-import com.test.weijuhui.receiver.NewActivityBroadcastReceiver;
+import com.test.weijuhui.receiver.NewMessageBroadcastReceiver;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -166,35 +166,6 @@ public class ContactChangeService extends Service {
 		}
 	};
 	
-	private class NewMessageBroadcastReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String username = intent.getStringExtra("from");
-			String msgid = intent.getStringExtra("msgid");
-			// 收到这个广播的时候，message已经在db和内存里了，可以通过id获取mesage对象
-			EMMessage message = EMChatManager.getInstance().getMessage(msgid);
-			// 如果是群聊消息，获取到group id
-			if (message.getChatType() == ChatType.GroupChat) {
-				username = message.getTo();
-			}
-			ActivityData data;
-	        if(message.getType() == EMMessage.Type.TXT)
-	        {
-	        	ComplexBusiness cb = new ComplexBusiness();
-	        	try {
-					JSONObject obj = new JSONObject(((TextMessageBody)message.getBody()).getMessage());
-	            	data = ActivityData.fromJSON(obj);
-	    			ActivityManager.getInstance().addActivity(data);
-	    			showNotification(data.mCB.mName);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	        	
-				abortBroadcast();
-	        }
-		}
-	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -209,12 +180,12 @@ public class ContactChangeService extends Service {
 		Log.v("weijuhui", "ActivityService onCreate");
 		inviteMessgeDao = new InviteMessgeDao(this);
 		userDao = new UserDao(this);
-		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		NewMessageBroadcastReceiver receiver;
-		receiver = new NewMessageBroadcastReceiver();
-		IntentFilter intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());
-		intentFilter.setPriority(5);
-		registerReceiver(receiver, intentFilter);
+//		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//		NewMessageBroadcastReceiver receiver;
+//		receiver = new NewMessageBroadcastReceiver();
+//		IntentFilter intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());
+//		intentFilter.setPriority(5);
+//		registerReceiver(receiver, intentFilter);
 	}
 
 	@Override

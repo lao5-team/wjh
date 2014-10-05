@@ -109,7 +109,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 			Thread t = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					ActivityData data = ActivityManager.getInstance().getActivities().get(mActivityIndex);
+					ActivityData data = ActivityManager.getInstance().getActivity(mActivityIndex).getData();
 					//mCBData = DianpingDataHelper.getInstance().getBusinessByID(mBusinessID);
 					mCBData = data.mCB;
 					if(null != mCBData)
@@ -194,7 +194,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 				{
 					sendActivityToGroup(data);
 				}
-				ActivityManager.getInstance().addActivity(data);
+				//ActivityManager.getInstance().addActivity(data);
 				ActivityDetailActivity.this.setResult(Activity.RESULT_OK);
 				ActivityDetailActivity.this.finish();
 			}

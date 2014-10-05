@@ -16,9 +16,12 @@ import com.easemob.exceptions.EaseMobException;
 import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
 import com.test.weijuhui.data.ActivityData;
+import com.test.weijuhui.data.Message;
 import com.test.weijuhui.data.User;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.domain.ActivityManager;
+import com.test.weijuhui.domain.MessageManager;
+import com.test.weijuhui.domain.MyServerManager;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -46,6 +49,8 @@ public class CreateActivityActivity2 extends Activity {
 	
 	//Data
 	private ActivityData mActivityData;
+	private String mActivityID;
+	private com.test.weijuhui.domain.Activity mActivity;
 	private ComplexBusiness mComplexBusiness;
 	private Date mBeginDate;
 	private int mUse;
@@ -89,6 +94,15 @@ public class CreateActivityActivity2 extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(CreateActivityActivity2.this, ActivityMembersActivity.class);
+				if(mActivity == null)
+				{
+					intent.putExtra("state", ActivityData.UNBEGIN);
+				}
+				else if(mActivity.getData().mState == ActivityData.BEGIN)
+				{
+					intent.putExtra("state", ActivityData.BEGIN);
+				}
+				
 				intent.putExtra("members", mUsers);
 				startActivityForResult(intent, INTENT_MEMBERS);				
 			}
@@ -107,35 +121,80 @@ public class CreateActivityActivity2 extends Activity {
 		mBtnSelectLocation = (Button)findViewById(R.id.button_select_location);
 		
 		mBtnOK = (Button)findViewById(R.id.button_confirm);
-		mBtnOK.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(createActivityData())
-				{
-					if(mUsers.size() == 1)
-					{
-						sendActivityToSingle(mActivityData);
-					}
-					else if(mUsers.size() > 1)
-					{
-						sendActivityToGroup(mActivityData);
-					}
-					ActivityManager.getInstance().addActivity(mActivityData);
-					CreateActivityActivity2.this.finish();					
-				}
-
-			}
-		});
-		
 		mBtnCancel = (Button)findViewById(R.id.button_cancel);	
-		mBtnCancel.setOnClickListener(new OnClickListener() {
+		if(mActivityData == null||mActivityData.mState == ActivityData.UNBEGIN)
+		{
+			mBtnOK.setText("发起聚会");
+			mBtnOK.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if(createActivityData())
+					{
+						com.test.weijuhui.domain.Activity activity = ActivityManager.getInstance().createActivity(mActivityData);
+						activity.startActivity();
+						CreateActivityActivity2.this.finish();					
+					}
+				}
+			});
 			
-			@Override
-			public void onClick(View v) {
-				finish();
+			mBtnCancel.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					CreateActivityActivity2.this.finish();						
+				}
+			});
+		}
+		else if(mActivityData.mState == ActivityData.BEGIN)
+		{
+			if(mActivity.getMyRoleType().equals(com.test.weijuhui.domain.Activity.CREATOR))
+			{
+				mBtnOK.setText("确认开始");
+				mBtnOK.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						mActivity.confirmActivity();
+						CreateActivityActivity2.this.finish();
+					}
+				});	
+				
+				mBtnCancel.setText("活动取消");
+				mBtnCancel.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						mActivity.cancelActivity();
+						CreateActivityActivity2.this.finish();						
+					}
+				});
 			}
-		});
+			else if(mActivity.getMyRoleType().equals(com.test.weijuhui.domain.Activity.JOINER))
+			{
+				mBtnOK.setText("同意加入");
+				mBtnOK.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						mActivity.acceptActivity();
+						CreateActivityActivity2.this.finish();
+					}
+				});	
+				
+				mBtnCancel.setText("拒绝加入");
+				mBtnCancel.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						mActivity.cancelActivity();
+						CreateActivityActivity2.this.finish();						
+					}
+				});				
+			}
+		}
+
+		
 		
 		if(mUse == INTENT_EDIT)
 		{
@@ -149,8 +208,6 @@ public class CreateActivityActivity2 extends Activity {
 			{
 				mBtnSelectDate.setText(DateFormat.format(ActivityData.dataPattern, mActivityData.mBeginDate));
 			}
-			
-			
 		}
 			
 	}
@@ -167,7 +224,10 @@ public class CreateActivityActivity2 extends Activity {
 		else if(INTENT_EDIT == mUse)
 		{
 			Assert.assertTrue(getIntent().hasExtra("activityIndex"));
-			mActivityData = ActivityManager.getInstance().getActivities().get(getIntent().getIntExtra("activityIndex", 0));
+			mActivityData = ActivityManager.getInstance().getActivity(getIntent().getIntExtra("activityIndex", 0)).getData();
+			mActivity = ActivityManager.getInstance().getActivity(getIntent().getIntExtra("activityIndex", 0));
+			mUsers = mActivityData.mUsers;
+					
 		}
 		
 	}
@@ -205,6 +265,7 @@ public class CreateActivityActivity2 extends Activity {
 	
 	private boolean createActivityData()
 	{
+		mActivityID = MyServerManager.getInstance().getNewActivityID(DemoApplication.getInstance().getUserName());
 		String title;
 		if(mEtxTitle.getEditableText().toString().length() != 0)
 		{
@@ -234,54 +295,14 @@ public class CreateActivityActivity2 extends Activity {
 		
 		User currentUser = new User();
 		currentUser.mName = DemoApplication.getInstance().getUserName();
-		
+		currentUser.mActivityState = User.CONFIRMED;
+		//mUsers.add(user);
 		mActivityData = new ActivityData.ActivityBuilder().setTitle(title).setContent(content).
 				setComplexBusiness(mComplexBusiness).setCreator(currentUser).setBeginTime(mBeginDate).
-				setUsers(mUsers).create();
+				setUsers(mUsers).setID(mActivityID).create();
 		return true;
 		
 	}
 	
-	private void sendActivityToSingle(ActivityData data)
-	{
-		EMConversation conversation = EMChatManager.getInstance().getConversation(data.mUsers.get(0).mName);
-		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
-		Log.v("weijuhui", ActivityData.toJSON(data).toString());
-		TextMessageBody txtBody = new TextMessageBody(ActivityData.toJSON(data).toString());
-		message.addBody(txtBody);
-		message.setReceipt(data.mUsers.get(0).mName);
-		conversation.addMessage(message);
-		try {
-			EMChatManager.getInstance().sendMessage(message);
-		} catch (EaseMobException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void sendActivityToGroup(ActivityData data)
-	{
-		EMGroup group;
-		try {
-			String[] names = new String[data.mUsers.size()];
-			for(int i=0; i<data.mUsers.size(); i++)
-			{
-				names[i] = data.mUsers.get(i).mName;
-			}
-			group = EMGroupManager.getInstance().createPrivateGroup("", "", names, false);
-			EMConversation conversation = EMChatManager.getInstance().getConversation(group.getGroupId());										
-			EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
-			message.setChatType(ChatType.GroupChat);
-			TextMessageBody txtBody = new TextMessageBody(ActivityData.toJSON(data).toString());
-			message.addBody(txtBody);
-		    message.setReceipt(group.getGroupId());
-		    conversation.addMessage(message);
-			try {
-				EMChatManager.getInstance().sendMessage(message);
-			} catch (EaseMobException e) {
-				e.printStackTrace();
-			}
-		} catch (EaseMobException e) {
-			e.printStackTrace();
-		}
-	}
+
 }

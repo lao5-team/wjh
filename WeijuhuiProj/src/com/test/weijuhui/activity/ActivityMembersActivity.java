@@ -11,7 +11,9 @@ import java.util.Map.Entry;
 import com.test.weijuhui.Constant;
 import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
-import com.test.weijuhui.adapter.ActivityMemberAdapter;
+import com.test.weijuhui.adapter.ActivityMemberSelectAdapter;
+import com.test.weijuhui.adapter.ActivityMemberStateAdapter;
+import com.test.weijuhui.data.ActivityData;
 import com.test.weijuhui.data.User;
 import com.test.weijuhui.widget.Sidebar;
 
@@ -36,7 +38,8 @@ public class ActivityMembersActivity extends FragmentActivity {
 	private Button mBtnOK;
 	private Button mBtnCancel;
 	private TextView mTvMembers;
-	private ActivityMemberAdapter mAdapter;
+	private ActivityMemberSelectAdapter mAdapter;
+	private ActivityMemberStateAdapter mStateAdapter;
 	private List<com.test.weijuhui.domain.User> mContactList = new ArrayList<com.test.weijuhui.domain.User>();;
 	private ListView listView;
 	private Sidebar sidebar;
@@ -62,8 +65,18 @@ public class ActivityMembersActivity extends FragmentActivity {
 			mFriends = new ArrayList<User>( );
 		}
 		getContactList();
-		mAdapter = new ActivityMemberAdapter(this, R.layout.row_contact, mContactList, mFriends, sidebar);
-		listView.setAdapter(mAdapter);
+		if(getIntent().getIntExtra("state", 0) == ActivityData.UNBEGIN)
+		{
+			mAdapter = new ActivityMemberSelectAdapter(this, R.layout.row_contact, mContactList, mFriends, sidebar);
+			listView.setAdapter(mAdapter);
+		}
+		else if(getIntent().getIntExtra("state", 0) == ActivityData.BEGIN)
+		{
+			mStateAdapter = new ActivityMemberStateAdapter(this, R.layout.row_contact, mFriends);
+			listView.setAdapter(mStateAdapter);
+		}
+		
+		
 		mBtnOK.setOnClickListener(new OnClickListener() {
 			
 			@Override

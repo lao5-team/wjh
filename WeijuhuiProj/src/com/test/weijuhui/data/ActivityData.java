@@ -14,6 +14,7 @@ import junit.framework.Assert;
 import android.text.format.DateFormat;
 import android.view.inputmethod.CompletionInfo;
 
+import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.data.DianpingDao.SimpleBusiness;
 import com.test.weijuhui.data.User;
@@ -25,15 +26,21 @@ public class ActivityData implements Serializable {
 	 */
 	private static final long serialVersionUID = 3368450357726232660L;
 	
-	public static int BEGIN = 0;
-	public static int PROCESSING = 1;
-	public static int END = 2;
+	/*
+	 * 活动状态可选值
+	 */
+	public static int UNBEGIN = 0;
+	public static int BEGIN = 1;
+	public static int PROCESSING = 2;
+	public static int END = 3;
+	public static int CANCELED = 4;
 	
+	public String mID;
 	public ComplexBusiness mCB;
 	public Date mBeginDate;
 	public ArrayList<User> mUsers;
 	public int mSpent;
-	/**
+	/*
 	 * 活动状态
 	 */
 	public int mState;
@@ -48,6 +55,7 @@ public class ActivityData implements Serializable {
 		mTitle = "";
 		mContent = "";
 		mCreator = new User();
+		mState = UNBEGIN;
 		mCB = null;
 	}
 	
@@ -67,8 +75,9 @@ public class ActivityData implements Serializable {
 			JSONArray array = new JSONArray();
 			for(int i = 0; i < cb.mUsers.size(); i++)
 			{
-				array.put(cb.mUsers.get(i).mName);
+				array.put(User.toJSON(cb.mUsers.get(i)));
 			}
+			obj.put("id", cb.mID);
 			obj.put("users", array);
 			obj.put("spent", cb.mSpent);
 			obj.put("state", cb.mState);
@@ -94,11 +103,11 @@ public class ActivityData implements Serializable {
 			data.mCreator = User.fromJSON(obj.getJSONObject("creator"));
 			data.mContent = obj.getString("content");
 			data.mTitle = obj.getString("title");
+			data.mID = obj.getString("id");
 			JSONArray array = obj.getJSONArray("users");
 			for(int i=0; i<array.length(); i++)
 			{
-				User user = new User();
-				user.mName = array.getString(i);
+				User user = User.fromJSON(array.getJSONObject(i));
 				data.mUsers.add(user);
 			}
 			data.mBeginDate = new SimpleDateFormat(dataPattern).parse(obj.getString("date"));
@@ -146,7 +155,7 @@ public class ActivityData implements Serializable {
 		
 		public ActivityBuilder setState(int state)
 		{
-			Assert.assertTrue(state<=END&&state>=BEGIN);
+			Assert.assertTrue(state<=CANCELED&&state>=UNBEGIN);
 			mData.mState = state;
 			return this;
 		}
@@ -167,7 +176,13 @@ public class ActivityData implements Serializable {
 		{
 			mData.mTitle = title;
 			return this;
-		}		
+		}	
+		
+		public ActivityBuilder setID(String ID)
+		{
+			mData.mID = ID;
+			return this;
+		}
 		
 		public ActivityData create()
 		{

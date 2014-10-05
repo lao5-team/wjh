@@ -33,7 +33,7 @@ import com.test.weijuhui.domain.ActivityManager;
 import com.test.weijuhui.domain.InviteMessage;
 import com.test.weijuhui.domain.User;
 import com.test.weijuhui.domain.InviteMessage.InviteMesageStatus;
-import com.test.weijuhui.receiver.NewActivityBroadcastReceiver;
+import com.test.weijuhui.receiver.NewMessageBroadcastReceiver;
 import com.test.weijuhui.service.ContactChangeService;
 import com.test.weijuhui.utils.CommonUtils;
 import com.test.weijuhui.utils.CrashLogHandler;
@@ -79,7 +79,7 @@ public class EntryActivity extends FragmentActivity {
 	private int index;
 	// 当前fragment的index
 	private int currentTabIndex;
-	private NewActivityBroadcastReceiver msgReceiver;
+	private NewMessageBroadcastReceiver msgReceiver;
 	// 账号在别处登录
 	private boolean isConflict = false;
 	
@@ -100,7 +100,7 @@ public class EntryActivity extends FragmentActivity {
 				.show(mActivityListFragment).commit();
 
 		// 注册一个接收消息的BroadcastReceiver
-		msgReceiver = new NewActivityBroadcastReceiver();
+		msgReceiver = new NewMessageBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());
 		intentFilter.setPriority(3);
 		registerReceiver(msgReceiver, intentFilter);

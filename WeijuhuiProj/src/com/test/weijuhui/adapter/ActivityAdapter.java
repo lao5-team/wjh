@@ -7,6 +7,7 @@ import com.test.weijuhui.R;
 import com.test.weijuhui.activity.ActivityDetailActivity;
 import com.test.weijuhui.activity.CreateActivityActivity2;
 import com.test.weijuhui.data.ActivityData;
+import com.test.weijuhui.domain.ActivityManager;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,7 +23,6 @@ import android.widget.TextView;
 
 public class ActivityAdapter extends BaseAdapter {
 
-	private ArrayList<ActivityData> mActivities = null;
 	private Fragment mFragment = null;
 	
 	private static class SBItemViewHolder
@@ -45,34 +45,15 @@ public class ActivityAdapter extends BaseAdapter {
 		mFragment = context;
 	}
 	
-	public void setData(ArrayList<ActivityData> activities)
-	{
-		mActivities = activities;
-	}
 	
 	@Override
 	public int getCount() {
-		if(mActivities!=null)
-		{
-			return mActivities.size();
-		}
-		else
-		{
-			return 0;
-		}
+		return ActivityManager.getInstance().getActivitySize();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
-		if(mActivities!=null)
-		{
-			return mActivities.get(position);
-		}
-		else
-		{
-			return 0;
-		}
+		return ActivityManager.getInstance().getActivity(position);
 	}
 
 	@Override
@@ -83,10 +64,6 @@ public class ActivityAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		if(null == mActivities)
-		{
-			return null;
-		}
 		
 		SBItemViewHolder holder;
 		if(null == convertView)
@@ -113,8 +90,15 @@ public class ActivityAdapter extends BaseAdapter {
 		{
 			holder = (SBItemViewHolder)convertView.getTag();
 		}
-		holder.mTvName.setText(mActivities.get(position).mTitle);
-		holder.mFromUser.setText("组织者: " + mActivities.get(position).mCreator.mName);
+		holder.mTvName.setText(ActivityManager.getInstance().getActivity(position).getData().mTitle);
+		try
+		{
+			holder.mFromUser.setText("组织者: " + ActivityManager.getInstance().getActivity(position).getData().mCreator.mName);
+		}
+		catch(Exception e)
+		{
+			
+		}
 		//Picasso.with(mFragment.getActivity()).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
 		return convertView;
 	}

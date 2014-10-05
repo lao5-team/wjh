@@ -37,6 +37,7 @@ import com.test.weijuhui.Constant;
 import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
 import com.test.weijuhui.data.UserDao;
+import com.test.weijuhui.domain.MyServerManager;
 import com.test.weijuhui.domain.User;
 import com.test.weijuhui.utils.CommonUtils;
 import com.easemob.util.HanziToPinyin;
@@ -60,8 +61,10 @@ public class LoginActivity extends BaseActivity {
 		passwordEditText = (EditText) findViewById(R.id.password);
 		// 如果用户名密码都有，直接进入主页面
 		if (DemoApplication.getInstance().getUserName() != null && DemoApplication.getInstance().getPassword() != null) {
+			MyServerManager.getInstance().login(DemoApplication.getInstance().getUserName());
 			startActivity(new Intent(this, EntryActivity.class));
 			finish();
+			
 		}
 		// 如果用户名改变，清空密码
 		usernameEditText.addTextChangedListener(new TextWatcher() {
@@ -117,6 +120,7 @@ public class LoginActivity extends BaseActivity {
 						return;
 					}
 					// 登陆成功，保存用户名密码
+					MyServerManager.getInstance().login(DemoApplication.getInstance().getUserName());
 					DemoApplication.getInstance().setUserName(username);
 					DemoApplication.getInstance().setPassword(password);
 					runOnUiThread(new Runnable() {

@@ -73,7 +73,7 @@ public class ContactAdapter extends ArrayAdapter<User>  implements SectionIndexe
 		this.sidebar=sidebar;
 		layoutInflater = LayoutInflater.from(context);
 		
-		if(!type.equals(ContactlistFragment.ACTIVITY)&&!type.equals(ContactlistFragment.CONTACTS))
+		if(!type.equals(ContactlistFragment.ACTIVITY_CREATE)&&!type.equals(ContactlistFragment.CONTACTS)&&!type.equals(ContactlistFragment.ACTIVITY_UNCONFIRM))
 		{
 			throw new IllegalArgumentException("Wrong ContactAdpater type");
 		}

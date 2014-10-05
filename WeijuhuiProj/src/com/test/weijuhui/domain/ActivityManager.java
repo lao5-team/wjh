@@ -11,13 +11,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.data.ActivityData;
+import com.test.weijuhui.data.Message;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
+import com.test.weijuhui.domain.MessageManager.MessageListener;
 
 public class ActivityManager {
 	private static ActivityManager mInstance = null;
-	private ArrayList<ActivityData> mActivities = null;
+	private ArrayList<Activity> mActivities = null;
 	private ArrayList<DataChangedListener> mListeners;
 	
 
@@ -39,28 +43,72 @@ public class ActivityManager {
 	
 	private ActivityManager()
 	{
-		mActivities = new ArrayList<ActivityData>();
+		mActivities = new ArrayList<Activity>();
 		mListeners = new ArrayList<ActivityManager.DataChangedListener>();
+		MessageListener msglistener = new MessageListener() {
+			
+			@Override
+			public void onReceiveMessage(Message msg) {
+				ActivityData data = ActivityData.fromJSON(msg.mData);
+				
+				if(null != data)
+				{
+					Activity activity = createActivity(data);
+					if(msg.mAction.equals("create"))
+					{
+						addActivity(activity);
+					}
+					else if(msg.mAction.equals("update"))
+					{
+						updateActivity(activity);
+					}
+					Log.v("weijuhui", "ActivityManager receive activity");
+				}
+			}
+		};
+		msglistener.filterType = "activity";
+		MessageManager.getInstance().addMessageListener(msglistener);
 		loadFromFile();
 	}
 	
-	public void addActivity(ActivityData activity)
+	public void addActivity(Activity activity)
 	{
 		mActivities.add(activity);
 		notifyDataChanged();
 		saveToFile();
 	}
 	
-	public void removeActivity(ActivityData activity)
+	public void removeActivity(Activity activity)
 	{
 		mActivities.remove(activity);
 		notifyDataChanged();
 	}
 	
-	public ArrayList<ActivityData> getActivities()
+	public void updateActivity(Activity activity)
 	{
-		return (ArrayList<ActivityData>) mActivities.clone();
+		for(int i=0; i<mActivities.size(); i++)
+		{
+			if(mActivities.get(i).mData.mID.equals(activity.mData.mID))
+			{
+				mActivities.set(i, activity);
+			}
+		}
 	}
+	
+	public int getActivitySize()
+	{
+		return mActivities.size();
+	}
+	
+	public Activity getActivity(int pos)
+	{
+		return mActivities.get(pos);
+	}
+	
+//	public ArrayList<Activity> getActivities()
+//	{
+//		return mActivities;
+//	}
 	
 	public void registerDataChangedListener(DataChangedListener listener)
 	{
@@ -76,6 +124,16 @@ public class ActivityManager {
 		{
 			mListeners.remove(listener);
 		}
+	}
+	
+	/** 创建一个新的活动
+	 * @param data 活动数据,不允许为空。 {@link ActivityData}
+	 * @return 返回新的活动 {@link Activity}
+	 */
+	public Activity createActivity(ActivityData data)
+	{
+		Activity activity = new Activity(data);
+		return activity;
 	}
 	
 	private void notifyDataChanged()
@@ -94,7 +152,7 @@ public class ActivityManager {
 			JSONArray array = new JSONArray();
 			for(int i=0; i<mActivities.size(); i++)
 			{
-				array.put(ActivityData.toJSON(mActivities.get(i)));
+				array.put(ActivityData.toJSON(mActivities.get(i).mData));
 			}
 			try {
 				obj.put("activities", array);
@@ -131,7 +189,7 @@ public class ActivityManager {
 				for(int i=0; i<array.length(); i++)
 				{
 					ActivityData data = ActivityData.fromJSON(array.getJSONObject(i));
-					mActivities.add(data);
+					mActivities.add(createActivity(data));
 				}				
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -140,6 +198,14 @@ public class ActivityManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
+	}
+	
+	public void clearActivityTest()
+	{
+		File file = new File(DemoApplication.getInstance().getCacheDir() + File.separator + "activities.txt");
+		file.delete();
+		mActivities.clear();
+		notifyDataChanged();
 	}
 
 	

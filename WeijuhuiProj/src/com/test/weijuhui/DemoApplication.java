@@ -32,6 +32,7 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.app.NotificationManager;
+
 import com.easemob.chat.ConnectionListener;
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
@@ -50,8 +51,10 @@ import com.test.weijuhui.data.ActivityData;
 //import com.easemob.chatuidemo.activity.ChatActivity;
 //import com.easemob.chatuidemo.activity.MainActivity;
 import com.test.weijuhui.data.DbOpenHelper;
+import com.test.weijuhui.data.Message;
 import com.test.weijuhui.data.UserDao;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
+import com.test.weijuhui.domain.MessageManager;
 import com.test.weijuhui.domain.User;
 import com.test.weijuhui.utils.PreferenceUtils;
 import com.umeng.analytics.MobclickAgent;
@@ -59,6 +62,7 @@ import com.umeng.analytics.MobclickAgent;
 public class DemoApplication extends Application {
 
 	public static Context applicationContext;
+	public static String TAG = "weijuhui";
 	private static DemoApplication instance;
 	// login user name
 	public final String PREF_USERNAME = "username";
@@ -131,12 +135,14 @@ public class DemoApplication extends Application {
 				if(arg0.getType() == EMMessage.Type.TXT)
 		        {
 					ActivityData data;
-		        	ComplexBusiness cb = new ComplexBusiness();
-		        	try {
-						JSONObject obj = new JSONObject(((TextMessageBody)arg0.getBody()).getMessage());
-		            	data = ActivityData.fromJSON(obj);
-		    			com.test.weijuhui.domain.ActivityManager.getInstance().addActivity(data);
-		    			return String.format("%s发来一条新的聚会邀请", data.mCreator.mName);
+					ComplexBusiness cb = new ComplexBusiness();
+					try {
+						JSONObject obj = new JSONObject(((TextMessageBody) arg0
+								.getBody()).getMessage());
+						Message msg = Message.fromJSON(obj);
+						MessageManager.getInstance().receiveMessage(msg);
+						return String.format("发来一条新的聚会邀请");// ,
+															// data.mCreator.mName);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

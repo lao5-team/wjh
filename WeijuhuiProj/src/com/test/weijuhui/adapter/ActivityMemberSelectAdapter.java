@@ -50,7 +50,7 @@ import android.widget.TextView;
  * 简单的好友Adapter实现
  *
  */
-public class ActivityMemberAdapter extends ArrayAdapter<User>  implements SectionIndexer{
+public class ActivityMemberSelectAdapter extends ArrayAdapter<User>  implements SectionIndexer{
 
 	private LayoutInflater layoutInflater;
 	private EditText query;
@@ -68,7 +68,7 @@ public class ActivityMemberAdapter extends ArrayAdapter<User>  implements Sectio
 	 * @param sidebar
 	 * @param type  联系人的使用类型 ContactlistFragment.CONTACTS ,ContactlistFragment.ACTIVITY 
 	 */
-	public ActivityMemberAdapter(Context context, int resource, List<User> objects, ArrayList<com.test.weijuhui.data.User> selectMembers, Sidebar sidebar) {
+	public ActivityMemberSelectAdapter(Context context, int resource, List<User> objects, ArrayList<com.test.weijuhui.data.User> selectMembers, Sidebar sidebar) {
 		super(context, resource, objects);
 		this.res = resource;
 		this.sidebar=sidebar;
@@ -95,44 +95,6 @@ public class ActivityMemberAdapter extends ArrayAdapter<User>  implements Sectio
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-//		if (position == 0) {//搜索框
-//			if(convertView == null){
-//				convertView = layoutInflater.inflate(R.layout.search_bar_with_padding, null);
-//				query = (EditText) convertView.findViewById(R.id.query);
-//				clearSearch = (ImageButton) convertView.findViewById(R.id.search_clear);
-//				query.addTextChangedListener(new TextWatcher() {
-//					public void onTextChanged(CharSequence s, int start, int before, int count) {
-//						getFilter().filter(s);
-//						if (s.length() > 0) {
-//							clearSearch.setVisibility(View.VISIBLE);
-//							if (sidebar != null)
-//								sidebar.setVisibility(View.GONE);
-//						} else {
-//							clearSearch.setVisibility(View.INVISIBLE);
-//							if (sidebar != null)
-//								sidebar.setVisibility(View.VISIBLE);
-//						}
-//					}
-//	
-//					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//					}
-//	
-//					public void afterTextChanged(Editable s) {
-//					}
-//				});
-//				clearSearch.setOnClickListener(new OnClickListener() {
-//					@Override
-//					public void onClick(View v) {
-//						InputMethodManager manager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//						if (((Activity) getContext()).getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-//							manager.hideSoftInputFromWindow(((Activity) getContext()).getCurrentFocus().getWindowToken(),
-//									InputMethodManager.HIDE_NOT_ALWAYS);
-//						//清除搜索框文字
-//						query.getText().clear();
-//					}
-//				});
-//			}
-//		}else{
 		if (convertView == null) {
 			convertView = layoutInflater.inflate(res, null);
 		}

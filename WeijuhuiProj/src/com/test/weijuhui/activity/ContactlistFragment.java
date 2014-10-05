@@ -61,7 +61,8 @@ import com.easemob.exceptions.EaseMobException;
  */
 public class ContactlistFragment extends Fragment {
 	public static final String CONTACTS = "contacts";
-	public static final String ACTIVITY = "activity";
+	public static final String ACTIVITY_CREATE = "activity_create";
+	public static final String ACTIVITY_UNCONFIRM = "activity_unconfirm";
 	private ContactAdapter adapter;
 	private List<User> contactList;
 	private ListView listView;

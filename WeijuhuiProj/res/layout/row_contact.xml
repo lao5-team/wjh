@@ -69,7 +69,33 @@
                 android:visibility="gone" />
         </LinearLayout>
 
+
+
         <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/user_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:visibility="invisible"
+            android:text="待确定"
+            android:textColor="#323232"
+            android:textSize="14sp" />
+                
+        <CheckBox
+            android:id="@+id/checkBox_selected"
+            android:visibility="invisible"
+            style="@android:style/Widget.Holo.Light.CompoundButton.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:text="" />
+        
+                <TextView
             android:layout_centerVertical="true"
             android:id="@+id/unread_msg_number"
             android:layout_width="wrap_content"
@@ -82,17 +108,6 @@
             android:text="7"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
-
-        <CheckBox
-            android:id="@+id/checkBox_selected"
-            android:visibility="invisible"
-            style="@android:style/Widget.Holo.Light.CompoundButton.CheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:text="" />
 
     </RelativeLayout>
 
