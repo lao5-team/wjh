@@ -24,9 +24,6 @@ public class ActivityManager {
 	private ArrayList<Activity> mActivities = null;
 	private ArrayList<DataChangedListener> mListeners;
 	
-
-	
-	
 	public static interface DataChangedListener
 	{
 		public void onDataChanged();
@@ -93,6 +90,8 @@ public class ActivityManager {
 				mActivities.set(i, activity);
 			}
 		}
+		notifyDataChanged();
+		saveToFile();
 	}
 	
 	public int getActivitySize()

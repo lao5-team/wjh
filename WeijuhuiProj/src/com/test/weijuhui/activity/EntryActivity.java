@@ -1,5 +1,8 @@
 package com.test.weijuhui.activity;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +78,7 @@ public class EntryActivity extends FragmentActivity {
 	private ActivityListFragment mActivityListFragment;
 	private SettingsFragment mSettingFragment;
 	private ContactlistFragment mContactListFragment;
+	private NavigationFragment mNaviFragment;
 	private Fragment[] fragments;
 	private int index;
 	// 当前fragment的index
@@ -95,8 +99,9 @@ public class EntryActivity extends FragmentActivity {
 		mActivityListFragment = new ActivityListFragment();
 		mContactListFragment = new ContactlistFragment();
 		mSettingFragment = new SettingsFragment();
-		fragments = new Fragment[] { mActivityListFragment, mContactListFragment, mSettingFragment };
-		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mActivityListFragment)
+		mNaviFragment = new NavigationFragment();
+		fragments = new Fragment[] { mNaviFragment, mContactListFragment, mSettingFragment };
+		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mNaviFragment)
 				.show(mActivityListFragment).commit();
 
 		// 注册一个接收消息的BroadcastReceiver
@@ -125,8 +130,11 @@ public class EntryActivity extends FragmentActivity {
 		
 		Intent intent = new Intent(this, ContactChangeService.class);
 		startService(intent);
-		
 	}
+	
+	
+
+
 
 	/**
 	 * 初始化组件

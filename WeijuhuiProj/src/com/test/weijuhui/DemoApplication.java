@@ -57,7 +57,7 @@ import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.domain.MessageManager;
 import com.test.weijuhui.domain.User;
 import com.test.weijuhui.utils.PreferenceUtils;
-import com.umeng.analytics.MobclickAgent;
+//import com.umeng.analytics.MobclickAgent;
 
 public class DemoApplication extends Application {
 
@@ -71,7 +71,7 @@ public class DemoApplication extends Application {
 	private static final String PREF_PWD = "pwd";
 	private String password = null;
 	private Map<String, User> contactList;
-
+	private NotificationManager mNotificationManager;
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -88,6 +88,8 @@ public class DemoApplication extends Application {
 			// 则此application::onCreate 是被service 调用的，直接返回
 			return;
 		}
+		
+		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		applicationContext = this;
 		instance = this;
 		// 初始化环信SDK,一定要先调用init()
@@ -141,7 +143,8 @@ public class DemoApplication extends Application {
 								.getBody()).getMessage());
 						Message msg = Message.fromJSON(obj);
 						MessageManager.getInstance().receiveMessage(msg);
-						return String.format("发来一条新的聚会邀请");// ,
+						showNotification(msg.getNotifyString());
+						return null;
 															// data.mCreator.mName);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -180,7 +183,7 @@ public class DemoApplication extends Application {
 //		});
 		
 		
-		MobclickAgent.onError(applicationContext);
+		//MobclickAgent.onError(applicationContext);
 		
 //		EMContactManager.getInstance().setContactListener(new EMContactListener() {
 //			
@@ -386,5 +389,17 @@ public class DemoApplication extends Application {
 		// We use a string id because it is a unique number. We use it later to
 		// cancel.
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
+	}
+	
+	private void showNotification(String notifyString) {
+		 Notification notification = new Notification.Builder(this)
+         .setContentTitle(notifyString)
+         .setContentText(notifyString)
+         .setTicker(notifyString)
+         .setSmallIcon(R.drawable.logo_uidemo)
+         .build();
+ 
+
+		mNotificationManager.notify(0, notification);
 	}
 }

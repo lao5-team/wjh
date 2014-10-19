@@ -3,6 +3,7 @@ package com.test.weijuhui.adapter;
 import java.util.ArrayList;
 
 import com.squareup.picasso.Picasso;
+import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
 import com.test.weijuhui.activity.ActivityDetailActivity;
 import com.test.weijuhui.activity.CreateActivityActivity2;
@@ -13,6 +14,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -29,12 +31,14 @@ public class ActivityAdapter extends BaseAdapter {
 	{
 		public TextView mTvName;
 		public TextView mFromUser;
+		public TextView mTvState;
 		//public ImageView mImgPic;
 		
 		public void createFromView(View view)
 		{
 			mTvName = (TextView)view.findViewById(R.id.textView_activity);
 			mFromUser = (TextView)view.findViewById(R.id.textView_from);
+			mTvState = (TextView)view.findViewById(R.id.textView_state);
 			//mImgPic = (ImageView)view.findViewById(R.id.imageView_pic);
 		}
 		
@@ -90,14 +94,28 @@ public class ActivityAdapter extends BaseAdapter {
 		{
 			holder = (SBItemViewHolder)convertView.getTag();
 		}
-		holder.mTvName.setText(ActivityManager.getInstance().getActivity(position).getData().mTitle);
+		ActivityData data = ActivityManager.getInstance().getActivity(position).getData();
+		holder.mTvName.setText(data.mTitle);
 		try
 		{
 			holder.mFromUser.setText("组织者: " + ActivityManager.getInstance().getActivity(position).getData().mCreator.mName);
+			if(data.mState == ActivityData.BEGIN)
+			{
+				holder.mTvState.setText("待确定");
+			}
+			else if(data.mState == ActivityData.PROCESSING)
+			{
+				holder.mTvState.setText("进行中");
+			}
+			else if(data.mState == ActivityData.END)
+			{
+				holder.mTvState.setText("完成");
+			}
+			
 		}
 		catch(Exception e)
 		{
-			
+			Log.v(DemoApplication.TAG, e.toString());
 		}
 		//Picasso.with(mFragment.getActivity()).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
 		return convertView;

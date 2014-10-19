@@ -15,6 +15,7 @@ import com.test.weijuhui.adapter.ActivityMemberSelectAdapter;
 import com.test.weijuhui.adapter.ActivityMemberStateAdapter;
 import com.test.weijuhui.data.ActivityData;
 import com.test.weijuhui.data.User;
+import com.test.weijuhui.domain.ActivityManager;
 import com.test.weijuhui.widget.Sidebar;
 
 import android.app.Activity;
@@ -30,7 +31,7 @@ import android.widget.TextView;
 
 /**
  * @author yh
- * 聚会成员选择Activity,记得intent.getBundleExtra("members").getSerializable("members")
+ * 聚会成员选择Activity,记得intent.getSerializable("members")
  */
 public class ActivityMembersActivity extends FragmentActivity {
 
@@ -43,60 +44,23 @@ public class ActivityMembersActivity extends FragmentActivity {
 	private List<com.test.weijuhui.domain.User> mContactList = new ArrayList<com.test.weijuhui.domain.User>();;
 	private ListView listView;
 	private Sidebar sidebar;
+	private ActivityManager.DataChangedListener mActivityChangeListener;
 	@Override
 	public void onCreate(Bundle savedInstance)
 	{
 		super.onCreate(savedInstance);
-		this.setContentView(R.layout.activity_members_activity);
-		mTvMembers = (TextView)this.findViewById(R.id.textView_members);
-		mBtnOK = (Button) this.findViewById(R.id.button_ok);
-		mBtnCancel = (Button) this.findViewById(R.id.button_cancel);
-		listView = (ListView) findViewById(R.id.list);
-		sidebar = (Sidebar) findViewById(R.id.sidebar);
-		sidebar.setListView(listView);
-		Intent intent = getIntent();
-		//Parent Activity 可能会传递已选择的用户
-		if(null != intent&&intent.hasExtra("members"))
-		{
-			mFriends = (ArrayList<User>) intent.getSerializableExtra("members");
-		}
-		else
-		{
-			mFriends = new ArrayList<User>( );
-		}
-		getContactList();
-		if(getIntent().getIntExtra("state", 0) == ActivityData.UNBEGIN)
-		{
-			mAdapter = new ActivityMemberSelectAdapter(this, R.layout.row_contact, mContactList, mFriends, sidebar);
-			listView.setAdapter(mAdapter);
-		}
-		else if(getIntent().getIntExtra("state", 0) == ActivityData.BEGIN)
-		{
-			mStateAdapter = new ActivityMemberStateAdapter(this, R.layout.row_contact, mFriends);
-			listView.setAdapter(mStateAdapter);
-		}
 		
+		initUI();	
 		
-		mBtnOK.setOnClickListener(new OnClickListener() {
+		initData();
+		mActivityChangeListener = new ActivityManager.DataChangedListener() {
 			
 			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent();
-//				Bundle bundle = new Bundle();
-//				bundle.putSerializable("members", mFriends);
-				intent.putExtra("members", mFriends);
-				setResult(RESULT_OK, intent);
-				finish();
+			public void onDataChanged() {
+				
 			}
-		});
-		
-		mBtnCancel.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
+		};
+
 	}
 	
 //	public void addFriend(com.test.weijuhui.domain.User user)
@@ -168,7 +132,64 @@ public class ActivityMembersActivity extends FragmentActivity {
 				return lhs.getUsername().compareTo(rhs.getUsername());
 			}
 		});
-
-
+	}
+	
+	public void initData()
+	{
+		Intent intent = getIntent();
+		//Parent Activity 可能会传递已选择的用户
+		if(null != intent&&intent.hasExtra("members"))
+		{
+			mFriends = (ArrayList<User>) intent.getSerializableExtra("members");
+		}
+		else
+		{
+			mFriends = new ArrayList<User>( );
+		}
+		getContactList();
+		if(getIntent().getIntExtra("state", 0) == ActivityData.UNBEGIN)
+		{
+			mAdapter = new ActivityMemberSelectAdapter(this, R.layout.row_contact, mContactList, mFriends, sidebar);
+			listView.setAdapter(mAdapter);
+		}
+		else if(getIntent().getIntExtra("state", 0) == ActivityData.BEGIN)
+		{
+			mStateAdapter = new ActivityMemberStateAdapter(this, R.layout.row_contact, mFriends);
+			listView.setAdapter(mStateAdapter);
+		}
+	}
+	
+	public void initUI()
+	{
+		this.setContentView(R.layout.activity_members_activity);
+		mTvMembers = (TextView)this.findViewById(R.id.textView_members);
+		mBtnOK = (Button) this.findViewById(R.id.button_ok);
+		mBtnCancel = (Button) this.findViewById(R.id.button_cancel);
+		listView = (ListView) findViewById(R.id.list);
+		sidebar = (Sidebar) findViewById(R.id.sidebar);
+		sidebar.setListView(listView);
+		
+		
+		
+		mBtnOK.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+//				Bundle bundle = new Bundle();
+//				bundle.putSerializable("members", mFriends);
+				intent.putExtra("members", mFriends);
+				setResult(RESULT_OK, intent);
+				finish();
+			}
+		});
+		
+		mBtnCancel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
 	}
 }

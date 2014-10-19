@@ -43,6 +43,16 @@ public class Activity {
 		Assert.assertTrue(mData.mState == ActivityData.BEGIN);
 		mData.mState = ActivityData.PROCESSING;
 		
+		if(mData.mUsers.size() == 1)
+		{
+			sendActivityToSingle(mData, "update");
+		}
+		else if(mData.mUsers.size() > 1)
+		{
+			sendActivityToGroup(mData, "update");
+		}	
+		ActivityManager.getInstance().updateActivity(this);
+		
 	}
 	
 	/**
@@ -69,6 +79,15 @@ public class Activity {
 	{
 		Assert.assertTrue(mData.mState == ActivityData.PROCESSING);
 		mData.mState = ActivityData.END;
+		if(mData.mUsers.size() == 1)
+		{
+			sendActivityToSingle(mData, "update");
+		}
+		else if(mData.mUsers.size() > 1)
+		{
+			sendActivityToGroup(mData, "update");
+		}	
+		ActivityManager.getInstance().updateActivity(this);
 	}
 	
 	/**
@@ -98,6 +117,14 @@ public class Activity {
 	 * 拒绝加入活动
 	 */
 	public void refuseActivity()
+	{
+		
+	}
+	
+	/**
+	 * 中途退出活动
+	 */
+	public void quitActivity()
 	{
 		
 	}
@@ -145,7 +172,15 @@ public class Activity {
 //		}
 		Message msg = new Message.MessageBuilder().setType("activity").setAction(action)
 				.setData(ActivityData.toJSON(data)).create();
-		MessageManager.getInstance().sendMessagetoSingle(msg, data.mUsers.get(0).mName);
+		if(data.mCreator.mName.equals(DemoApplication.getInstance().getUserName()))
+		{
+			MessageManager.getInstance().sendMessagetoSingle(msg, data.mUsers.get(0).mName);
+		}
+		else
+		{
+			MessageManager.getInstance().sendMessagetoSingle(msg, data.mCreator.mName);
+		}
+		
 	}
 	
 	private void sendActivityToGroup(ActivityData data, String action)
@@ -173,6 +208,7 @@ public class Activity {
 //		} catch (EaseMobException e) {
 //			e.printStackTrace();
 //		}
+		Assert.assertTrue(data.mGroupID!=null);
 		Message msg = new Message.MessageBuilder().setType("activity").setAction(action)
 				.setData(ActivityData.toJSON(data)).create();
 		String[] names = new String[data.mUsers.size()];
@@ -180,7 +216,7 @@ public class Activity {
 		{
 			names[i] = data.mUsers.get(i).mName;
 		}
-		MessageManager.getInstance().sendMessagetoGroup(msg, names);
+		MessageManager.getInstance().sendMessagetoGroup(msg, data.mGroupID);
 	}
 
 }

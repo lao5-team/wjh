@@ -66,7 +66,14 @@ public class ActivityListFragment extends Fragment {
 			@Override
 			public void onDataChanged() {
 				//mAdapter.setData(ActivityManager.getInstance().getActivities());
-				mAdapter.notifyDataSetChanged();
+				getActivity().runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						mAdapter.notifyDataSetChanged();
+					}
+				});
+				
 			}
 		});
 	}

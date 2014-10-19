@@ -18,7 +18,7 @@ import com.test.weijuhui.data.Message;
 
 /**
  * @author yh
- * 消息发送和接受的管理者
+ * 微聚会自定义消息发送和接受的管理者
  * @see Message
  */
 public class MessageManager {
@@ -67,27 +67,23 @@ public class MessageManager {
 		}
 	}
 	
-	public boolean sendMessagetoGroup(Message msg, String[] usernames)
+	/**
+	 * @param msg
+	 * @param groupID 
+	 * @return
+	 */
+	public boolean sendMessagetoGroup(Message msg, String groupID)
 	{
-		EMGroup group;
+		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
+		message.setChatType(ChatType.GroupChat);
+		String str = Message.toJSON(msg).toString();
+		Log.v("weijuhui", "Message to group ID " + groupID + " " + str);			
+		TextMessageBody txtBody = new TextMessageBody(str);
+		message.addBody(txtBody);
+		message.setReceipt(groupID);
 		try {
-			group = EMGroupManager.getInstance().createPrivateGroup("", "", usernames, false);
-			EMConversation conversation = EMChatManager.getInstance().getConversation(group.getGroupId());										
-			EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
-			message.setChatType(ChatType.GroupChat);
-			String str = Message.toJSON(msg).toString();
-			Log.v("weijuhui", "Message to group " + str);			
-			TextMessageBody txtBody = new TextMessageBody(str);
-			message.addBody(txtBody);
-		    message.setReceipt(group.getGroupId());
-		    conversation.addMessage(message);
-			try {
-				EMChatManager.getInstance().sendMessage(message);
-				return true;
-			} catch (EaseMobException e) {
-				e.printStackTrace();
-				return false;
-			}
+			EMChatManager.getInstance().sendMessage(message);
+			return true;
 		} catch (EaseMobException e) {
 			e.printStackTrace();
 			return false;

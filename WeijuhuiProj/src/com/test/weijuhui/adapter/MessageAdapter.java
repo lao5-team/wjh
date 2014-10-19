@@ -60,7 +60,6 @@ import com.easemob.util.LatLng;
 import com.easemob.util.TextFormater;
 import com.test.weijuhui.R;
 import com.test.weijuhui.activity.AlertDialog;
-import com.test.weijuhui.activity.BaiduMapActivity;
 import com.test.weijuhui.activity.ChatActivity;
 import com.test.weijuhui.task.LoadImageTask;
 import com.test.weijuhui.task.LoadVideoImageTask;
@@ -849,7 +848,7 @@ public class MessageAdapter extends BaseAdapter {
 		LocationMessageBody locBody = (LocationMessageBody) message.getBody();
 		locationView.setText(locBody.getAddress());
 		LatLng loc = new LatLng(locBody.getLatitude(), locBody.getLongitude());
-		locationView.setOnClickListener(new MapClickListener(loc, locBody.getAddress()));
+		//locationView.setOnClickListener(new MapClickListener(loc, locBody.getAddress()));
 		locationView.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
@@ -1178,30 +1177,5 @@ public class MessageAdapter extends BaseAdapter {
 		TextView tv_file_download_state;
 	}
 
-	/*
-	 * 点击地图消息listener
-	 */
-	class MapClickListener implements View.OnClickListener {
-
-		LatLng location;
-		String address;
-
-		public MapClickListener(LatLng loc, String address) {
-			location = loc;
-			this.address = address;
-
-		}
-
-		@Override
-		public void onClick(View v) {
-			Intent intent;
-			intent = new Intent(context, BaiduMapActivity.class);
-			intent.putExtra("latitude", location.latitude);
-			intent.putExtra("longitude", location.longitude);
-			intent.putExtra("address", address);
-			activity.startActivity(intent);
-		}
-
-	}
 
 }

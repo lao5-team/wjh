@@ -69,6 +69,23 @@ public class Message implements Serializable {
 		}
 	}
 	
+	public String getNotifyString()
+	{
+		if(mType.equals("activity"))
+		{
+			ActivityData data = ActivityData.fromJSON(mData);
+			if(mAction.equals("create"))
+			{
+				return String.format("你的好友%s邀请您参加活动 %s", data.mCreator.mName, data.mTitle );
+			}
+			else if(mAction.equals("update"))
+			{
+				return String.format("活动%s有更新", data.mTitle);
+			}
+		}
+		return "未知消息";
+	}
+	
 	
 	
 	public static class MessageBuilder

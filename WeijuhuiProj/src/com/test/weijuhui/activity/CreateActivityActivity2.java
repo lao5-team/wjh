@@ -63,6 +63,7 @@ public class CreateActivityActivity2 extends Activity {
 	
 	public static final int INTENT_CREATE = 4;
 	public static final int INTENT_EDIT = 5;
+	
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -70,6 +71,8 @@ public class CreateActivityActivity2 extends Activity {
 		initData();
 		
 		initUI();
+		
+
 	}
 	
 	public void initUI()
@@ -193,7 +196,54 @@ public class CreateActivityActivity2 extends Activity {
 				});				
 			}
 		}
+		else if(mActivityData.mState == ActivityData.PROCESSING)
+		{
+			if(mActivity.getMyRoleType().equals(com.test.weijuhui.domain.Activity.CREATOR))
+			{
+				mBtnOK.setText("完成");
+				mBtnOK.setOnClickListener(new OnClickListener() {
 
+					@Override
+					public void onClick(View v) {
+						mActivity.finishActivity();
+						CreateActivityActivity2.this.finish();
+					}
+				});	
+				
+				mBtnCancel.setText("活动取消");
+				mBtnCancel.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						mActivity.cancelActivity();
+						CreateActivityActivity2.this.finish();						
+					}
+				});
+			}
+			else if(mActivity.getMyRoleType().equals(com.test.weijuhui.domain.Activity.JOINER))
+			{
+				mBtnOK.setVisibility(View.INVISIBLE);
+				mBtnOK.setText("同意加入");
+				mBtnOK.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						mActivity.acceptActivity();
+						CreateActivityActivity2.this.finish();
+					}
+				});	
+				
+				mBtnCancel.setText("退出");
+				mBtnCancel.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						mActivity.quitActivity();
+						CreateActivityActivity2.this.finish();						
+					}
+				});				
+			}			
+		}
 		
 		
 		if(mUse == INTENT_EDIT)
@@ -263,6 +313,12 @@ public class CreateActivityActivity2 extends Activity {
 		
 	}
 	
+	/**
+	 * @return
+	 */
+	/**
+	 * @return
+	 */
 	private boolean createActivityData()
 	{
 		mActivityID = MyServerManager.getInstance().getNewActivityID(DemoApplication.getInstance().getUserName());
@@ -292,14 +348,43 @@ public class CreateActivityActivity2 extends Activity {
 			Toast.makeText(this, "请选择聚会时间", Toast.LENGTH_SHORT).show();
 			return false;			
 		}
+		if(null == mUsers||mUsers.size()==0)
+		{
+			Toast.makeText(this, "请选择聚会人员", Toast.LENGTH_SHORT).show();
+			return false;			
+		}		
+		User creator = new User();
+		creator.mName = DemoApplication.getInstance().getUserName();
+		creator.mActivityState = User.CONFIRMED;
+		if(mUsers.size()==1)
+		{
+			mActivityData = new ActivityData.ActivityBuilder().setTitle(title).setContent(content).
+					setComplexBusiness(mComplexBusiness).setCreator(creator).setBeginTime(mBeginDate).
+					setUsers(mUsers).setID(mActivityID).create();			
+		}
+		/*3人或以上属于群聊，需要groupID*/
+		else if(mUsers.size()>1)
+		{
+			String[] usernames = new String[mUsers.size()];
+			for(int i=0; i<mUsers.size(); i++)
+			{
+				usernames[i] = mUsers.get(i).mName;
+			}
+			//usernames[mUsers.size()] = creator.mName;
+			EMGroup group;
+			try {
+				group = EMGroupManager.getInstance().createPrivateGroup("", "", usernames, false);
+				mActivityData = new ActivityData.ActivityBuilder().setTitle(title).setContent(content).
+						setComplexBusiness(mComplexBusiness).setCreator(creator).setBeginTime(mBeginDate).
+						setUsers(mUsers).setID(mActivityID).setGroupID(group.getGroupId()).create();
+			} catch (EaseMobException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 		
-		User currentUser = new User();
-		currentUser.mName = DemoApplication.getInstance().getUserName();
-		currentUser.mActivityState = User.CONFIRMED;
-		//mUsers.add(user);
-		mActivityData = new ActivityData.ActivityBuilder().setTitle(title).setContent(content).
-				setComplexBusiness(mComplexBusiness).setCreator(currentUser).setBeginTime(mBeginDate).
-				setUsers(mUsers).setID(mActivityID).create();
+
 		return true;
 		
 	}

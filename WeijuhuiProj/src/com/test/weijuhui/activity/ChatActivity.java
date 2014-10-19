@@ -65,7 +65,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.location.i;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMContactManager;
 import com.easemob.chat.EMConversation;
@@ -532,7 +531,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 		} else if (id == R.id.btn_picture) {
 			selectPicFromLocal(); // 点击图片图标
 		} else if (id == R.id.btn_location) { // 位置
-			startActivityForResult(new Intent(this, BaiduMapActivity.class), REQUEST_CODE_MAP);
+			//startActivityForResult(new Intent(this, BaiduMapActivity.class), REQUEST_CODE_MAP);
 		} else if (id == R.id.iv_emoticons_normal) { // 点击显示表情框
 			more.setVisibility(View.VISIBLE);
 			iv_emoticons_normal.setVisibility(View.INVISIBLE);

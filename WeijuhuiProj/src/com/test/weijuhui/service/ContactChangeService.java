@@ -180,7 +180,7 @@ public class ContactChangeService extends Service {
 		Log.v("weijuhui", "ActivityService onCreate");
 		inviteMessgeDao = new InviteMessgeDao(this);
 		userDao = new UserDao(this);
-//		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 //		NewMessageBroadcastReceiver receiver;
 //		receiver = new NewMessageBroadcastReceiver();
 //		IntentFilter intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());

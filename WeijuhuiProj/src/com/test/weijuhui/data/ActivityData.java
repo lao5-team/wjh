@@ -40,6 +40,7 @@ public class ActivityData implements Serializable {
 	public Date mBeginDate;
 	public ArrayList<User> mUsers;
 	public int mSpent;
+	public String mGroupID;
 	/*
 	 * 活动状态
 	 */
@@ -50,13 +51,14 @@ public class ActivityData implements Serializable {
 	public String mContent;
 	private ActivityData()
 	{
-		mUsers = new ArrayList<User>();
+		mUsers = null;
 		mBeginDate = null;
-		mTitle = "";
-		mContent = "";
-		mCreator = new User();
+		mTitle = null;
+		mContent = null;
+		mCreator = null;
 		mState = UNBEGIN;
 		mCB = null;
+		mGroupID = null;
 	}
 	
 	public static JSONObject toJSON(ActivityData cb)
@@ -84,6 +86,10 @@ public class ActivityData implements Serializable {
 			obj.put("creator", User.toJSON(cb.mCreator));
 			obj.put("title", cb.mTitle);
 			obj.put("content", cb.mContent);
+			if(cb.mGroupID != null)
+			{
+				obj.put("groupID", cb.mGroupID);
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -105,12 +111,19 @@ public class ActivityData implements Serializable {
 			data.mTitle = obj.getString("title");
 			data.mID = obj.getString("id");
 			JSONArray array = obj.getJSONArray("users");
+
+			data.mUsers = new ArrayList<User>();
 			for(int i=0; i<array.length(); i++)
 			{
 				User user = User.fromJSON(array.getJSONObject(i));
 				data.mUsers.add(user);
 			}
 			data.mBeginDate = new SimpleDateFormat(dataPattern).parse(obj.getString("date"));
+			
+			if(obj.has("groupID"))
+			{
+				data.mGroupID = obj.getString("groupID");
+			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -162,30 +175,51 @@ public class ActivityData implements Serializable {
 		
 		public ActivityBuilder setBeginTime(Date beginTime)
 		{
+			Assert.assertNotNull(beginTime);
 			mData.mBeginDate = beginTime;
 			return this;
 		}
 		
 		public ActivityBuilder setContent(String content)
 		{
+			Assert.assertNotNull(content);
 			mData.mContent = content;
 			return this;
 		}
 
 		public ActivityBuilder setTitle(String title)
 		{
+			Assert.assertNotNull(title);
 			mData.mTitle = title;
 			return this;
 		}	
 		
 		public ActivityBuilder setID(String ID)
 		{
+			Assert.assertNotNull(ID);
 			mData.mID = ID;
 			return this;
 		}
 		
+		public ActivityBuilder setGroupID(String groupID)
+		{
+			Assert.assertNotNull(groupID);
+			mData.mGroupID = groupID;
+			return this;			
+		}
+		
 		public ActivityData create()
 		{
+			Assert.assertNotNull("ActivityData must have ID!", mData.mID);
+			Assert.assertNotNull("ActivityData must have Title!",mData.mTitle);
+			Assert.assertNotNull("ActivityData must have Content!",mData.mContent);
+			Assert.assertNotNull("ActivityData must have Begin Date!",mData.mBeginDate);
+			Assert.assertNotNull("ActivityData must have Creator!",mData.mCreator);
+			Assert.assertNotNull("ActivityData must have Users!", mData.mUsers);
+			if(mData.mUsers.size()>1)
+			{
+				Assert.assertNotNull("Multiple ActivityData must have GroupID!", mData.mGroupID);
+			}
 			return mData;
 		}
 	}
