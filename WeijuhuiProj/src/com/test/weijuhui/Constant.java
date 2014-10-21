@@ -13,8 +13,14 @@
  */
 package com.test.weijuhui;
 
+import java.io.File;
+
+import android.os.Environment;
+
 public class Constant {
 	public static final String NEW_FRIENDS_USERNAME = "item_new_friends";
 	public static final String GROUP_USERNAME = "item_groups";
 	public static final String CUSTOM_BUSINESS = "custom_business";
+	public static final String ROOT_DIR = Environment.getExternalStorageDirectory().getPath() + File.separator + "Weijuhui";
+	public static final String CACHE_DIR = ROOT_DIR + File.separator + "cache";
 }

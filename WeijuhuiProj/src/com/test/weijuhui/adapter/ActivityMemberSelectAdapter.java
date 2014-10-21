@@ -59,7 +59,7 @@ public class ActivityMemberSelectAdapter extends ArrayAdapter<User>  implements 
 	private SparseIntArray sectionOfPosition;
 	private Sidebar sidebar;
 	private int res;
-	private ArrayList<com.test.weijuhui.data.User> mSelectedMembers = new ArrayList<com.test.weijuhui.data.User>();
+	private ArrayList<com.test.weijuhui.data.MyUser> mSelectedMembers = new ArrayList<com.test.weijuhui.data.MyUser>();
 	private HashMap<String, Boolean> mSelectedMaps = new  HashMap<String, Boolean>();
 	/**
 	 * @param context
@@ -68,7 +68,7 @@ public class ActivityMemberSelectAdapter extends ArrayAdapter<User>  implements 
 	 * @param sidebar
 	 * @param type  联系人的使用类型 ContactlistFragment.CONTACTS ,ContactlistFragment.ACTIVITY 
 	 */
-	public ActivityMemberSelectAdapter(Context context, int resource, List<User> objects, ArrayList<com.test.weijuhui.data.User> selectMembers, Sidebar sidebar) {
+	public ActivityMemberSelectAdapter(Context context, int resource, List<User> objects, ArrayList<com.test.weijuhui.data.MyUser> selectMembers, Sidebar sidebar) {
 		super(context, resource, objects);
 		this.res = resource;
 		this.sidebar=sidebar;
@@ -76,7 +76,7 @@ public class ActivityMemberSelectAdapter extends ArrayAdapter<User>  implements 
 		if(null!=selectMembers)
 		{
 			mSelectedMembers = selectMembers;
-			for(com.test.weijuhui.data.User user: mSelectedMembers)
+			for(com.test.weijuhui.data.MyUser user: mSelectedMembers)
 			{
 				mSelectedMaps.put(user.mName, true);
 			}
@@ -216,7 +216,7 @@ public class ActivityMemberSelectAdapter extends ArrayAdapter<User>  implements 
 				return;
 			}
 		}
-		com.test.weijuhui.data.User user1 = new com.test.weijuhui.data.User();
+		com.test.weijuhui.data.MyUser user1 = new com.test.weijuhui.data.MyUser();
 		user1.mName = user.getNick();
 		mSelectedMembers.add(user1);
 		mSelectedMaps.put(user1.mName, true);

@@ -95,11 +95,11 @@ public class Activity {
 	 */
 	public void acceptActivity()
 	{
-		for(com.test.weijuhui.data.User user: mData.mUsers)
+		for(com.test.weijuhui.data.MyUser user: mData.mUsers)
 		{
 			if(user.mName.equals(DemoApplication.getInstance().getUserName()))
 			{
-				user.mActivityState = com.test.weijuhui.data.User.CONFIRMED;
+				user.mActivityState = com.test.weijuhui.data.MyUser.CONFIRMED;
 			}
 		}
 		if(mData.mUsers.size() == 1)

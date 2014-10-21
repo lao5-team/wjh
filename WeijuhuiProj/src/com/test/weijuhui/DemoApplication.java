@@ -52,6 +52,7 @@ import com.test.weijuhui.data.ActivityData;
 //import com.easemob.chatuidemo.activity.MainActivity;
 import com.test.weijuhui.data.DbOpenHelper;
 import com.test.weijuhui.data.Message;
+import com.test.weijuhui.data.MyUser;
 import com.test.weijuhui.data.UserDao;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.domain.MessageManager;
@@ -72,6 +73,7 @@ public class DemoApplication extends Application {
 	private String password = null;
 	private Map<String, User> contactList;
 	private NotificationManager mNotificationManager;
+	private MyUser mUser = null;
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -262,6 +264,21 @@ public class DemoApplication extends Application {
 			userName = preferences.getString(PREF_USERNAME, null);
 		}
 		return userName;
+	}
+	
+	public MyUser getUser()
+	{
+		if(mUser == null)
+		{
+			if(userName == null)
+			{
+				getUserName();
+			}	
+			mUser = new MyUser();
+			mUser.mName = userName;
+		}
+		return mUser;
+
 	}
 
 	/**

@@ -7,7 +7,7 @@ import junit.framework.Assert;
 import com.test.weijuhui.Constant;
 import com.test.weijuhui.R;
 import com.test.weijuhui.activity.ActivityMembersActivity;
-import com.test.weijuhui.data.User;
+import com.test.weijuhui.data.MyUser;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -21,12 +21,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class ActivityMemberStateAdapter extends ArrayAdapter<User>  {
+public class ActivityMemberStateAdapter extends ArrayAdapter<MyUser>  {
 
 	private LayoutInflater layoutInflater;
-	ArrayList<User> mUsers;
+	ArrayList<MyUser> mUsers;
 	int mRes;
-	public ActivityMemberStateAdapter(Context context, int resource, ArrayList<User> users)
+	public ActivityMemberStateAdapter(Context context, int resource, ArrayList<MyUser> users)
 	{
 		super(context, resource, users);
 		Assert.assertNotNull(users);
@@ -64,14 +64,14 @@ public class ActivityMemberStateAdapter extends ArrayAdapter<User>  {
 		TextView tvState = (TextView)convertView.findViewById(R.id.user_state);
 		tvState.setVisibility(View.VISIBLE);
 		
-		User user = getItem(position);
+		MyUser user = getItem(position);
 		// 设置nick，demo里不涉及到完整user，用username代替nick显示
 		nameTextview.setText(user.mName);
-		if(user.mActivityState == User.UNCONFIRMED)
+		if(user.mActivityState == MyUser.UNCONFIRMED)
 		{
 			tvState.setText("待确定");
 		}
-		else if(user.mActivityState == User.CONFIRMED)
+		else if(user.mActivityState == MyUser.CONFIRMED)
 		{
 			tvState.setText("已确定");
 		}

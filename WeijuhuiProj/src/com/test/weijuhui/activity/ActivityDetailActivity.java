@@ -18,7 +18,7 @@ import com.test.weijuhui.R.layout;
 import com.test.weijuhui.data.ActivityData;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.data.DianpingDataHelper;
-import com.test.weijuhui.data.User;
+import com.test.weijuhui.data.MyUser;
 import com.test.weijuhui.domain.ActivityManager;
 
 import android.app.Activity;
@@ -62,7 +62,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 	
 	//Handler
 	private Handler mUIHandler;
-	private ArrayList<User> mFriends = new ArrayList<User>();
+	private ArrayList<MyUser> mFriends = new ArrayList<MyUser>();
 
 	
 	private void updateFriendsUI()
@@ -183,7 +183,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 			
 			@Override
 			public void onClick(View v) {
-				User currentUser = new User();
+				MyUser currentUser = new MyUser();
 				currentUser.mName = DemoApplication.getInstance().getUserName();
 				ActivityData data = new ActivityData.ActivityBuilder().setComplexBusiness(mCBData).setUsers(mFriends).setCreator(currentUser).create();
 				if(mFriends.size() == 1)
@@ -304,7 +304,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 		if(data!=null)
 		{
 			Bundle bundle = data.getBundleExtra("members");
-			mFriends = (ArrayList<User>)bundle.getSerializable("members");
+			mFriends = (ArrayList<MyUser>)bundle.getSerializable("members");
 			updateFriendsUI();			
 		}
 

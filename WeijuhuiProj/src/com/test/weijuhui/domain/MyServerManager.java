@@ -1,5 +1,9 @@
 package com.test.weijuhui.domain;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -7,7 +11,10 @@ import java.net.URISyntaxException;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -167,5 +174,58 @@ public class MyServerManager {
 		}
 		return mNewID;
 	}
+	
+	public String uploadImage(File file)
+	{
+		String fileName = file.getName();
+		String fileContent;
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte buffer[] = new byte[1024*100];
+			int count = 0;
+			count = fis.read(buffer);
+			while(-1 != count)
+			{
+				
+				baos.write(buffer, 0, count);
+				count = fis.read(buffer);
+			};
+			fileContent = new String(baos.toByteArray(), "ISO-8859-1");
+				
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+		try {
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpPost post = new HttpPost("http://117.78.3.87:81/upload");
+			post.setEntity(new StringEntity(
+					String.format(
+							"%s\r\n%s\r\n",
+							fileName,
+							fileContent), "ISO-8859-1"));
+			HttpResponse response = httpClient.execute(post);
+			if (response.getStatusLine().getStatusCode() == 200) {
+				Log.v(DemoApplication.TAG, "Upload Image Success");
+	            String result = EntityUtils.toString(response.getEntity());  
+	            try {
+					JSONObject obj = new JSONObject(result);
+					return obj.getString("url");
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return "";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
+	//uploadUser
 	
 }

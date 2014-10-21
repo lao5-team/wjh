@@ -65,13 +65,20 @@
     <string name="select_activity_members">选择聚会好友</string>
     <string name="application_crashed">抱歉，应用崩溃了，通过邮件发送崩溃日志到服务器，仅会占用少量流量^_^</string><string name="send_crash_report"></string>
     <string name="select_party_content">选择聚会内容</string>
-    <string name="select_party_member">选择聚会同伴</string>
+    <string name="select_party_member">邀请聚会同伴</string>
     <string name="cancel_activity">取消</string>
     <string name="custom_activity">自定义</string>
     <string name="location">地点</string>
     <string name="search">搜索</string>
     <string name="writeContent">编辑聚会内容</string>
-    <string name="select_business_room">选择聚会场所</string>
+    <string name="select_business_room">预订聚会场所</string>
     <string name="select_time">选择聚会时间</string>
     <string name="select_location">选择聚会地点</string>
+    <string name="title">主题</string>
+    <string name="contentDescription">文字说明</string>
+    <string name="paymentType">消费方式</string>
+    <string name="pay_me">我请客</string>
+    <string name="pay_aa">AA吧</string>
+    <string name="pay_other">想被请</string>
+    <string name="introduction">简介</string>
 </resources>

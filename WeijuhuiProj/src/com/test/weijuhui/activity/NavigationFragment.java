@@ -1,8 +1,11 @@
 package com.test.weijuhui.activity;
 
+import java.io.File;
+
 import com.test.weijuhui.R;
 import com.test.weijuhui.adapter.ActivityAdapter;
 import com.test.weijuhui.adapter.ActivityCategoryAdapter;
+import com.test.weijuhui.domain.MyServerManager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -53,6 +56,16 @@ public class NavigationFragment extends Fragment {
 		mHotActivityAdapter = new ActivityAdapter(this);
 		
 		mCity = "北京";
+		
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				File file = new File("mnt/sdcard/1.png");
+				MyServerManager.getInstance().uploadImage(file);
+			}
+		});
+		t.start();
 		
 	}
 	

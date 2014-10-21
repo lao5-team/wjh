@@ -17,7 +17,7 @@ import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
 import com.test.weijuhui.data.ActivityData;
 import com.test.weijuhui.data.Message;
-import com.test.weijuhui.data.User;
+import com.test.weijuhui.data.MyUser;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.domain.ActivityManager;
 import com.test.weijuhui.domain.MessageManager;
@@ -55,7 +55,7 @@ public class CreateActivityActivity2 extends Activity {
 	private Date mBeginDate;
 	private int mUse;
 	//private float mLocation_Long
-	private ArrayList<User> mUsers;
+	private ArrayList<MyUser> mUsers;
 	private final int INTENT_MEMBERS = 0;
 	private final int INTENT_BUSINESS = 1;
 	private final int INTENT_DATE = 2;
@@ -121,7 +121,7 @@ public class CreateActivityActivity2 extends Activity {
 			}
 		});
 		
-		mBtnSelectLocation = (Button)findViewById(R.id.button_select_location);
+		//mBtnSelectLocation = (Button)findViewById(R.id.button_select_location);
 		
 		mBtnOK = (Button)findViewById(R.id.button_confirm);
 		mBtnCancel = (Button)findViewById(R.id.button_cancel);	
@@ -264,7 +264,7 @@ public class CreateActivityActivity2 extends Activity {
 	
 	public void initData()
 	{
-		mUsers = new ArrayList<User>();
+		mUsers = new ArrayList<MyUser>();
 		Assert.assertTrue(getIntent().hasExtra("use"));
 		mUse = getIntent().getIntExtra("use", INTENT_CREATE);
 		if(INTENT_CREATE == mUse)
@@ -294,9 +294,9 @@ public class CreateActivityActivity2 extends Activity {
 				break;
 				
 			case INTENT_MEMBERS:
-				mUsers = (ArrayList<User>) data.getSerializableExtra("members");
+				mUsers = (ArrayList<MyUser>) data.getSerializableExtra("members");
 				String users = "";
-				for(User user:mUsers)
+				for(MyUser user:mUsers)
 				{
 					users += user.mName + " ";
 				}
@@ -353,9 +353,9 @@ public class CreateActivityActivity2 extends Activity {
 			Toast.makeText(this, "请选择聚会人员", Toast.LENGTH_SHORT).show();
 			return false;			
 		}		
-		User creator = new User();
+		MyUser creator = new MyUser();
 		creator.mName = DemoApplication.getInstance().getUserName();
-		creator.mActivityState = User.CONFIRMED;
+		creator.mActivityState = MyUser.CONFIRMED;
 		if(mUsers.size()==1)
 		{
 			mActivityData = new ActivityData.ActivityBuilder().setTitle(title).setContent(content).

@@ -75,10 +75,11 @@ public class EntryActivity extends FragmentActivity {
 	private TextView unreadAddressLable;
 
 	private Button[] mTabs;
-	private ActivityListFragment mActivityListFragment;
-	private SettingsFragment mSettingFragment;
+	//private ActivityListFragment mActivityListFragment;
+	//private SettingsFragment mSettingFragment;
 	private ContactlistFragment mContactListFragment;
 	private NavigationFragment mNaviFragment;
+	private UserinfoFragment mUserinfoFragment;
 	private Fragment[] fragments;
 	private int index;
 	// 当前fragment的index
@@ -96,13 +97,16 @@ public class EntryActivity extends FragmentActivity {
 		initView();
 		inviteMessgeDao = new InviteMessgeDao(this);
 		userDao = new UserDao(this);
-		mActivityListFragment = new ActivityListFragment();
+		//mActivityListFragment = new ActivityListFragment();
 		mContactListFragment = new ContactlistFragment();
-		mSettingFragment = new SettingsFragment();
+		//mSettingFragment = new SettingsFragment();
 		mNaviFragment = new NavigationFragment();
-		fragments = new Fragment[] { mNaviFragment, mContactListFragment, mSettingFragment };
+		
+		mUserinfoFragment = new UserinfoFragment(DemoApplication.getInstance().getUser());
+		
+		fragments = new Fragment[] { mNaviFragment, mContactListFragment, mUserinfoFragment };
 		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mNaviFragment)
-				.show(mActivityListFragment).commit();
+				.show(mNaviFragment).commit();
 
 		// 注册一个接收消息的BroadcastReceiver
 		msgReceiver = new NewMessageBroadcastReceiver();

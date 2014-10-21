@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.test.weijuhui.Constant;
 import com.test.weijuhui.data.DianpingDao.Category;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.data.DianpingDao.SimpleBusiness;
@@ -27,8 +28,7 @@ public class DianpingDataHelper {
 	private static DianpingDataHelper mInstance = null;
 	
 
-	private String ROOT_DIR = Environment.getExternalStorageDirectory().getPath() + File.separator + "Weijuhui";
-	private String CACHE_DIR = ROOT_DIR + File.separator + "cache";
+
 	private Boolean OFFLINE_DEBUG = false;
 	
 	private TreeData mCacheContentData = null;
@@ -45,11 +45,11 @@ public class DianpingDataHelper {
 	
 	public DianpingDataHelper()
 	{
-		File rootDir = new File(ROOT_DIR);
+		File rootDir = new File(Constant.ROOT_DIR);
 		if(!rootDir.exists())
 		{
 			rootDir.mkdir();
-			File cacheDir = new File(CACHE_DIR);
+			File cacheDir = new File(Constant.CACHE_DIR);
 			cacheDir.mkdir();
 		}
 	}
@@ -313,7 +313,7 @@ public class DianpingDataHelper {
 		if(null!=result)
 		{
 			try {
-				FileWriter fw = new FileWriter(CACHE_DIR + File.separator + "ContentCategoriesData.txt");
+				FileWriter fw = new FileWriter(Constant.CACHE_DIR + File.separator + "ContentCategoriesData.txt");
 				fw.write(result);
 				fw.close();
 			} catch (IOException e) {
@@ -327,7 +327,7 @@ public class DianpingDataHelper {
 	{
 		String result = "";
 		try {
-			FileReader fr = new FileReader(CACHE_DIR + File.separator + "ContentCategoriesData.txt");
+			FileReader fr = new FileReader(Constant.CACHE_DIR + File.separator + "ContentCategoriesData.txt");
 			int readNum = 0;
 			do
 			{
@@ -352,7 +352,7 @@ public class DianpingDataHelper {
 		if(null!=result)
 		{
 			try {
-				FileWriter fw = new FileWriter(CACHE_DIR + File.separator + "LocationCategoriesData.txt");
+				FileWriter fw = new FileWriter(Constant.CACHE_DIR + File.separator + "LocationCategoriesData.txt");
 				fw.write(result);
 				fw.close();
 			} catch (IOException e) {
@@ -366,7 +366,7 @@ public class DianpingDataHelper {
 	{
 		String result = "";
 		try {
-			FileReader fr = new FileReader(CACHE_DIR + File.separator + "LocationCategoriesData.txt");
+			FileReader fr = new FileReader(Constant.CACHE_DIR + File.separator + "LocationCategoriesData.txt");
 			int readNum = 0;
 			do
 			{

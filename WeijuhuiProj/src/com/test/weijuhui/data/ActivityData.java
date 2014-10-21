@@ -17,7 +17,7 @@ import android.view.inputmethod.CompletionInfo;
 import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
 import com.test.weijuhui.data.DianpingDao.SimpleBusiness;
-import com.test.weijuhui.data.User;
+import com.test.weijuhui.data.MyUser;
 
 public class ActivityData implements Serializable {
 
@@ -38,14 +38,14 @@ public class ActivityData implements Serializable {
 	public String mID;
 	public ComplexBusiness mCB;
 	public Date mBeginDate;
-	public ArrayList<User> mUsers;
+	public ArrayList<MyUser> mUsers;
 	public int mSpent;
 	public String mGroupID;
 	/*
 	 * 活动状态
 	 */
 	public int mState;
-	public User mCreator;
+	public MyUser mCreator;
 	public final static String dataPattern = "yyyy年MM月dd日 hh时";
 	public String mTitle;
 	public String mContent;
@@ -77,13 +77,13 @@ public class ActivityData implements Serializable {
 			JSONArray array = new JSONArray();
 			for(int i = 0; i < cb.mUsers.size(); i++)
 			{
-				array.put(User.toJSON(cb.mUsers.get(i)));
+				array.put(MyUser.toJSON(cb.mUsers.get(i)));
 			}
 			obj.put("id", cb.mID);
 			obj.put("users", array);
 			obj.put("spent", cb.mSpent);
 			obj.put("state", cb.mState);
-			obj.put("creator", User.toJSON(cb.mCreator));
+			obj.put("creator", MyUser.toJSON(cb.mCreator));
 			obj.put("title", cb.mTitle);
 			obj.put("content", cb.mContent);
 			if(cb.mGroupID != null)
@@ -106,16 +106,16 @@ public class ActivityData implements Serializable {
 			}
 			data.mSpent = obj.getInt("spent");
 			data.mState = obj.getInt("state");
-			data.mCreator = User.fromJSON(obj.getJSONObject("creator"));
+			data.mCreator = MyUser.fromJSON(obj.getJSONObject("creator"));
 			data.mContent = obj.getString("content");
 			data.mTitle = obj.getString("title");
 			data.mID = obj.getString("id");
 			JSONArray array = obj.getJSONArray("users");
 
-			data.mUsers = new ArrayList<User>();
+			data.mUsers = new ArrayList<MyUser>();
 			for(int i=0; i<array.length(); i++)
 			{
-				User user = User.fromJSON(array.getJSONObject(i));
+				MyUser user = MyUser.fromJSON(array.getJSONObject(i));
 				data.mUsers.add(user);
 			}
 			data.mBeginDate = new SimpleDateFormat(dataPattern).parse(obj.getString("date"));
@@ -148,13 +148,13 @@ public class ActivityData implements Serializable {
 			return this;
 		}
 		
-		public ActivityBuilder setUsers(ArrayList<User> users)
+		public ActivityBuilder setUsers(ArrayList<MyUser> users)
 		{
-			mData.mUsers = (ArrayList<User>)users.clone();
+			mData.mUsers = (ArrayList<MyUser>)users.clone();
 			return this;
 		}
 		
-		public ActivityBuilder setCreator(User user)
+		public ActivityBuilder setCreator(MyUser user)
 		{
 			mData.mCreator = user;
 			return this;

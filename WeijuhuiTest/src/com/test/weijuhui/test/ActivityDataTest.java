@@ -13,7 +13,7 @@ import android.util.Log;
 
 import com.test.weijuhui.data.ActivityData;
 import com.test.weijuhui.data.DianpingDao.ComplexBusiness;
-import com.test.weijuhui.data.User;
+import com.test.weijuhui.data.MyUser;
 
 
 public class ActivityDataTest extends AndroidTestCase {
@@ -34,19 +34,19 @@ public class ActivityDataTest extends AndroidTestCase {
 		testCB.mImgUrl = "http://i2.dpfile.com//pc//e6801a8a0b89fa2dd93e582c69d2e7cd(700x700)//thumb.jpg";
 		testCB.mPhoneNumber = "12345678";
 		
-		User testUser = new User();
+		MyUser testUser = new MyUser();
 		testUser.mName = "testCreator";
 		
-		ArrayList<User> users = new ArrayList<User>();
-		User testGuest = new User();
+		ArrayList<MyUser> users = new ArrayList<MyUser>();
+		MyUser testGuest = new MyUser();
 		testGuest.mName = "test0";
 		users.add(testGuest);
 		
-		testGuest = new User();
+		testGuest = new MyUser();
 		testGuest.mName = "test1";
 		users.add(testGuest);
 		
-		testGuest = new User();
+		testGuest = new MyUser();
 		testGuest.mName = "test2";
 		users.add(testGuest);	
 		

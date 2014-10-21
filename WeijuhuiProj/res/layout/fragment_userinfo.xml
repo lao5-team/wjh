@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/imageView_avatar"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/app_pref_bg" />
+
+    <TextView
+        android:id="@+id/textView_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageView_avatar"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@+id/imageView_avatar"
+        android:text="TextView"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/textView_introduction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imageView_avatar"
+        android:layout_below="@+id/imageView_avatar"
+        android:layout_marginTop="10dp"
+        android:text="@string/introduction"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/textView_introContent"
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:layout_alignLeft="@+id/textView_introduction"
+        android:layout_below="@+id/textView_introduction"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/app_pref_bg"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView_introContent"
+        android:layout_below="@+id/textView_introContent"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView1"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:text="TextView" />
+
+</RelativeLayout>

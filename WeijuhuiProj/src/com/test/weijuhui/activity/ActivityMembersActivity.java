@@ -14,7 +14,7 @@ import com.test.weijuhui.R;
 import com.test.weijuhui.adapter.ActivityMemberSelectAdapter;
 import com.test.weijuhui.adapter.ActivityMemberStateAdapter;
 import com.test.weijuhui.data.ActivityData;
-import com.test.weijuhui.data.User;
+import com.test.weijuhui.data.MyUser;
 import com.test.weijuhui.domain.ActivityManager;
 import com.test.weijuhui.widget.Sidebar;
 
@@ -35,7 +35,7 @@ import android.widget.TextView;
  */
 public class ActivityMembersActivity extends FragmentActivity {
 
-	private ArrayList<User> mFriends;//
+	private ArrayList<MyUser> mFriends;//
 	private Button mBtnOK;
 	private Button mBtnCancel;
 	private TextView mTvMembers;
@@ -140,11 +140,11 @@ public class ActivityMembersActivity extends FragmentActivity {
 		//Parent Activity 可能会传递已选择的用户
 		if(null != intent&&intent.hasExtra("members"))
 		{
-			mFriends = (ArrayList<User>) intent.getSerializableExtra("members");
+			mFriends = (ArrayList<MyUser>) intent.getSerializableExtra("members");
 		}
 		else
 		{
-			mFriends = new ArrayList<User>( );
+			mFriends = new ArrayList<MyUser>( );
 		}
 		getContactList();
 		if(getIntent().getIntExtra("state", 0) == ActivityData.UNBEGIN)
