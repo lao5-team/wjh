@@ -81,6 +81,7 @@ public class DianpingDao {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				cb = null;
 			}
 			
 			return cb;

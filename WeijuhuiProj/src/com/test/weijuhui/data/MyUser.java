@@ -47,18 +47,18 @@ public class MyUser implements Serializable {
 	
 	public static MyUser fromJSON(JSONObject obj)
 	{
+		MyUser user = new MyUser();
 		try {
-			MyUser user = new MyUser();
 			user.mName = obj.getString("name");
 			user.mSex = obj.getString("sex");
 			user.mActivityState = obj.getInt("state");
 			user.mImgUrl = obj.getString("imgUrl");
-			return user;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
+		return user;
 	}
 	
 }

@@ -26,29 +26,25 @@ public class ActivityData implements Serializable {
 	 */
 	private static final long serialVersionUID = 3368450357726232660L;
 	
-	/*
-	 * 活动状态可选值
-	 */
-	public static int UNBEGIN = 0;
-	public static int BEGIN = 1;
-	public static int PROCESSING = 2;
-	public static int END = 3;
-	public static int CANCELED = 4;
+	/*活动状态可选值*/
+	public final static int UNBEGIN = 0; //活动未开始，创建者还在填写活动信息，未发起的状态
+	public final static int BEGIN = 1;   //活动开始，创建者已经发起，等待报名的状态
+	public final static int PROCESSING = 2;  //活动进行中，指参与者已经报名和支付完成，正式开始的状态
+	public final static int END = 3;   //完成，活动发起人点击完成
+	public final static int CANCELED = 4;   //活动取消，发起人中途终止活动
 	
+	public final static String dataPattern = "yyyy年MM月dd日 hh时";
 	public String mID;
 	public ComplexBusiness mCB;
 	public Date mBeginDate;
-	public ArrayList<MyUser> mUsers;
-	public int mSpent;
-	public String mGroupID;
-	/*
-	 * 活动状态
-	 */
-	public int mState;
-	public MyUser mCreator;
-	public final static String dataPattern = "yyyy年MM月dd日 hh时";
-	public String mTitle;
-	public String mContent;
+	public ArrayList<MyUser> mUsers;  //活动参与者，注意不包括创建者
+	public float mSpent;    //活动所需金额
+	public String mGroupID;  //多人活动的groupID，供环信使用
+	public int mState;       //活动状态
+	public MyUser mCreator;  //活动创建者
+	public String mTitle;    //活动标题
+	public String mContent;  //活动内容介绍
+	
 	private ActivityData()
 	{
 		mUsers = null;
@@ -92,6 +88,7 @@ public class ActivityData implements Serializable {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
+			obj = null;
 		}
 		return obj;
 	}
@@ -125,11 +122,12 @@ public class ActivityData implements Serializable {
 				data.mGroupID = obj.getString("groupID");
 			}
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			data = null;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			data = null;
 		}
 		return data;
 	}

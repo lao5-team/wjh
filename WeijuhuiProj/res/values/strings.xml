@@ -81,4 +81,6 @@
     <string name="pay_aa">AA吧</string>
     <string name="pay_other">想被请</string>
     <string name="introduction">简介</string>
+    <string name="payment">订单支付</string>
+    <string name="confirm_payment">确认支付</string>
 </resources>

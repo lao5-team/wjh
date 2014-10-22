@@ -85,6 +85,7 @@
         </activity>
         <activity android:name=".activity.PhotoSelectActivity"
             android:theme="@style/horizontal_slide"></activity>
+        <activity android:name=".activity.ActivityPayment"></activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
