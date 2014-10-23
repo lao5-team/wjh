@@ -47,7 +47,7 @@
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/textView_creator_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView_introContent"
@@ -60,8 +60,8 @@
         android:id="@+id/textView_sum"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
+        android:layout_alignLeft="@+id/textView_creator_name"
+        android:layout_below="@+id/textView_creator_name"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:text="TextView" />
