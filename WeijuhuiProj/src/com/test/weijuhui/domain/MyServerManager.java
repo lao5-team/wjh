@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.test.weijuhui.DemoApplication;
+import com.test.weijuhui.data.MyUser;
 
 import android.util.Log;
 
@@ -217,13 +218,63 @@ public class MyServerManager {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return "";
+				return null;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		return null;
+	}
+	
+	public boolean updateUserInfo(MyUser user) {
+		mLoginResult = false;
+		final MyUser fUser = user;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (mLock) {
+					String url = String.format(
+							"%s/db?action=set_user&table=user&username=%s",
+							IP_ADDRESS, fUser.mName);
+					HttpPost post = new HttpPost(url);
+					// 第2步：使用execute方法发送HTTP GET请求，并返回HttpResponse对象
+					HttpResponse httpResponse;
+					try {
+						post.addHeader("Cookie",
+								String.format("user=%s;token=%s", fUser.mName, mToken));
+						post.setEntity(new StringEntity(MyUser.toJSON(fUser)
+								.toString(), "utf-8"));
+						httpResponse = new DefaultHttpClient().execute(post);
+						if (httpResponse.getStatusLine().getStatusCode() == 200) {
+							mLoginResult = true;
+						}
+
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+						mLoginResult = false;
+					} catch (IOException e) {
+						e.printStackTrace();
+						mLoginResult = false;
+					} finally {
+						mLock.notifyAll();
+					}
+				}
+			}
+		});
+		t.start();
+		synchronized (mLock) {
+			try {
+				mLock.wait();
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.v(DemoApplication.TAG, "updateUserInfo result is "
+					+ mLoginResult);
+		}
+		return mLoginResult;
 	}
 	
 	//uploadUser

@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import junit.framework.Assert;
 
 import com.test.weijuhui.Constant;
+import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
 import com.test.weijuhui.data.MyUser;
 import com.test.weijuhui.domain.MyServerManager;
@@ -23,6 +24,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -56,6 +58,7 @@ public class UserinfoFragment extends Fragment {
 	{
 		Assert.assertNotNull(user);
 		mUser = user;
+		Log.v(DemoApplication.TAG, String.format("Userinfo is %s", MyUser.toJSON(user).toString()));
 	}
 	
 	@Override
@@ -203,30 +206,53 @@ public class UserinfoFragment extends Fragment {
 			try {
 				fos = new FileOutputStream(IMAGE_AVATAR);
 				photo.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-				
 				Thread t = new Thread(new Runnable() {
-					
 					@Override
 					public void run() {
-						MyServerManager.getInstance().uploadImage(new File(IMAGE_AVATAR));
-						getActivity().runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								Toast.makeText(getActivity(), "头像上传成功", Toast.LENGTH_SHORT).show();
+						String imgUrl = MyServerManager.getInstance()
+								.uploadImage(new File(IMAGE_AVATAR));
+						if (null != imgUrl) {
+							mUser.mImgUrl = imgUrl;
+							if (MyServerManager.getInstance().updateUserInfo(
+									mUser)) {
+								getActivity().runOnUiThread(new Runnable() {
+
+									@Override
+									public void run() {
+										Toast.makeText(getActivity(), "头像修改成功",
+												Toast.LENGTH_SHORT).show();
+									}
+								});
+							} else {
+								getActivity().runOnUiThread(new Runnable() {
+
+									@Override
+									public void run() {
+										Toast.makeText(getActivity(), "头像修改失败",
+												Toast.LENGTH_SHORT).show();
+									}
+								});
 							}
-						});
+						} else {
+							getActivity().runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									Toast.makeText(getActivity(), "头像修改失败",
+											Toast.LENGTH_SHORT).show();
+								}
+							});
+						}
 					}
 				});
 				t.start();
-				
-				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Toast.makeText(getActivity(), "头像上传失败", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), "头像上传失败", Toast.LENGTH_SHORT)
+						.show();
 			}
-			
+
 		}
 	}
 	
