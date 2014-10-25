@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.Assert;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -266,17 +268,14 @@ public class DemoApplication extends Application {
 		return userName;
 	}
 	
+	public void setUser(MyUser user)
+	{
+		Assert.assertNotNull(user);
+		mUser = user;
+	}
+	
 	public MyUser getUser()
 	{
-		if(mUser == null)
-		{
-			if(userName == null)
-			{
-				getUserName();
-			}	
-			mUser = new MyUser();
-			mUser.mName = userName;
-		}
 		return mUser;
 
 	}
@@ -333,6 +332,7 @@ public class DemoApplication extends Application {
 		// reset password to null
 		setPassword(null);
 		setContactList(null);
+		mUser = null;
 
 	}
 

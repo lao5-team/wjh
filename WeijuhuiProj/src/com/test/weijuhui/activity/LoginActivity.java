@@ -36,6 +36,7 @@ import com.easemob.chat.EMGroupManager;
 import com.test.weijuhui.Constant;
 import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
+import com.test.weijuhui.data.MyUser;
 import com.test.weijuhui.data.UserDao;
 import com.test.weijuhui.domain.MyServerManager;
 import com.test.weijuhui.domain.User;
@@ -61,7 +62,10 @@ public class LoginActivity extends BaseActivity {
 		passwordEditText = (EditText) findViewById(R.id.password);
 		// 如果用户名密码都有，直接进入主页面
 		if (DemoApplication.getInstance().getUserName() != null && DemoApplication.getInstance().getPassword() != null) {
+			/*调用自己的服务器逻辑login*/
 			MyServerManager.getInstance().login(DemoApplication.getInstance().getUserName());
+			MyUser user = MyServerManager.getInstance().getUserInfo(DemoApplication.getInstance().getUserName());
+			DemoApplication.getInstance().setUser(user);
 			startActivity(new Intent(this, EntryActivity.class));
 			finish();
 			

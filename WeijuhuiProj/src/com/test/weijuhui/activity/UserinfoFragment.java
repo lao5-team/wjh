@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 
 import junit.framework.Assert;
 
+import com.squareup.picasso.Picasso;
 import com.test.weijuhui.Constant;
 import com.test.weijuhui.DemoApplication;
 import com.test.weijuhui.R;
@@ -29,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +55,7 @@ public class UserinfoFragment extends Fragment {
 	/*UI Widget*/;
 	private ImageView mImgAvatar;
 	private TextView mTvName;
+	private Button mBtnLogout;
 	
 	public UserinfoFragment(MyUser user)
 	{
@@ -84,11 +87,23 @@ public class UserinfoFragment extends Fragment {
 		mTvName = (TextView)getView().findViewById(R.id.textView_name);
 		mTvName.setText(mUser.mName);
 		mImgAvatar = (ImageView)getView().findViewById(R.id.imageView_avatar);
+		Picasso.with(getActivity()).load(mUser.mImgUrl).into(mImgAvatar);
 		mImgAvatar.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				showDialog();
+			}
+		});
+		
+		mBtnLogout = (Button)getView().findViewById(R.id.button_logout);
+		mBtnLogout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DemoApplication.getInstance().logout();
+				// 重新显示登陆页面
+				((EntryActivity) getActivity()).finish();
+				startActivity(new Intent(getActivity(), LoginActivity.class));
 			}
 		});
 	}

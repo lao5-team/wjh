@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -32,6 +33,7 @@ public class MyServerManager {
 	String mToken;
 	boolean mLoginResult = false;
 	String mNewID;
+	MyUser mUser;
 	private MyServerManager()
 	{
 	}
@@ -227,6 +229,11 @@ public class MyServerManager {
 		return null;
 	}
 	
+	/**
+	 * 更新用户信息
+	 * @param user
+	 * @return
+	 */
 	public boolean updateUserInfo(MyUser user) {
 		mLoginResult = false;
 		final MyUser fUser = user;
@@ -277,6 +284,60 @@ public class MyServerManager {
 		return mLoginResult;
 	}
 	
-	//uploadUser
-	
+	/**
+	 * 获取用户信息
+	 * @param username
+	 * @return MyUser
+	 */
+	public MyUser getUserInfo(String username)
+	{
+		final String fUserName = username;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (mLock) {
+					String url = String.format(
+							"%s/db?action=get_user&table=user&username=%s",
+							IP_ADDRESS, fUserName);
+					HttpPost post = new HttpPost(url);
+					HttpResponse httpResponse;
+					try {
+						post.addHeader("Cookie", String.format("user=%s;token=%s", fUserName, mToken));
+						httpResponse = new DefaultHttpClient().execute(post);
+						if (httpResponse.getStatusLine().getStatusCode() == 200) {
+							try {
+								JSONObject jsonObj = new JSONObject
+										(EntityUtils.toString(httpResponse.getEntity(), "utf-8"));
+								mUser = MyUser.fromJSON(jsonObj.getJSONObject("data"));
+							} catch (Exception e) {
+								e.printStackTrace();
+								mUser = null;
+							}
+						}
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+						mUser = null;
+					} catch (IOException e) {
+						e.printStackTrace();
+						mUser = null;
+					} finally {
+						mLock.notifyAll();
+					}
+				}
+			}
+		});
+		t.start();
+		synchronized (mLock) {
+			try {
+				mLock.wait();
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.v(DemoApplication.TAG, "getUserInfo result is "
+					+ MyUser.toJSON(mUser).toString());
+			return mUser;
+		}
+	}
 }
