@@ -7,15 +7,18 @@ import com.test.juxiaohui.adapter.ActivityCategoryAdapter;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.R;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
@@ -28,6 +31,7 @@ public class NavigationFragment extends Fragment {
 	SearchView mEtxSearch;
 	GridView mGVCategory;
 	ListView mLvActivity;
+	ImageButton mIbNew;
 	
 	//data
 	String mCity;
@@ -98,6 +102,16 @@ public class NavigationFragment extends Fragment {
 		
 		mLvActivity = (ListView)getView().findViewById(R.id.listView_activity);
 		mLvActivity.setAdapter(mHotActivityAdapter);
+		
+		mIbNew = (ImageButton)getView().findViewById(R.id.imageButton_new);
+		mIbNew.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), CreateActivityActivity2.class);
+				getActivity().startActivity(intent);
+			}
+		});
 		
 	}
 }

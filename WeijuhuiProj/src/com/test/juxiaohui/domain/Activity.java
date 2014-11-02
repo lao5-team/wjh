@@ -24,15 +24,19 @@ public class Activity {
 	{
 		Assert.assertTrue(mData.mState == ActivityData.UNBEGIN);
 		mData.mState = ActivityData.BEGIN;
-		if(mData.mUsers.size() == 1)
-		{
-			sendActivityToSingle(mData, "create");
-		}
-		else if(mData.mUsers.size() > 1)
-		{
-			sendActivityToGroup(mData, "create");
-		}
-		ActivityManager.getInstance().addActivity(this);
+//		if(mData.mUsers.size() == 1)
+//		{
+//			sendActivityToSingle(mData, "create");
+//		}
+//		else if(mData.mUsers.size() > 1)
+//		{
+//			sendActivityToGroup(mData, "create");
+//		}
+//		ActivityManager.getInstance().addActivity(this);
+		/*创建一个新的activity，将该activity添加到所有用户正在进行中的活动列表中*/
+		String id = MyServerManager.getInstance().createActivity(mData);
+		mData.mID = id;
+		MyServerManager.getInstance().addUserActivity(mData.mCreator.mID, mData.mID, "doingActivity");
 	}
 	
 	/**
@@ -99,7 +103,7 @@ public class Activity {
 		{
 			if(user.mName.equals(DemoApplication.getInstance().getUserName()))
 			{
-				user.mActivityState = com.test.juxiaohui.data.MyUser.CONFIRMED;
+				//user.mActivityState = com.test.juxiaohui.data.MyUser.CONFIRMED;
 			}
 		}
 		if(mData.mUsers.size() == 1)

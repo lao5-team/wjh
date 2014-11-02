@@ -62,10 +62,7 @@ public class LoginActivity extends BaseActivity {
 		passwordEditText = (EditText) findViewById(R.id.password);
 		// 如果用户名密码都有，直接进入主页面
 		if (DemoApplication.getInstance().getUserName() != null && DemoApplication.getInstance().getPassword() != null) {
-			/*调用自己的服务器逻辑login*/
-			MyServerManager.getInstance().login(DemoApplication.getInstance().getUserName());
-			MyUser user = MyServerManager.getInstance().getUserInfo(DemoApplication.getInstance().getUserName());
-			DemoApplication.getInstance().setUser(user);
+			loginMyServer();
 			startActivity(new Intent(this, EntryActivity.class));
 			finish();
 			
@@ -125,13 +122,10 @@ public class LoginActivity extends BaseActivity {
 					}
 					runOnUiThread(new Runnable() {
 						public void run() {
-							MyUser myuser = MyServerManager.getInstance().getUserInfo(DemoApplication.getInstance().getUserName());
-							DemoApplication.getInstance().setUser(myuser);
+							loginMyServer();
 						}
 					});
 					// 登陆成功，保存用户名密码
-					MyServerManager.getInstance().login(DemoApplication.getInstance().getUserName());
-
 					DemoApplication.getInstance().setUserName(username);
 					DemoApplication.getInstance().setPassword(password);
 					runOnUiThread(new Runnable() {
@@ -251,5 +245,13 @@ public class LoginActivity extends BaseActivity {
 				user.setHeader("#");
 			}
 		}
+	}
+	
+	private void loginMyServer()
+	{
+		/*调用自己的服务器逻辑login*/
+		MyServerManager.getInstance().login(DemoApplication.getInstance().getUserName());
+		MyUser user = MyServerManager.getInstance().getUserInfo(DemoApplication.getInstance().getUserName());
+		DemoApplication.getInstance().setUser(user);
 	}
 }

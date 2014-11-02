@@ -82,6 +82,7 @@ public class RegisterActivity extends BaseActivity {
 					try {
 						// 调用sdk注册方法
 						EMChatManager.getInstance().createAccountOnServer(username, pwd);
+						/*将用户信息上传到自己的服务器*/
 						MyServerManager.getInstance().login(username);
 						MyUser user = new MyUser();
 						user.mName = username;

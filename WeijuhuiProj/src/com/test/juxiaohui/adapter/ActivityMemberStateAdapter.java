@@ -67,14 +67,14 @@ public class ActivityMemberStateAdapter extends ArrayAdapter<MyUser>  {
 		MyUser user = getItem(position);
 		// 设置nick，demo里不涉及到完整user，用username代替nick显示
 		nameTextview.setText(user.mName);
-		if(user.mActivityState == MyUser.UNCONFIRMED)
-		{
-			tvState.setText("待确定");
-		}
-		else if(user.mActivityState == MyUser.CONFIRMED)
-		{
-			tvState.setText("已确定");
-		}
+//		if(user.mActivityState == MyUser.UNCONFIRMED)
+//		{
+//			tvState.setText("待确定");
+//		}
+//		else if(user.mActivityState == MyUser.CONFIRMED)
+//		{
+//			tvState.setText("已确定");
+//		}
 		if (unreadMsgView != null)
 			unreadMsgView.setVisibility(View.INVISIBLE);
 		avatar.setImageResource(R.drawable.default_avatar);

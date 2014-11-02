@@ -64,6 +64,7 @@ public class CreateActivityActivity2 extends Activity {
 	public static final int INTENT_CREATE = 4;
 	public static final int INTENT_EDIT = 5;
 	
+	
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -72,6 +73,11 @@ public class CreateActivityActivity2 extends Activity {
 		
 		initUI();
 		
+		if(DemoApplication.isDebug)
+		{
+			mActivityData = ActivityData.createTestData();
+			updateView();
+		}
 
 	}
 	
@@ -134,6 +140,7 @@ public class CreateActivityActivity2 extends Activity {
 				public void onClick(View v) {
 					if(createActivityData())
 					{
+						mActivityData.mCreator = DemoApplication.getInstance().getUser();
 						com.test.juxiaohui.domain.Activity activity = ActivityManager.getInstance().createActivity(mActivityData);
 						activity.startActivity();
 						CreateActivityActivity2.this.finish();					
@@ -259,27 +266,15 @@ public class CreateActivityActivity2 extends Activity {
 				mBtnSelectDate.setText(DateFormat.format(ActivityData.dataPattern, mActivityData.mBeginDate));
 			}
 		}
+		
+
 			
 	}
 	
 	public void initData()
 	{
 		mUsers = new ArrayList<MyUser>();
-		Assert.assertTrue(getIntent().hasExtra("use"));
-		mUse = getIntent().getIntExtra("use", INTENT_CREATE);
-		if(INTENT_CREATE == mUse)
-		{
-			mActivityData = null;
-		}
-		else if(INTENT_EDIT == mUse)
-		{
-			Assert.assertTrue(getIntent().hasExtra("activityIndex"));
-			mActivityData = ActivityManager.getInstance().getActivity(getIntent().getIntExtra("activityIndex", 0)).getData();
-			mActivity = ActivityManager.getInstance().getActivity(getIntent().getIntExtra("activityIndex", 0));
-			mUsers = mActivityData.mUsers;
-					
-		}
-		
+		mActivityData = null;
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -355,7 +350,7 @@ public class CreateActivityActivity2 extends Activity {
 		}		
 		MyUser creator = new MyUser();
 		creator.mName = DemoApplication.getInstance().getUserName();
-		creator.mActivityState = MyUser.CONFIRMED;
+		//creator.mActivityState = MyUser.CONFIRMED;
 		if(mUsers.size()==1)
 		{
 			mActivityData = new ActivityData.ActivityBuilder().setTitle(title).setContent(content).
@@ -389,5 +384,27 @@ public class CreateActivityActivity2 extends Activity {
 		
 	}
 	
+	/**
+	 * ActivityData 更新 View
+	 * 
+	 */
+	private void updateView( )
+	{
+		if(null != mActivityData)
+		{
+			mEtxTitle.setText(mActivityData.mTitle);
+			mEtxContent.setText(mActivityData.mContent);
+			mBeginDate = mActivityData.mBeginDate;
+			mBtnSelectDate.setText(DateFormat.format(ActivityData.dataPattern, mBeginDate));
+			mUsers = mActivityData.mUsers;
+			String users = "";
+			for(MyUser user:mUsers)
+			{
+				users += user.mName + " ";
+			}
+			mBtnSelectFriends.setText(users);			
+		}
+		
+	}
 
 }

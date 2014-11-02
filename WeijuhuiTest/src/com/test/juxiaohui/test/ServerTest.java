@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
+import com.test.juxiaohui.domain.MyServerManager;
 
 import android.test.AndroidTestCase;
 import android.util.Log;
@@ -45,6 +46,8 @@ public class ServerTest extends AndroidTestCase {
 	String cookie = "";
 	protected void setUp() throws Exception {
 		super.setUp();
+		MyServerManager.getInstance().login("yihao");
+		MyServerManager.getInstance().getUserInfo("yihao");
 	}
 	
 //	public void testLogin()
@@ -256,16 +259,12 @@ public class ServerTest extends AndroidTestCase {
 	{
 		String userName = "yihao";
 		String url = String.format("%s/login?user=%s", IP_ADDRESS, userName);//"http://192.168.1.103:8080/login?user=" + userName;
-        //  第1步：创建HttpGet对象  
         HttpGet httpGet = new HttpGet(url);  
-        //  第2步：使用execute方法发送HTTP GET请求，并返回HttpResponse对象  
         HttpResponse httpResponse;
 		try {
 			httpResponse = new DefaultHttpClient().execute(httpGet);
-	        //  判断请求响应状态码，状态码为200表示服务端成功响应了客户端的请求  
 	        if (httpResponse.getStatusLine().getStatusCode() == 200)  
 	        {  
-	            //  第3步：使用getEntity方法获得返回结果  
 	            String result = EntityUtils.toString(httpResponse.getEntity());  
 	            Log.v("weijuhuiTest", result);
 	            Header[] headers = httpResponse.getHeaders("Set-Cookie");
@@ -295,38 +294,38 @@ public class ServerTest extends AndroidTestCase {
 			e.printStackTrace();
 		}
 		
-		testAddData(cookie);
+		//testAddData(cookie);
 	}
 	
-	public void testAddData(String cookie)
-	{
-  
-		String id = "";
-		try {
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost post = new HttpPost(String.format("http://117.78.3.87:80/db?action=set&table=%s", "ut"));
-			post.addHeader("Cookie", String.format("token=%s", cookie));
-			JSONObject obj = new JSONObject();
-			obj.put("data", "论对音乐的执着追求");
-			post.setEntity(new StringEntity(obj.toString(), "utf-8"));
-			HttpResponse response = httpClient.execute(post);
-			if (response.getStatusLine().getStatusCode() == 200) {
-				String result = EntityUtils.toString(response.getEntity()); 
-				JSONObject jsonResult = new JSONObject(result);
-				id = jsonResult.getString("id");
-			}
-			else
-			{
-				Assert.fail();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		testGetData(cookie, id);
-		testDelData(cookie, id);
-		
-	}
+//	public void testAddData(String cookie)
+//	{
+//  
+//		String id = "";
+//		try {
+//			HttpClient httpClient = new DefaultHttpClient();
+//			HttpPost post = new HttpPost(String.format("http://117.78.3.87:80/db?action=set&table=%s", "ut"));
+//			post.addHeader("Cookie", String.format("token=%s", cookie));
+//			JSONObject obj = new JSONObject();
+//			obj.put("data", "论对音乐的执着追求");
+//			post.setEntity(new StringEntity(obj.toString(), "utf-8"));
+//			HttpResponse response = httpClient.execute(post);
+//			if (response.getStatusLine().getStatusCode() == 200) {
+//				String result = EntityUtils.toString(response.getEntity()); 
+//				JSONObject jsonResult = new JSONObject(result);
+//				id = jsonResult.getString("id");
+//			}
+//			else
+//			{
+//				Assert.fail();
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		//testGetData(cookie, id);
+//		//testDelData(cookie, id);
+//		
+//	}
 	
 	private void testGetData(String cookie, String id)
 	{
@@ -350,27 +349,40 @@ public class ServerTest extends AndroidTestCase {
 		}		
 	}
 	
-	private void testDelData(String cookie, String id)
+//	private void testDelData(String cookie, String id)
+//	{
+//		try {
+//			HttpClient httpClient = new DefaultHttpClient();
+//			HttpPost post = new HttpPost(String.format("http://117.78.3.87:80/db?action=del&table=ut&id=%s", id));
+//			post.addHeader("Cookie", String.format("token=%s", cookie));
+//			HttpResponse response = httpClient.execute(post);
+//			if (response.getStatusLine().getStatusCode() == 200) {
+//				String result = EntityUtils.toString(response.getEntity()); 
+//				JSONObject jsonResult = new JSONObject(result);
+//				String data = jsonResult.getString("id");
+//				Log.v(TAG, data);
+//			}
+//			else
+//			{
+//				Assert.fail();
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}		
+//	}
+	private String activityID;
+	public void testCreateActivity()
 	{
-		try {
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost post = new HttpPost(String.format("http://117.78.3.87:80/db?action=del&table=ut&id=%s", id));
-			post.addHeader("Cookie", String.format("token=%s", cookie));
-			HttpResponse response = httpClient.execute(post);
-			if (response.getStatusLine().getStatusCode() == 200) {
-				String result = EntityUtils.toString(response.getEntity()); 
-				JSONObject jsonResult = new JSONObject(result);
-				String data = jsonResult.getString("id");
-				Log.v(TAG, data);
-			}
-			else
-			{
-				Assert.fail();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
+		ActivityData data = ActivityData.createTestData();
+		activityID = MyServerManager.getInstance().createActivity(data);
+		Assert.assertNotNull(activityID);
+		
+		data = MyServerManager.getInstance().getActivity(activityID);
+		Assert.assertNotNull(data);
+		
+		Assert.assertEquals(true, MyServerManager.getInstance().updateActivity(data, activityID));
 	}
+	
 
 //	private void testGetData()
 //	{

@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.test.juxiaohui.DemoApplication;
+import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 
 import android.util.Log;
@@ -31,7 +32,7 @@ public class MyServerManager {
 	private Object mLock = new Object();
 	final String IP_ADDRESS = "http://117.78.3.87:80";
 	String mToken;
-	boolean mLoginResult = false;
+	boolean mResult = false;
 	String mNewID;
 	MyUser mUser;
 	private MyServerManager()
@@ -48,7 +49,7 @@ public class MyServerManager {
 	}
 	
 	public boolean login(String username) {
-		mLoginResult = false;
+		mResult = false;
 		final String userName = username;
 
 		Thread t = new Thread(new Runnable() {
@@ -81,13 +82,13 @@ public class MyServerManager {
 							}
 						}
 					}
-					mLoginResult = true;
+					mResult = true;
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
-					mLoginResult = false;
+					mResult = false;
 				} catch (IOException e) {
 					e.printStackTrace();
-					mLoginResult = false;
+					mResult = false;
 				}
 				finally
 				{
@@ -107,9 +108,9 @@ public class MyServerManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Log.v(DemoApplication.TAG, "login result is " + mLoginResult);
+			Log.v(DemoApplication.TAG, "login result is " + mResult);
 		}
-		return mLoginResult;
+		return mResult;
 	}
 	
 	public String getNewActivityID(String username)
@@ -170,7 +171,7 @@ public class MyServerManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Log.v(DemoApplication.TAG, "login result is " + mLoginResult);
+			Log.v(DemoApplication.TAG, "login result is " + mResult);
 		}
 		return mNewID;
 	}
@@ -233,7 +234,7 @@ public class MyServerManager {
 	 * @return
 	 */
 	public boolean updateUserInfo(MyUser user) {
-		mLoginResult = false;
+		mResult = false;
 		final MyUser fUser = user;
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -252,15 +253,15 @@ public class MyServerManager {
 								.toString(), "utf-8"));
 						httpResponse = new DefaultHttpClient().execute(post);
 						if (httpResponse.getStatusLine().getStatusCode() == 200) {
-							mLoginResult = true;
+							mResult = true;
 						}
 
 					} catch (ClientProtocolException e) {
 						e.printStackTrace();
-						mLoginResult = false;
+						mResult = false;
 					} catch (IOException e) {
 						e.printStackTrace();
-						mLoginResult = false;
+						mResult = false;
 					} finally {
 						mLock.notifyAll();
 					}
@@ -277,9 +278,9 @@ public class MyServerManager {
 				e.printStackTrace();
 			}
 			Log.v(DemoApplication.TAG, "updateUserInfo result is "
-					+ mLoginResult);
+					+ mResult);
 		}
-		return mLoginResult;
+		return mResult;
 	}
 	
 	/**
@@ -307,6 +308,7 @@ public class MyServerManager {
 								JSONObject jsonObj = new JSONObject
 										(EntityUtils.toString(httpResponse.getEntity(), "utf-8"));
 								mUser = MyUser.fromJSON(jsonObj.getJSONObject("data"));
+								mUser.mID = jsonObj.getString("_id");
 							} catch (Exception e) {
 								e.printStackTrace();
 								mUser = null;
@@ -337,5 +339,263 @@ public class MyServerManager {
 					+ MyUser.toJSON(mUser).toString());
 			return mUser;
 		}
+	}
+	private String mActivityID;
+	/**
+	 * 创建一个活动数据
+	 * @param data 活动数据
+	 * @return 活动id
+	 */
+	public String createActivity(ActivityData data)
+	{
+		mActivityID = null;
+		if(null == data)
+		{
+			throw new IllegalArgumentException("ActivityData can not be null");
+		}
+		
+		mResult = false;
+		final ActivityData fData = data;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (mLock) {
+					String url = String.format(
+							"%s/db?action=set&table=activity",IP_ADDRESS);
+					HttpPost post = new HttpPost(url);
+					// 第2步：使用execute方法发送HTTP GET请求，并返回HttpResponse对象
+					HttpResponse httpResponse;
+					try {
+						post.addHeader("Cookie",
+								String.format("user=%s;token=%s", mUser.mName, mToken));
+						post.setEntity(new StringEntity(ActivityData.toJSON(fData)
+								.toString(), "utf-8"));
+						httpResponse = new DefaultHttpClient().execute(post);
+						if (httpResponse.getStatusLine().getStatusCode() == 200) {
+							mResult = true;
+							try {
+								JSONObject jsonObj = new JSONObject
+										(EntityUtils.toString(httpResponse.getEntity(), "utf-8"));
+								mActivityID = jsonObj.getString("id");
+							} catch (Exception e) {
+								e.printStackTrace();
+								mUser = null;
+							}
+							
+						}
+
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						mLock.notifyAll();
+					}
+				}
+			}
+		});
+		t.start();
+		synchronized (mLock) {
+			try {
+				mLock.wait();
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.v(DemoApplication.TAG, "createActivity sucess, new id is "
+					+ mActivityID);
+		}
+		return mActivityID;		
+	}	
+	
+	/**
+	 * 更新一个活动数据
+	 * @param data 活动数据
+	 * @param id 活动id
+	 * @return
+	 */
+	public boolean updateActivity(ActivityData data, String id)
+	{
+		if(null == data||null == id)
+		{
+			throw new IllegalArgumentException("ActivityData or id can not be null");
+		}
+		
+		mResult = false;
+		final ActivityData fData = data;
+		final String fId = id;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (mLock) {
+					String url = String.format(
+							"%s/db?action=set&table=activity&id=%s" ,IP_ADDRESS, fId);
+					HttpPost post = new HttpPost(url);
+					// 第2步：使用execute方法发送HTTP GET请求，并返回HttpResponse对象
+					HttpResponse httpResponse;
+					try {
+						post.addHeader("Cookie",
+								String.format("user=%s;token=%s", mUser.mName, mToken));
+						post.setEntity(new StringEntity(ActivityData.toJSON(fData)
+								.toString(), "utf-8"));
+						httpResponse = new DefaultHttpClient().execute(post);
+						if (httpResponse.getStatusLine().getStatusCode() == 200) {
+							mResult = true;
+						}
+
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+						mResult = false;
+					} catch (IOException e) {
+						e.printStackTrace();
+						mResult = false;
+					} finally {
+						mLock.notifyAll();
+					}
+				}
+			}
+		});
+		t.start();
+		synchronized (mLock) {
+			try {
+				mLock.wait();
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.v(DemoApplication.TAG, "updateActivity result is "
+					+ mResult);
+		}
+		return mResult;		
+	}
+	
+	/**
+	 * 获取一条活动数据
+	 * @param id 活动id
+	 * @return 活动数据，如果此id不存在，则返回null
+	 */
+	private ActivityData mActivityData = null;
+	public ActivityData getActivity(String id)
+	{
+		mActivityData = null;
+		if(null == id)
+		{
+			throw new IllegalArgumentException("id can not be null");
+		}		
+		mResult = false;
+		final String fId = id;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (mLock) {
+					String url = String.format(
+							"%s/db?action=get&table=activity&id=%s", IP_ADDRESS, fId);
+					HttpPost post = new HttpPost(url);
+					HttpResponse httpResponse;
+					try {
+						post.addHeader("Cookie",
+								String.format("user=%s;token=%s", mUser.mName, mToken));
+						httpResponse = new DefaultHttpClient().execute(post);
+						if (httpResponse.getStatusLine().getStatusCode() == 200) {
+							mResult = true;
+							try {
+								JSONObject jsonObj = new JSONObject
+										(EntityUtils.toString(httpResponse.getEntity(), "utf-8"));
+								mActivityData = ActivityData.fromJSON(jsonObj.getJSONObject("data"));
+							} catch (Exception e) {
+								e.printStackTrace();
+								mUser = null;
+							}
+						}
+
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+						mResult = false;
+					} catch (IOException e) {
+						e.printStackTrace();
+						mResult = false;
+					} finally {
+						mLock.notifyAll();
+					}
+				}
+			}
+		});
+		t.start();
+		synchronized (mLock) {
+			try {
+				mLock.wait();
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.v(DemoApplication.TAG, "updateActivity result is "
+					+ mResult);
+		}
+		return mActivityData;		
+	}	
+	
+	
+	
+	/**
+	 * @param userId  用户id
+	 * @param activityId 活动id
+	 * @param field 活动的field doing_activity, finish_activity
+	 * @return 是否成功
+	 */
+	public boolean addUserActivity(String userId, String activityId, String field)
+	{
+		if(null == userId||null == activityId||null == field)
+		{
+			throw new IllegalArgumentException("userId or activityId or field can not be null");
+		}
+		
+		mResult = false;
+		final String fUserId = userId;
+		final String fActivityID = activityId;
+		final String fField = field;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (mLock) {
+					String url = String.format(
+							"%s/db?action=add_user_activity&table=user_activity&user_id=%s&field=%s&activity_id=%s" ,IP_ADDRESS, fUserId, fField, fActivityID);
+					HttpPost post = new HttpPost(url);
+					HttpResponse httpResponse;
+					try {
+						post.addHeader("Cookie",
+								String.format("user=%s;token=%s", mUser.mName, mToken));
+						httpResponse = new DefaultHttpClient().execute(post);
+						if (httpResponse.getStatusLine().getStatusCode() == 200) {
+							mResult = true;
+						}
+
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+						mResult = false;
+					} catch (IOException e) {
+						e.printStackTrace();
+						mResult = false;
+					} finally {
+						mLock.notifyAll();
+					}
+				}
+			}
+		});
+		t.start();
+		synchronized (mLock) {
+			try {
+				mLock.wait();
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.v(DemoApplication.TAG, "addUserctivity result is "
+					+ mResult);
+		}
+		return mResult;		
 	}
 }

@@ -67,6 +67,7 @@ public class DemoApplication extends Application {
 
 	public static Context applicationContext;
 	public static String TAG = "juxiaohui";
+	public static boolean isDebug = true;
 	private static DemoApplication instance;
 	// login user name
 	public final String PREF_USERNAME = "username";
