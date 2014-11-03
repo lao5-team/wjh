@@ -381,6 +381,12 @@ public class ServerTest extends AndroidTestCase {
 		Assert.assertNotNull(data);
 		
 		Assert.assertEquals(true, MyServerManager.getInstance().updateActivity(data, activityID));
+		
+		MyServerManager.getInstance().addUserActivity("5456478e1ef08c418fc9f726", activityID, "doing_activity");
+		
+		ArrayList list = MyServerManager.getInstance().getUserActivity("5456478e1ef08c418fc9f726");
+		Assert.assertTrue(list.size()>0);
+		Log.v("juxiaohuitest", list.size() + "");
 	}
 	
 

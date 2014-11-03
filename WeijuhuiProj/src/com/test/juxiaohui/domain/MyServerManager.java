@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -18,6 +19,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -597,5 +599,83 @@ public class MyServerManager {
 					+ mResult);
 		}
 		return mResult;		
+	}
+	
+	private ArrayList<ArrayList<String>> mActivityList = null;
+	/** 获取某个用户的活动列表
+	 * @param userId
+	 * @return 该ArrayList有两个元素，第一个元素为doingActivity的ArrayList，第二个为finishActivity的ArrayList
+	 */
+	public ArrayList<ArrayList<String>> getUserActivity(String userId)
+	{
+		if(null == userId)
+		{
+			throw new IllegalArgumentException("userId can not be null");
+		}
+		mActivityList = null;
+		mResult = false;
+		final String fUserId = userId;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (mLock) {
+					String url = String.format(
+							"%s/db?action=get_user_activity&table=user_activity&user_id=%s" ,IP_ADDRESS, fUserId);
+					HttpPost post = new HttpPost(url);
+					HttpResponse httpResponse;
+					try {
+						post.addHeader("Cookie",
+								String.format("user=%s;token=%s", mUser.mName, mToken));
+						httpResponse = new DefaultHttpClient().execute(post);
+						if (httpResponse.getStatusLine().getStatusCode() == 200) {
+							mResult = true;
+							try {
+								JSONObject jsonObj = new JSONObject
+										(EntityUtils.toString(httpResponse.getEntity(), "utf-8"));
+								JSONArray jDoingActivity = jsonObj.getJSONArray("doing_activity");
+								ArrayList<String> doingActivity = new ArrayList<String>();
+								for(int i=0; i<jDoingActivity.length(); i++)
+								{
+									doingActivity.add(jDoingActivity.getString(i));
+								}
+								mActivityList.add(doingActivity);
+								
+								JSONArray jFinishActivity = jsonObj.getJSONArray("finish_activity");
+								ArrayList<String> finishActivity = new ArrayList<String>();
+								for(int i=0; i<jFinishActivity.length(); i++)
+								{
+									finishActivity.add(jFinishActivity.getString(i));
+								}
+								mActivityList.add(finishActivity);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+						mResult = false;
+					} catch (IOException e) {
+						e.printStackTrace();
+						mResult = false;
+					} finally {
+						mLock.notifyAll();
+					}
+				}
+			}
+		});
+		t.start();
+		synchronized (mLock) {
+			try {
+				mLock.wait();
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.v(DemoApplication.TAG, "addUserctivity result is "
+					+ mResult);
+		}
+		return mActivityList;			
 	}
 }
