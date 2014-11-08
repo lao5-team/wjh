@@ -15,12 +15,12 @@ import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.exceptions.EaseMobException;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
-import com.test.juxiaohui.data.Message;
+import com.test.juxiaohui.data.message.MyMessage;
 
 /**
  * @author yh
  * 微聚会自定义消息发送和接受的管理者
- * @see Message
+ * @see MyMessage
  */
 public class MessageManager {
 
@@ -30,7 +30,7 @@ public class MessageManager {
 	public static abstract class MessageListener
 	{
 		public String filterType = null;
-		abstract public void onReceiveMessage(Message msg);
+		abstract public void onReceiveMessage(MyMessage msg);
 	}
 	
 	private MessageManager()
@@ -47,13 +47,13 @@ public class MessageManager {
 		return mInstance;
 	}
 	
-	public boolean sendMessagetoSingle(Message msg, String username)
+	public boolean sendMessagetoSingle(MyMessage msg, String username)
 	{
 		Assert.assertNotNull(username);
 		Assert.assertNotNull(msg);
 		EMConversation conversation = EMChatManager.getInstance().getConversation(username);
 		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
-		String str = Message.toJSON(msg).toString();
+		String str = MyMessage.toJSON(msg).toString();
 		Log.v(DemoApplication.TAG, "Message to single: " + str);
 		TextMessageBody txtBody = new TextMessageBody(str);
 		message.addBody(txtBody);
@@ -73,11 +73,11 @@ public class MessageManager {
 	 * @param groupID 
 	 * @return
 	 */
-	public boolean sendMessagetoGroup(Message msg, String groupID)
+	public boolean sendMessagetoGroup(MyMessage msg, String groupID)
 	{
 		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
 		message.setChatType(ChatType.GroupChat);
-		String str = Message.toJSON(msg).toString();
+		String str = MyMessage.toJSON(msg).toString();
 		Log.v(DemoApplication.TAG, "Message to group ID " + groupID + " " + str);			
 		TextMessageBody txtBody = new TextMessageBody(str);
 		message.addBody(txtBody);
@@ -91,7 +91,7 @@ public class MessageManager {
 		}		
 	}
 	
-	public void receiveMessage(Message msg)
+	public void receiveMessage(MyMessage msg)
 	{
 		for(MessageListener listener:mMsgListeners)
 		{

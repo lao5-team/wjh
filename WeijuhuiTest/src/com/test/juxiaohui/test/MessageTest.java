@@ -18,5 +18,9 @@ public class MessageTest extends AndroidTestCase {
 		
 	}
 	
+	//测试聚会消息
+	
+    //
+	
 	
 }

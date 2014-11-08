@@ -90,4 +90,10 @@
     <string name="payment_sum">消费金额</string>
     <string name="enroll_users">已报名用户</string>
     <string name="enroll">报名</string>
+    <string name="invite_message">%1$s邀请你加入“%2$s”</string>
+    <string name="accept_invite_message">%1$s接受了你的邀请</string>
+    <string name="refuse_invite_message">%1$s拒绝了你的邀请</string>    
+    <string name="apply_message">%1$s申请加入“%2$s”</string>
+    <string name="accept_apply_message">%1$s接受了你的申请</string>    
+    <string name="refuse_apply_message">%1$s拒绝了你的申请</string>        
 </resources>

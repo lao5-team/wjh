@@ -9,8 +9,8 @@ import com.easemob.chat.TextMessageBody;
 import com.easemob.chat.EMMessage.ChatType;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
-import com.test.juxiaohui.data.Message;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
+import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.ActivityManager;
 import com.test.juxiaohui.domain.MessageManager;
 
@@ -57,7 +57,7 @@ public class NewMessageBroadcastReceiver extends BroadcastReceiver {
         	try {
 				JSONObject obj = new JSONObject(((TextMessageBody)message.getBody()).getMessage());
 				Log.v(DemoApplication.TAG, "receive message " + obj.toString());
-            	Message msg = Message.fromJSON(obj);
+            	MyMessage msg = MyMessage.fromJSON(obj);
     			MessageManager.getInstance().receiveMessage(msg);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

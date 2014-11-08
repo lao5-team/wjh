@@ -15,8 +15,8 @@ import android.util.Log;
 
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
-import com.test.juxiaohui.data.Message;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
+import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MessageManager.MessageListener;
 
 public class ActivityManager {
@@ -42,29 +42,29 @@ public class ActivityManager {
 	{
 		mActivities = new ArrayList<Activity>();
 		mListeners = new ArrayList<ActivityManager.DataChangedListener>();
-		MessageListener msglistener = new MessageListener() {
-			
-			@Override
-			public void onReceiveMessage(Message msg) {
-				ActivityData data = ActivityData.fromJSON(msg.mData);
-				
-				if(null != data)
-				{
-					Activity activity = createActivity(data);
-					if(msg.mAction.equals("create"))
-					{
-						addActivity(activity);
-					}
-					else if(msg.mAction.equals("update"))
-					{
-						updateActivity(activity);
-					}
-					Log.v(DemoApplication.TAG, "ActivityManager receive activity");
-				}
-			}
-		};
-		msglistener.filterType = "activity";
-		MessageManager.getInstance().addMessageListener(msglistener);
+//		MessageListener msglistener = new MessageListener() {
+//			
+//			@Override
+//			public void onReceiveMessage(MyMessage msg) {
+//				ActivityData data = ActivityData.fromJSON(msg.mData);
+//				
+//				if(null != data)
+//				{
+//					Activity activity = createActivity(data);
+//					if(msg.mAction.equals("create"))
+//					{
+//						addActivity(activity);
+//					}
+//					else if(msg.mAction.equals("update"))
+//					{
+//						updateActivity(activity);
+//					}
+//					Log.v(DemoApplication.TAG, "ActivityManager receive activity");
+//				}
+//			}
+//		};
+//		msglistener.filterType = "activity";
+//		MessageManager.getInstance().addMessageListener(msglistener);
 		loadFromFile();
 	}
 	

@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -26,6 +30,7 @@ import org.json.JSONObject;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
+import com.test.juxiaohui.data.message.MyMessage;
 
 import android.util.Log;
 
@@ -34,8 +39,6 @@ public class MyServerManager {
 	private Object mLock = new Object();
 	final String IP_ADDRESS = "http://117.78.3.87:80";
 	String mToken;
-	boolean mResult = false;
-	String mNewID;
 	MyUser mUser;
 
 	private MyServerManager() {
@@ -49,23 +52,20 @@ public class MyServerManager {
 	}
 
 	public boolean login(String username) {
-		mResult = false;
-		final String userName = username;
-		Thread t = new Thread(new Runnable() {
+		final String fUsername = username;
+		
+		Callable<Boolean> callable = new Callable<Boolean>() {
 			@Override
-			public void run() {
+			public Boolean call() throws Exception {
+				Boolean result = false;
 				String url = String.format("%s/login?user=%s", IP_ADDRESS,
-						userName);
-				// 第1步：创建HttpGet对象
+						fUsername);
 				HttpGet httpGet = new HttpGet(url);
-				// 第2步：使用execute方法发送HTTP GET请求，并返回HttpResponse对象
 				HttpResponse httpResponse;
 				try {
 					httpResponse = new DefaultHttpClient().execute(httpGet);
-					// 判断请求响应状态码，状态码为200表示服务端成功响应了客户端的请求
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						// 第3步：使用getEntity方法获得返回结果
-						String result = EntityUtils.toString(httpResponse
+						EntityUtils.toString(httpResponse
 								.getEntity());
 						Header[] headers = httpResponse
 								.getHeaders("Set-Cookie");
@@ -80,35 +80,36 @@ public class MyServerManager {
 								}
 							}
 						}
+						result = true;
 					}
-					mResult = true;
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
-					mResult = false;
 				} catch (IOException e) {
 					e.printStackTrace();
-					mResult = false;
-				} finally {
-				}
+				}	
+				return result;
 			}
-		});
-		t.start();
+		};
+		
+		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
 		try {
-			t.join();
+			return future.get().booleanValue();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return false;
 		}
-		return mResult;
 	}
 
 	public String getNewActivityID(String username) {
 		final String fUsername = username;
 		final String ftoken = mToken;
-		Thread t = new Thread(new Runnable() {
-
+		Callable<String> callable = new Callable<String>() {
 			@Override
-			public void run() {
+			public String call() throws Exception {
+				String newID = null;
 				HttpGet httpGet = new HttpGet();
 				httpGet.addHeader("Cookie",
 						String.format("user=%s; token=%s", fUsername, ftoken));
@@ -123,38 +124,36 @@ public class MyServerManager {
 									.getEntity());
 							try {
 								JSONObject obj = new JSONObject(result);
-								mNewID = obj.getString("id");
+								newID = obj.getString("id");
 							} catch (JSONException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
 					} catch (ClientProtocolException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
 				} catch (URISyntaxException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} finally {
-				}
-
+				} 
+				return newID;
 			}
-		});
-		t.start();
+		};
+		Future<String>future = Executors.newSingleThreadExecutor().submit(callable);
 		try {
-			t.join();
+			return future.get();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		return mNewID;
+			return null;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return null;
+		}		
 	}
-
+	
 	public String uploadImage(File file) {
 		String fileName = file.getName();
 		String fileContent;
@@ -210,16 +209,16 @@ public class MyServerManager {
 	 * @return
 	 */
 	public boolean updateUserInfo(MyUser user) {
-		mResult = false;
 		final MyUser fUser = user;
-		Thread t = new Thread(new Runnable() {
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			
 			@Override
-			public void run() {
+			public Boolean call() throws Exception {
+				Boolean result = false;
 				String url = String.format(
 						"%s/db?action=set_user&table=user&username=%s",
 						IP_ADDRESS, fUser.mName);
 				HttpPost post = new HttpPost(url);
-				// 第2步：使用execute方法发送HTTP GET请求，并返回HttpResponse对象
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
@@ -228,27 +227,28 @@ public class MyServerManager {
 							.toString(), "utf-8"));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						mResult = true;
+						result = true;
 					}
 
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
-					mResult = false;
 				} catch (IOException e) {
 					e.printStackTrace();
-					mResult = false;
-				} finally {
-				}
+				} 
+				return result;
 			}
-		});
-		t.start();
+		};
+		
+		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
 		try {
-			t.join();
+			return future.get().booleanValue();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return false;
 		}
-		return mResult;
 	}
 
 	/**
@@ -259,9 +259,10 @@ public class MyServerManager {
 	 */
 	public MyUser getUserInfo(String username) {
 		final String fUserName = username;
-		Thread t = new Thread(new Runnable() {
+		Callable<MyUser> callable = new Callable<MyUser>() {
 			@Override
-			public void run() {
+			public MyUser call() throws Exception {
+				MyUser user = null;
 				String url = String.format(
 						"%s/db?action=get_user&table=user&username=%s",
 						IP_ADDRESS, fUserName);
@@ -276,37 +277,38 @@ public class MyServerManager {
 							JSONObject jsonObj = new JSONObject(
 									EntityUtils.toString(
 											httpResponse.getEntity(), "utf-8"));
-							mUser = MyUser.fromJSON(jsonObj
+							user = MyUser.fromJSON(jsonObj
 									.getJSONObject("data"));
-							mUser.mID = jsonObj.getString("_id");
+							user.mID = jsonObj.getString("_id");
 						} catch (Exception e) {
 							e.printStackTrace();
-							mUser = null;
 						}
 					}
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
-					mUser = null;
 				} catch (IOException e) {
 					e.printStackTrace();
-					mUser = null;
-				} finally {
-				}
+				} 
+				Log.v(DemoApplication.TAG,
+						"getUserInfo result is " + MyUser.toJSON(user).toString());
+				return user;
 			}
-		});
-		t.start();
+		};
+		
+		Future<MyUser>future = Executors.newSingleThreadExecutor().submit(callable);
 		try {
-			t.join();
+			return future.get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		Log.v(DemoApplication.TAG,
-				"getUserInfo result is " + MyUser.toJSON(mUser).toString());
-		return mUser;
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}			
 	}
 
-	private String mActivityID;
 
 	/**
 	 * 创建一个活动数据
@@ -316,16 +318,14 @@ public class MyServerManager {
 	 * @return 活动id
 	 */
 	public String createActivity(ActivityData data) {
-		mActivityID = null;
 		if (null == data) {
 			throw new IllegalArgumentException("ActivityData can not be null");
 		}
-
-		mResult = false;
 		final ActivityData fData = data;
-		Thread t = new Thread(new Runnable() {
+		Callable<String> callable = new Callable<String>() {
 			@Override
-			public void run() {
+			public String call() throws Exception {
+				String activityID = null;
 				String url = String.format("%s/db?action=set&table=activity",
 						IP_ADDRESS);
 				HttpPost post = new HttpPost(url);
@@ -338,35 +338,36 @@ public class MyServerManager {
 							.toString(), "utf-8"));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						mResult = true;
 						try {
 							JSONObject jsonObj = new JSONObject(
 									EntityUtils.toString(
 											httpResponse.getEntity(), "utf-8"));
-							mActivityID = jsonObj.getString("id");
+							activityID = jsonObj.getString("id");
 						} catch (Exception e) {
 							e.printStackTrace();
-							mUser = null;
 						}
-
 					}
-
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
-				} finally {
-				}
+				} 	
+				return activityID;
 			}
-		});
-		t.start();
+		};
+		
+		Future<String>future = Executors.newSingleThreadExecutor().submit(callable);
 		try {
-			t.join();
+			return future.get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		return mActivityID;
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}		
 	}
 
 	/**
@@ -383,13 +384,13 @@ public class MyServerManager {
 			throw new IllegalArgumentException(
 					"ActivityData or id can not be null");
 		}
-
-		mResult = false;
 		final ActivityData fData = data;
 		final String fId = id;
-		Thread t = new Thread(new Runnable() {
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			
 			@Override
-			public void run() {
+			public Boolean call() throws Exception {
+				Boolean result = false;
 				String url = String.format(
 						"%s/db?action=set&table=activity&id=%s", IP_ADDRESS,
 						fId);
@@ -403,27 +404,30 @@ public class MyServerManager {
 							.toString(), "utf-8"));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						mResult = true;
+						result = true;
 					}
 
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
-					mResult = false;
 				} catch (IOException e) {
 					e.printStackTrace();
-					mResult = false;
-				} finally {
-				}
+				} 
+				return result;
 			}
-		});
-		t.start();
+		};
+
+		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
 		try {
-			t.join();
+			return future.get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		return mResult;
+			return false;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}	
 	}
 
 	/**
@@ -433,18 +437,16 @@ public class MyServerManager {
 	 *            活动id
 	 * @return 活动数据，如果此id不存在，则返回null
 	 */
-	private ActivityData mActivityData = null;
 
 	public ActivityData getActivity(String id) {
-		mActivityData = null;
 		if (null == id) {
 			throw new IllegalArgumentException("id can not be null");
 		}
-		mResult = false;
 		final String fId = id;
-		Thread t = new Thread(new Runnable() {
+		Callable<ActivityData> callable = new Callable<ActivityData>() {
 			@Override
-			public void run() {
+			public ActivityData call() throws Exception {
+				ActivityData activityData = null;
 				String url = String.format(
 						"%s/db?action=get&table=activity&id=%s", IP_ADDRESS,
 						fId);
@@ -455,37 +457,36 @@ public class MyServerManager {
 							mUser.mName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						mResult = true;
 						try {
 							JSONObject jsonObj = new JSONObject(
 									EntityUtils.toString(
 											httpResponse.getEntity(), "utf-8"));
-							mActivityData = ActivityData.fromJSON(jsonObj
+							activityData = ActivityData.fromJSON(jsonObj
 									.getJSONObject("data"));
 						} catch (Exception e) {
 							e.printStackTrace();
-							mUser = null;
 						}
 					}
-
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
-					mResult = false;
 				} catch (IOException e) {
 					e.printStackTrace();
-					mResult = false;
-				} finally {
-				}
+				} 
+				return activityData;
 			}
-		});
-		t.start();
+		};
+		Future<ActivityData>future = Executors.newSingleThreadExecutor().submit(callable);
 		try {
-			t.join();
+			return future.get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		return mActivityData;
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}			
 	}
 
 	/**
@@ -504,13 +505,15 @@ public class MyServerManager {
 					"userId or activityId or field can not be null");
 		}
 
-		mResult = false;
 		final String fUserId = userId;
 		final String fActivityID = activityId;
 		final String fField = field;
-		Thread t = new Thread(new Runnable() {
+		
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			
 			@Override
-			public void run() {
+			public Boolean call() throws Exception {
+				Boolean result = false;
 				String url = String
 						.format("%s/db?action=add_user_activity&table=user_activity&user_id=%s&field=%s&activity_id=%s",
 								IP_ADDRESS, fUserId, fField, fActivityID);
@@ -521,30 +524,32 @@ public class MyServerManager {
 							mUser.mName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						mResult = true;
+						result = true;
 					}
 
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
-					mResult = false;
 				} catch (IOException e) {
 					e.printStackTrace();
-					mResult = false;
-				} finally {
-				}
+				} 
+				return result;
 			}
-		});
-		t.start();
+		};
+		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
 		try {
-			t.join();
+			return future.get().booleanValue();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		return mResult;
+			return false;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}		
+		
 	}
 
-	private ArrayList<ArrayList<String>> mActivityList = null;
 
 	/**
 	 * 获取某个用户的活动列表
@@ -557,12 +562,12 @@ public class MyServerManager {
 		if (null == userId) {
 			throw new IllegalArgumentException("userId can not be null");
 		}
-		mActivityList = null;
-		mResult = false;
 		final String fUserId = userId;
-		Thread t = new Thread(new Runnable() {
+		Callable<ArrayList<ArrayList<String>>> callable = new Callable<ArrayList<ArrayList<String>>>() {
+			
 			@Override
-			public void run() {
+			public ArrayList<ArrayList<String>> call() throws Exception {
+				ArrayList<ArrayList<String>> activityList = null;
 				String url = String
 						.format("%s/db?action=get_user_activity&table=user_activity&user_id=%s",
 								IP_ADDRESS, fUserId);
@@ -573,9 +578,8 @@ public class MyServerManager {
 							mUser.mName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						mResult = true;
 						try {
-							mActivityList = new ArrayList<ArrayList<String>>();
+							activityList = new ArrayList<ArrayList<String>>();
 							JSONObject jsonObj = new JSONObject(
 									EntityUtils.toString(
 											httpResponse.getEntity(), "utf-8"));
@@ -585,7 +589,7 @@ public class MyServerManager {
 							for (int i = 0; i < jDoingActivity.length(); i++) {
 								doingActivity.add(jDoingActivity.getString(i));
 							}
-							mActivityList.add(doingActivity);
+							activityList.add(doingActivity);
 
 							JSONArray jFinishActivity = jsonObj
 									.getJSONArray("finish_activity");
@@ -593,7 +597,7 @@ public class MyServerManager {
 							for (int i = 0; i < jFinishActivity.length(); i++) {
 								finishActivity.add(jFinishActivity.getString(i));
 							}
-							mActivityList.add(finishActivity);
+							activityList.add(finishActivity);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -601,22 +605,200 @@ public class MyServerManager {
 
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
-					mResult = false;
-					mActivityList = null;
 				} catch (IOException e) {
 					e.printStackTrace();
-					mResult = false;
-					mActivityList = null;
 				}
+				return activityList;
 			}
-		});
-		t.start();
+		};
+		Future<ArrayList<ArrayList<String>>> future = Executors.newSingleThreadExecutor().submit(callable);
 		try {
-			t.join();
+			return future.get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
-		return mActivityList;
 	}
+	
+	/** 向user发送消息
+	 * @param user
+	 * @param message
+	 */
+	public boolean sendMessage(MyUser user, MyMessage message)
+	{
+		if (null == user || null == message) {
+			throw new IllegalArgumentException(
+					"user or message can not be null");
+		}
+		final MyUser fUser = user;
+		final MyMessage fMessage = message;
+		
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			
+			@Override
+			public Boolean call() throws Exception {
+				Boolean result = false;
+				String url = String
+						.format("%s/db?action=add_user_message&table=user_message&user_id=%s",
+								IP_ADDRESS, fUser.mID);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUser.mName, mToken));
+					JSONArray jsonArray = new JSONArray();
+					post.setEntity(new StringEntity(MyMessage.toJSON(fMessage).toString(), "utf-8"));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						result = true;
+					}
+
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+				}
+				return result;
+			}
+		};
+		
+		Future<Boolean> future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get().booleanValue();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**获取user的消息，该接口可以用于作为通知提示用户阅读消息
+	 * @param user
+	 * @return
+	 */
+	public ArrayList<MyMessage> getMessages(MyUser user)
+	{
+		if (null == user) {
+			throw new IllegalArgumentException("userId can not be null");
+		}
+		final MyUser fUser = user;
+		Callable <ArrayList<MyMessage>> callable = new Callable<ArrayList<MyMessage>>() {
+			
+			@Override
+			public ArrayList<MyMessage> call() throws Exception {
+				ArrayList<MyMessage> messages = null;
+				String url = String
+						.format("%s/db?action=get_user_message&table=user_message&user_id=%s",
+								IP_ADDRESS, fUser.mID);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUser.mName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						try {
+							messages = new ArrayList<MyMessage>();
+							JSONObject jsonObj = new JSONObject(
+									EntityUtils.toString(
+											httpResponse.getEntity(), "utf-8"));
+							JSONArray jMessages = jsonObj
+									.getJSONArray("messages");
+							for (int i = 0; i < jMessages.length(); i++) {
+								messages.add(MyMessage.fromJSON(jMessages.getJSONObject(i)));
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return messages;
+			}
+		};
+		
+		Future<ArrayList<MyMessage>> future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	/**
+	 * 删除用户消息，该接口可用于阅读完消息后，删除未读的消息
+	 * @param messages
+	 */
+	public boolean removeMessages(MyUser user, ArrayList<MyMessage> messages)
+	{
+		if (null == user || null == messages) {
+			throw new IllegalArgumentException("user or messages can not be null");
+		}
+		final MyUser fUser = user;
+		final ArrayList<MyMessage> fMessages  = messages;
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			
+			@Override
+			public Boolean call() throws Exception {
+				Boolean result = false;
+				String url = String
+						.format("%s/db?action=remove_user_message&table=user_message&user_id=%s",
+								IP_ADDRESS, fUser.mID);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUser.mName, mToken));
+					JSONArray jsonArray = new JSONArray();
+					for(MyMessage message : fMessages)
+					{
+						jsonArray.put(MyMessage.toJSON(message));
+					}
+					post.setEntity(new StringEntity(jsonArray.toString(), "utf-8"));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						result = true;				
+					}
+
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return result;
+			}
+		};
+		Future<Boolean> future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get().booleanValue();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
 }

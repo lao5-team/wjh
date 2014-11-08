@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
-import com.test.juxiaohui.data.Message;
+import com.test.juxiaohui.data.message.MyMessage;
 
 public class Activity {
 	public static String CREATOR = "creator";
@@ -173,16 +173,16 @@ public class Activity {
 //		} catch (EaseMobException e) {
 //			e.printStackTrace();
 //		}
-		Message msg = new Message.MessageBuilder().setType("activity").setAction(action)
-				.setData(ActivityData.toJSON(data)).create();
-		if(data.mCreator.mName.equals(DemoApplication.getInstance().getUserName()))
-		{
-			MessageManager.getInstance().sendMessagetoSingle(msg, data.mUsers.get(0).mName);
-		}
-		else
-		{
-			MessageManager.getInstance().sendMessagetoSingle(msg, data.mCreator.mName);
-		}
+//		MyMessage msg = new MyMessage.MessageBuilder().setType("activity").setAction(action)
+//				.setData(ActivityData.toJSON(data)).create();
+//		if(data.mCreator.mName.equals(DemoApplication.getInstance().getUserName()))
+//		{
+//			MessageManager.getInstance().sendMessagetoSingle(msg, data.mUsers.get(0).mName);
+//		}
+//		else
+//		{
+//			MessageManager.getInstance().sendMessagetoSingle(msg, data.mCreator.mName);
+//		}
 		
 	}
 	
@@ -211,15 +211,15 @@ public class Activity {
 //		} catch (EaseMobException e) {
 //			e.printStackTrace();
 //		}
-		Assert.assertTrue(data.mGroupID!=null);
-		Message msg = new Message.MessageBuilder().setType("activity").setAction(action)
-				.setData(ActivityData.toJSON(data)).create();
-		String[] names = new String[data.mUsers.size()];
-		for(int i=0; i<data.mUsers.size(); i++)
-		{
-			names[i] = data.mUsers.get(i).mName;
-		}
-		MessageManager.getInstance().sendMessagetoGroup(msg, data.mGroupID);
+//		Assert.assertTrue(data.mGroupID!=null);
+//		MyMessage msg = new MyMessage.MessageBuilder().setType("activity").setAction(action)
+//				.setData(ActivityData.toJSON(data)).create();
+//		String[] names = new String[data.mUsers.size()];
+//		for(int i=0; i<data.mUsers.size(); i++)
+//		{
+//			names[i] = data.mUsers.get(i).mName;
+//		}
+//		MessageManager.getInstance().sendMessagetoGroup(msg, data.mGroupID);
 	}
 
 }

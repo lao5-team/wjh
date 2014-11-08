@@ -52,10 +52,10 @@ import com.test.juxiaohui.activity.EntryActivity;
 import com.test.juxiaohui.activity.MainActivity;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.DbOpenHelper;
-import com.test.juxiaohui.data.Message;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.UserDao;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
+import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MessageManager;
 import com.test.juxiaohui.domain.User;
 import com.test.juxiaohui.utils.PreferenceUtils;
@@ -147,7 +147,7 @@ public class DemoApplication extends Application {
 					try {
 						JSONObject obj = new JSONObject(((TextMessageBody) arg0
 								.getBody()).getMessage());
-						Message msg = Message.fromJSON(obj);
+						MyMessage msg = MyMessage.fromJSON(obj);
 						MessageManager.getInstance().receiveMessage(msg);
 						showNotification(msg.getNotifyString());
 						return null;
