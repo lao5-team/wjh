@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
 
@@ -38,21 +39,44 @@ public class MessageService extends Service {
 	@Override
 	public void onCreate()
 	{
-		while(true)
-		{
-			ArrayList<MyMessage> messages;
-			messages = MyServerManager.getInstance().getMessages(DemoApplication.getInstance().getUser());
-			NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-			for(MyMessage message : messages)
-			{
-				 Notification noti = new Notification.Builder(this)
-		         .setContentTitle("new Message")
-		         .setContentText(message.toString(this))
-		         .setSmallIcon(R.drawable.ic_launcher)
-		         .build();
-				nm.notify("test", 0, noti);
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				while(true)
+				{
+					ArrayList<MyMessage> messages;
+					MyUser user = DemoApplication.getInstance().getUser();
+					messages = MyServerManager.getInstance().getMessages(user);
+					if(null!=messages)
+					{
+						//MyServerManager.getInstance().removeMessages(user, messages);		
+						NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+						for(MyMessage message : messages)
+						{
+							 Notification noti = new Notification.Builder(MessageService.this)
+					         .setContentTitle("new Message")
+					         .setContentText(message.toString(MessageService.this))
+					         .setSmallIcon(R.drawable.ic_launcher)
+					         .setDefaults(Notification.DEFAULT_SOUND)
+					         .build();
+							 nm.notify("test", 0, noti);
+						}
+
+					}
+
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}				
+				}				// TODO Auto-generated method stub
+				
 			}
-		}
+		});
+		t.start();
+		
 	}
 
 }

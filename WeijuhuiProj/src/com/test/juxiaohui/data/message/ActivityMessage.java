@@ -37,6 +37,7 @@ public class ActivityMessage extends MyMessage {
 	public ActivityMessage()
 	{
 		mAction = null;
+		mType = "activity";
 	}
 	
 	/** 消息转化为字符串
@@ -94,7 +95,7 @@ public class ActivityMessage extends MyMessage {
 			message.mType = json.getString("type");
 			message.mFromUser = MyUser.fromJSON(json.getJSONObject("from"));
 			message.mAction = json.getString("action");
-			message.mActivityID = json.getString("activity_id");
+			//message.mActivityID = json.getString("activity_id");
 			message.mActivityName = json.getString("activity_name");
 			return message;
 		} catch (JSONException e) {
@@ -108,15 +109,17 @@ public class ActivityMessage extends MyMessage {
 	 * @param message
 	 * @return
 	 */
-	public static JSONObject toJSON(ActivityMessage message)
+	@Override
+	public JSONObject toJSON()
 	{
+
 		JSONObject obj = new JSONObject();
 		try {
-			obj.put("type", message.mType);
-			obj.put("from", MyUser.toJSON(message.mFromUser));
-			obj.put("action", message.mAction);
-			obj.put("activity_id", message.mActivityID);
-			obj.put("activity_name", message.mActivityName);
+			obj.put("type", this.mType);
+			obj.put("from", MyUser.toJSON(this.mFromUser));
+			obj.put("action", this.mAction);
+			obj.put("activity_id", this.mActivityID);
+			obj.put("activity_name", this.mActivityName);
 			//obj.put("action", msg.mAction);
 			return obj;
 		} catch (JSONException e) {

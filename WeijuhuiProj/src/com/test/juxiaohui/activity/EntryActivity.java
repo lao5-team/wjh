@@ -37,6 +37,7 @@ import com.test.juxiaohui.domain.User;
 import com.test.juxiaohui.domain.InviteMessage.InviteMesageStatus;
 import com.test.juxiaohui.receiver.NewMessageBroadcastReceiver;
 import com.test.juxiaohui.service.ContactChangeService;
+import com.test.juxiaohui.service.MessageService;
 import com.test.juxiaohui.utils.CommonUtils;
 import com.test.juxiaohui.utils.CrashLogHandler;
 import com.test.juxiaohui.R;
@@ -134,6 +135,9 @@ public class EntryActivity extends FragmentActivity {
 		
 		Intent intent = new Intent(this, ContactChangeService.class);
 		startService(intent);
+		
+		intent = new Intent(this, MessageService.class);
+		startService(intent);		
 	}
 	
 	

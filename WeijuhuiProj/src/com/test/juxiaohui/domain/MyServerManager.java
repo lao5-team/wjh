@@ -280,6 +280,7 @@ public class MyServerManager {
 							user = MyUser.fromJSON(jsonObj
 									.getJSONObject("data"));
 							user.mID = jsonObj.getString("_id");
+							mUser = user;
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -652,7 +653,7 @@ public class MyServerManager {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
 							mUser.mName, mToken));
 					JSONArray jsonArray = new JSONArray();
-					post.setEntity(new StringEntity(MyMessage.toJSON(fMessage).toString(), "utf-8"));
+					post.setEntity(new StringEntity(fMessage.toJSON().toString(), "utf-8"));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						result = true;
@@ -711,10 +712,12 @@ public class MyServerManager {
 							JSONObject jsonObj = new JSONObject(
 									EntityUtils.toString(
 											httpResponse.getEntity(), "utf-8"));
+							jsonObj = jsonObj.getJSONObject("data");
 							JSONArray jMessages = jsonObj
 									.getJSONArray("messages");
 							for (int i = 0; i < jMessages.length(); i++) {
-								messages.add(MyMessage.fromJSON(jMessages.getJSONObject(i)));
+								JSONObject obj = new JSONObject(jMessages.getString(i));
+								messages.add(MyMessage.fromJSON(obj));
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -769,11 +772,16 @@ public class MyServerManager {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
 							mUser.mName, mToken));
 					JSONArray jsonArray = new JSONArray();
+					String data = "[";
 					for(MyMessage message : fMessages)
 					{
-						jsonArray.put(MyMessage.toJSON(message));
+						data += String.format("\'%s\',", message.toJSON().toString());
+						jsonArray.put(message.toJSON().toString());
 					}
-					post.setEntity(new StringEntity(jsonArray.toString(), "utf-8"));
+					data = data.substring(0, data.length()-1);
+					data += "]";
+					//post.setEntity(new StringEntity(fMessages.get(0).toJSON().toString(), "utf-8"));
+					post.setEntity(new StringEntity(jsonArray.toString()));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						result = true;				

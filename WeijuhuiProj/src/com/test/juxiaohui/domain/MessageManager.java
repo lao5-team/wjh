@@ -53,7 +53,7 @@ public class MessageManager {
 		Assert.assertNotNull(msg);
 		EMConversation conversation = EMChatManager.getInstance().getConversation(username);
 		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
-		String str = MyMessage.toJSON(msg).toString();
+		String str = msg.toJSON().toString();
 		Log.v(DemoApplication.TAG, "Message to single: " + str);
 		TextMessageBody txtBody = new TextMessageBody(str);
 		message.addBody(txtBody);
@@ -77,7 +77,7 @@ public class MessageManager {
 	{
 		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
 		message.setChatType(ChatType.GroupChat);
-		String str = MyMessage.toJSON(msg).toString();
+		String str = msg.toJSON().toString();
 		Log.v(DemoApplication.TAG, "Message to group ID " + groupID + " " + str);			
 		TextMessageBody txtBody = new TextMessageBody(str);
 		message.addBody(txtBody);

@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
+import com.test.juxiaohui.data.message.ActivityMessage;
 import com.test.juxiaohui.domain.MyServerManager;
 
 import android.test.AndroidTestCase;
@@ -387,6 +388,23 @@ public class ServerTest extends AndroidTestCase {
 		ArrayList list = MyServerManager.getInstance().getUserActivity("5456478e1ef08c418fc9f726");
 		Assert.assertTrue(list.size()>0);
 		Log.v("juxiaohuitest", list.size() + "");
+	}
+	
+	public void testSendMessage()
+	{
+		ActivityMessage message = new ActivityMessage();
+		MyUser user = new MyUser();
+		user.mName = "kimi";
+		message.mFromUser = user;
+		message.mAction = "invite";
+		message.mActivityName = "war3 2v2";
+		
+		MyUser me = new MyUser();
+		me.mID = "545f496d1c63a0f5756c7bd0";
+		MyServerManager.getInstance().login("yh");
+		MyServerManager.getInstance().getUserInfo("yh");
+		MyServerManager.getInstance().sendMessage(me, message);
+		Log.v("juxiaohuitest", message.toJSON().toString());
 	}
 	
 

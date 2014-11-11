@@ -17,7 +17,7 @@ import com.test.juxiaohui.data.MyUser;
  * 
  * 本应用使用的消息数据
  */
-public abstract class MyMessage implements Serializable {
+public class MyMessage implements Serializable {
 
 	/**
 	 * 
@@ -41,12 +41,12 @@ public abstract class MyMessage implements Serializable {
 		mType = null;
 	}
 	
-	public static JSONObject toJSON(MyMessage msg)
+	public JSONObject toJSON()
 	{
 		JSONObject obj = new JSONObject();
 		try {
-			obj.put("type", msg.mType);
-			obj.put("from", MyUser.toJSON(msg.mFromUser));
+			obj.put("type", this.mType);
+			obj.put("from", MyUser.toJSON(this.mFromUser));
 			//obj.put("action", msg.mAction);
 			return obj;
 		} catch (JSONException e) {
@@ -56,19 +56,19 @@ public abstract class MyMessage implements Serializable {
 		
 	}
 	
-//	abstract public static MyMessage fromJSON(JSONObject json);
-//	{
-//		MyMessage msg = new MyMessage();
-//		try {
-//			msg.mType = json.getString("type");
-//			msg.mFromUser = MyUser.fromJSON(json.getJSONObject("from"));
-//			//msg.mAction = json.getString("action");
-//			return msg;
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
+    public static MyMessage fromJSON(JSONObject json)
+	{
+    	try {
+			if(json.getString("type").equals("activity"))
+			{
+				return ActivityMessage.fromJSON(json);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+	}
 	
 	public String getNotifyString()
 	{
@@ -86,7 +86,10 @@ public abstract class MyMessage implements Serializable {
 		return "未知消息";
 	}
 	
-	abstract public String toString(Context context);
+	 public String toString(Context context)
+	 {
+		 return null;
+	 }
 	
 //	public static class MessageBuilder
 //	{
