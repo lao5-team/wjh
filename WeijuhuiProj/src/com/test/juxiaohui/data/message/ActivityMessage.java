@@ -95,7 +95,7 @@ public class ActivityMessage extends MyMessage {
 			message.mType = json.getString("type");
 			message.mFromUser = MyUser.fromJSON(json.getJSONObject("from"));
 			message.mAction = json.getString("action");
-			//message.mActivityID = json.getString("activity_id");
+			message.mActivityID = json.getString("activity_id");
 			message.mActivityName = json.getString("activity_name");
 			return message;
 		} catch (JSONException e) {

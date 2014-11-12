@@ -151,17 +151,8 @@ public class ActivityData implements Serializable {
 		
 		ArrayList<MyUser> users = new ArrayList<MyUser>();
 		MyUser testGuest = new MyUser();
-		testGuest.mName = "test0";
+		testGuest.mName = "2";
 		users.add(testGuest);
-		
-		testGuest = new MyUser();
-		testGuest.mName = "test1";
-		users.add(testGuest);
-		
-		testGuest = new MyUser();
-		testGuest.mName = "test2";
-		users.add(testGuest);	
-		
 			try {
 				ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2014年1月1日16时")
 						).setComplexBusiness(testCB).setCreator(testUser).setUsers(users).setTitle("test_title").setContent("test_content").setGroupID("testGroup0").create();

@@ -38,6 +38,7 @@ public class MyServerManager {
 	private static MyServerManager mInstance = null;
 	private Object mLock = new Object();
 	final String IP_ADDRESS = "http://117.78.3.87:80";
+	final String IP_ADDRESS_UPLOAD = "http://117.78.3.87:81/upload";
 	String mToken;
 	MyUser mUser;
 
@@ -51,6 +52,10 @@ public class MyServerManager {
 		return mInstance;
 	}
 
+	/**登录到自己的服务器，若成功，会在MyServerManager中生成token
+	 * @param username 用户名
+	 * @return 登录是否成功
+	 */
 	public boolean login(String username) {
 		final String fUsername = username;
 		
@@ -103,6 +108,7 @@ public class MyServerManager {
 		}
 	}
 
+	@Deprecated
 	public String getNewActivityID(String username) {
 		final String fUsername = username;
 		final String ftoken = mToken;
@@ -154,7 +160,15 @@ public class MyServerManager {
 		}		
 	}
 	
+	/** 向华为云存储上传文件，如果上传成功，则会返回对应文件的一个url
+	 * @param file
+	 * @return String 上传文件的url
+	 */
 	public String uploadImage(File file) {
+		if(null == file)
+		{
+			throw new IllegalArgumentException("uploadImage File can not be null!");
+		}
 		String fileName = file.getName();
 		String fileContent;
 		try {
@@ -178,7 +192,7 @@ public class MyServerManager {
 		}
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost post = new HttpPost("http://117.78.3.87:81/upload");
+			HttpPost post = new HttpPost(IP_ADDRESS_UPLOAD);
 			fileName = mToken + "_" + fileName;
 			post.setEntity(new StringEntity(String.format("%s\r\n%s\r\n",
 					fileName, fileContent), "ISO-8859-1"));
@@ -209,6 +223,11 @@ public class MyServerManager {
 	 * @return
 	 */
 	public boolean updateUserInfo(MyUser user) {
+		if(null == user)
+		{
+			throw new IllegalArgumentException("updateUserInfo user can not be null");
+		}
+		
 		final MyUser fUser = user;
 		Callable<Boolean> callable = new Callable<Boolean>() {
 			
@@ -258,6 +277,10 @@ public class MyServerManager {
 	 * @return MyUser
 	 */
 	public MyUser getUserInfo(String username) {
+		if(null == username)
+		{
+			throw new IllegalArgumentException("getUserInfo username can not be null");
+		}
 		final String fUserName = username;
 		Callable<MyUser> callable = new Callable<MyUser>() {
 			@Override
@@ -312,7 +335,7 @@ public class MyServerManager {
 
 
 	/**
-	 * 创建一个活动数据
+	 * 在服务器端创建一个活动数据
 	 * 
 	 * @param data
 	 *            活动数据
@@ -374,10 +397,10 @@ public class MyServerManager {
 	/**
 	 * 更新一个活动数据
 	 * 
-	 * @param data
-	 *            活动数据
-	 * @param id
-	 *            活动id
+	 * @param data 活动数据
+	 *            
+	 * @param id 活动id
+	 *            
 	 * @return
 	 */
 	public boolean updateActivity(ActivityData data, String id) {

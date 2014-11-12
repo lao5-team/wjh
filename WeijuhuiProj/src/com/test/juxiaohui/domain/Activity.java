@@ -4,8 +4,15 @@ import junit.framework.Assert;
 
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
+import com.test.juxiaohui.data.MyUser;
+import com.test.juxiaohui.data.message.ActivityMessage;
 import com.test.juxiaohui.data.message.MyMessage;
 
+/**
+ * 用来进行活动相关处理的类，该类大部分方法都会涉及到网络通信，应该放到线程中调用
+ * @author yh
+ *
+ */
 public class Activity {
 	public static String CREATOR = "creator";
 	public static String JOINER = "joiner";
@@ -18,25 +25,38 @@ public class Activity {
 	}
 	
 	/**
-	 * 发起活动，进入待确定状态
+	 * 发起活动。此方法会进行网络通信，且不会涉及任何UI的操作，所以建议放在子线程中调用
+	 * 
 	 */
 	public void startActivity()
 	{
 		Assert.assertTrue(mData.mState == ActivityData.UNBEGIN);
 		mData.mState = ActivityData.BEGIN;
-//		if(mData.mUsers.size() == 1)
-//		{
-//			sendActivityToSingle(mData, "create");
-//		}
-//		else if(mData.mUsers.size() > 1)
-//		{
-//			sendActivityToGroup(mData, "create");
-//		}
-//		ActivityManager.getInstance().addActivity(this);
-		/*创建一个新的activity，将该activity添加到所有用户正在进行中的活动列表中*/
-		String id = MyServerManager.getInstance().createActivity(mData);
-		mData.mID = id;
+		mData.mID = MyServerManager.getInstance().createActivity(mData);
+		
+		/*该代码是为了增强数据的完整性*/
+		for(int i=0; i<mData.mUsers.size(); i++)
+		{
+			MyUser user = MyServerManager.getInstance().getUserInfo(mData.mUsers.get(i).mName);
+			mData.mUsers.set(i, user);  
+		}
+		
+		//创建者添加活动
 		MyServerManager.getInstance().addUserActivity(mData.mCreator.mID, mData.mID, "doingActivity");
+		
+		//向被邀请者发送消息
+		ActivityMessage message = new ActivityMessage();
+		message.mType = "activity";
+		message.mActivityID = mData.mID;
+		message.mAction = "invite";
+		message.mActivityName = mData.mTitle;
+		message.mFromUser = DemoApplication.getInstance().getUser();
+		
+		for(MyUser user:mData.mUsers)
+		{
+			MyServerManager.getInstance().sendMessage(user, message);
+		}
+		
 	}
 	
 	/**

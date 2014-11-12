@@ -35,12 +35,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-/*
+/**
+ * @author yh
  * 1 显示活动的详细内容和地点
  * 2 抽取活动内容和地点（包括经纬度）
  * 3 添加好友
  * 4 发起聚会，向好友发送邀请单
- * */
+ */
 public class ActivityDetailActivity extends FragmentActivity {
 
 	//data

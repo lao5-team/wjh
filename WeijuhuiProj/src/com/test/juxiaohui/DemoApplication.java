@@ -285,6 +285,10 @@ public class DemoApplication extends Application {
 		mUser = user;
 	}
 	
+	/**
+	 * 返回当前登录的用户，如果该用户注销，则返回为null
+	 * @return
+	 */
 	public MyUser getUser()
 	{
 		return mUser;

@@ -47,24 +47,26 @@ public class MessageService extends Service {
 				{
 					ArrayList<MyMessage> messages;
 					MyUser user = DemoApplication.getInstance().getUser();
-					messages = MyServerManager.getInstance().getMessages(user);
-					if(null!=messages)
+					if(null != user)
 					{
-						//MyServerManager.getInstance().removeMessages(user, messages);		
-						NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-						for(MyMessage message : messages)
+						messages = MyServerManager.getInstance().getMessages(user);
+						if(null!=messages)
 						{
-							 Notification noti = new Notification.Builder(MessageService.this)
-					         .setContentTitle("new Message")
-					         .setContentText(message.toString(MessageService.this))
-					         .setSmallIcon(R.drawable.ic_launcher)
-					         .setDefaults(Notification.DEFAULT_SOUND)
-					         .build();
-							 nm.notify("test", 0, noti);
-						}
+							//MyServerManager.getInstance().removeMessages(user, messages);		
+							NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+							for(MyMessage message : messages)
+							{
+								 Notification noti = new Notification.Builder(MessageService.this)
+						         .setContentTitle("new Message")
+						         .setContentText(message.toString(MessageService.this))
+						         .setSmallIcon(R.drawable.ic_launcher)
+						         .setDefaults(Notification.DEFAULT_SOUND)
+						         .build();
+								 nm.notify("test", 0, noti);
+							}
 
+						}						
 					}
-
 					try {
 						Thread.sleep(10000);
 					} catch (InterruptedException e) {
