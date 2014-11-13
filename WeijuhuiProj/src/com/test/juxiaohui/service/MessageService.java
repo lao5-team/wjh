@@ -47,6 +47,7 @@ public class MessageService extends Service {
 				{
 					ArrayList<MyMessage> messages;
 					MyUser user = DemoApplication.getInstance().getUser();
+					/**/
 					if(null != user)
 					{
 						messages = MyServerManager.getInstance().getMessages(user);

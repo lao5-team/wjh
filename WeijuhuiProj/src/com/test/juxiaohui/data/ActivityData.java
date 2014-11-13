@@ -151,7 +151,7 @@ public class ActivityData implements Serializable {
 		
 		ArrayList<MyUser> users = new ArrayList<MyUser>();
 		MyUser testGuest = new MyUser();
-		testGuest.mName = "2";
+		testGuest.mName = "rlk";
 		users.add(testGuest);
 			try {
 				ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2014年1月1日16时")
