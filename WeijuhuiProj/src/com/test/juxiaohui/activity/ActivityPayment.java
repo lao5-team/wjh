@@ -50,7 +50,7 @@ public class ActivityPayment extends Activity {
 		mImg = (ImageView)findViewById(R.id.imageView_payment);
 		Picasso.with(this).load(mImgUrl).into(mImg);
 		
-		mTvSum = (TextView)findViewById(R.id.textView_sum);
+		mTvSum = (TextView)findViewById(R.id.textView_finish_activity);
 		mTvSum.setText(String.format("%s元", mSum));
 		
 	}

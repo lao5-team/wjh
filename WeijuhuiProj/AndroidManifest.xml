@@ -87,6 +87,8 @@
         <activity android:name="com.test.juxiaohui.activity.PhotoSelectActivity"
             android:theme="@style/horizontal_slide"></activity>
         <activity android:name="com.test.juxiaohui.activity.ActivityPayment"></activity>
+        <activity android:name=".activity.MessagesActivity" android:theme="@style/horizontal_slide"></activity>
+        <activity android:name=".activity.ActivityListActivity"></activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

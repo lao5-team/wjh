@@ -44,27 +44,29 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:background="@drawable/app_pref_bg"
-        android:text="TextView" />
+        android:text="@string/none_intro_content" />
 
     <TextView
-        android:id="@+id/textView_creator_name"
+        android:id="@+id/textView_doing_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView_introContent"
         android:layout_below="@+id/textView_introContent"
         android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
-        android:text="TextView" />
+        android:clickable="true"
+        android:text="@string/doing_activity" />
 
     <TextView
-        android:id="@+id/textView_sum"
+        android:id="@+id/textView_finish_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView_creator_name"
-        android:layout_below="@+id/textView_creator_name"
+        android:layout_alignLeft="@+id/textView_doing_activity"
+        android:layout_below="@+id/textView_doing_activity"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:text="TextView" />
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:text="@string/finish_activity" />
 
     <Button
         android:id="@+id/button_logout"
@@ -74,5 +76,24 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="19dp"
         android:text="@string/logout" />
+
+    <ImageButton
+        android:id="@+id/imageButton_finish_activity"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@+id/textView_finish_activity"
+        android:layout_alignRight="@+id/textView_introContent"
+        android:background="@drawable/next"
+        android:scaleType="fitCenter" />
+
+    <ImageButton
+        android:id="@+id/imageButton_doing_activity"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@id/textView_doing_activity"
+        android:layout_alignLeft="@+id/imageButton_finish_activity"
+        android:layout_alignRight="@id/textView_introContent"
+        android:background="@drawable/next"
+        android:scaleType="fitCenter" />
 
 </RelativeLayout>

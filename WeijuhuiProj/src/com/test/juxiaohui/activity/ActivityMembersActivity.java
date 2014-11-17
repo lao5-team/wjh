@@ -14,7 +14,7 @@ import com.test.juxiaohui.adapter.ActivityMemberSelectAdapter;
 import com.test.juxiaohui.adapter.ActivityMemberStateAdapter;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
-import com.test.juxiaohui.domain.ActivityManager;
+import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.widget.Sidebar;
 import com.test.juxiaohui.R;
 

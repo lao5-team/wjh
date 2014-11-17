@@ -1,10 +1,14 @@
 package com.test.juxiaohui.activity;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import com.test.juxiaohui.adapter.ActivityAdapter;
 import com.test.juxiaohui.adapter.ActivityCategoryAdapter;
+import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.activity.ActivityManager;
+import com.test.juxiaohui.domain.activity.IActivityLoader;
 import com.test.juxiaohui.R;
 
 import android.content.Intent;
@@ -57,7 +61,7 @@ public class NavigationFragment extends Fragment {
 		mCategoryAdapter = new ActivityCategoryAdapter(getActivity());
 		mCategoryAdapter.setData(mCategories);
 
-		mHotActivityAdapter = new ActivityAdapter(this);
+		mHotActivityAdapter = new ActivityAdapter(this, null);
 		
 		mCity = "北京";
 		

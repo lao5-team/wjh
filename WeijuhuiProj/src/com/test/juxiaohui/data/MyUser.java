@@ -42,6 +42,10 @@ public class MyUser implements Serializable {
 			obj.put("sex", user.mSex);
 			//obj.put("state", user.mActivityState);
 			obj.put("imgUrl", user.mImgUrl);
+			if(user.mID != null)
+			{
+				obj.put("id", user.mID);
+			}
 			
 			/*put doing activities*/
 			//JSONArray doingActivities = new JSONArray(user.mDoingActivities);
@@ -67,7 +71,10 @@ public class MyUser implements Serializable {
 			user.mSex = obj.getString("sex");
 			//user.mActivityState = obj.getInt("state");
 			user.mImgUrl = obj.getString("imgUrl");
-			
+			if(obj.has("id"))
+			{
+				user.mID = obj.getString("id");
+			}
 			/*get doing activities*/
 //			JSONArray doingActivities = obj.getJSONArray("doingActivities");
 //			for(int i=0; i<doingActivities.length(); i++)

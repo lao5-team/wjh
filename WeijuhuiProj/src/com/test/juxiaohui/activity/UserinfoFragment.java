@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +57,8 @@ public class UserinfoFragment extends Fragment {
 	private ImageView mImgAvatar;
 	private TextView mTvName;
 	private Button mBtnLogout;
+	private TextView mTvDoing;
+	private TextView mTvFinish;
 	
 	public UserinfoFragment(MyUser user)
 	{
@@ -97,6 +100,29 @@ public class UserinfoFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				showDialog();
+			}
+		});
+		
+		mTvDoing = (TextView)getView().findViewById(R.id.textView_doing_activity);
+		mTvDoing.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), ActivityListActivity.class);
+				intent.putExtra("user_id", mUser.mID);
+				intent.putExtra("type", ActivityListActivity.TYPE_DOING);
+				getActivity().startActivity(intent);
+			}
+		});
+		mTvFinish = (TextView)getView().findViewById(R.id.textView_finish_activity);
+		mTvFinish.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), ActivityListActivity.class);
+				intent.putExtra("user_id", mUser.mID);
+				intent.putExtra("type", ActivityListActivity.TYPE_FINISH);
+				getActivity().startActivity(intent);				
 			}
 		});
 		

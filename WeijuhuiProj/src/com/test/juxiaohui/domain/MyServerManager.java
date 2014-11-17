@@ -487,6 +487,7 @@ public class MyServerManager {
 											httpResponse.getEntity(), "utf-8"));
 							activityData = ActivityData.fromJSON(jsonObj
 									.getJSONObject("data"));
+							activityData.mID = fId;
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -519,7 +520,7 @@ public class MyServerManager {
 	 * @param activityId
 	 *            活动id
 	 * @param field
-	 *            活动的field doing_activity, finish_activity
+	 *            活动的field 正在进行中的活动"doing_activity", 完成的活动"finish_activity"
 	 * @return 是否成功
 	 */
 	public boolean addUserActivity(String userId, String activityId,

@@ -252,6 +252,7 @@ public class LoginActivity extends BaseActivity {
 		/*调用自己的服务器逻辑login*/
 		MyServerManager.getInstance().login(DemoApplication.getInstance().getUserName());
 		MyUser user = MyServerManager.getInstance().getUserInfo(DemoApplication.getInstance().getUserName());
+		MyServerManager.getInstance().updateUserInfo(user);
 		DemoApplication.getInstance().setUser(user);
 	}
 }

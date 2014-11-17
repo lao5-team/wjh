@@ -16,7 +16,8 @@ import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.DianpingDataHelper;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
-import com.test.juxiaohui.domain.ActivityManager;
+import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.R.id;
 import com.test.juxiaohui.R.layout;
@@ -35,6 +36,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 /**
  * @author yh
  * 1 显示活动的详细内容和地点
@@ -44,6 +46,7 @@ import android.widget.TextView;
  */
 public class ActivityDetailActivity extends FragmentActivity {
 
+	
 	//data
 	private ComplexBusiness mCBData;
 	private int mActivityIndex;
@@ -64,8 +67,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 	//Handler
 	private Handler mUIHandler;
 	private ArrayList<MyUser> mFriends = new ArrayList<MyUser>();
-
-	
+	private ActivityData mData;
 	private void updateFriendsUI()
 	{
 		String result = "";
@@ -87,13 +89,27 @@ public class ActivityDetailActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstance)
 	{
 		super.onCreate(savedInstance);
-
+		
 		initData();
 		initUI();
 	}
 	
 	private void initData()
 	{
+		/*test code begin*/
+		final Intent intent = getIntent();
+		String activity_id = intent.getStringExtra("activity id");
+		if(null!=activity_id && activity_id.length()>0)
+		{
+			ActivityData data = MyServerManager.getInstance().getActivity(activity_id);
+			if(data == null)
+			{
+				Toast.makeText(this, "找不到活动内容", Toast.LENGTH_SHORT).show();
+			}
+			mData = data;
+			Log.v(DemoApplication.TAG, ActivityData.toJSON(data).toString());
+		}
+		/*test code end*/
 		mUIHandler = new Handler()
 		{
 			@Override
@@ -102,7 +118,6 @@ public class ActivityDetailActivity extends FragmentActivity {
 				updateUI();
 			}
 		};
-		final Intent intent = getIntent();
 		mActivityIndex = intent.getIntExtra("activityIndex", -1);
 		
 		if(-1 != mActivityIndex)
@@ -139,11 +154,6 @@ public class ActivityDetailActivity extends FragmentActivity {
 			});
 			t.start();
 		}
-		
-		/*else
-		{
-			finish();
-		}*/
 	}
 	
 	private void initUI()
@@ -152,64 +162,73 @@ public class ActivityDetailActivity extends FragmentActivity {
 		mView = layout;
 		setContentView(layout);
 		
-		mTvName = (TextView) layout.findViewById(R.id.textView_name);
+		mTvName = (TextView) layout.findViewById(R.id.textView_title_sub);
+		mTvName.setText(mData.mTitle);
 		
-		mImgContent = (ImageView) layout.findViewById(R.id.imageView_img);
+		mTvFriends = (TextView) layout.findViewById(R.id.button_select_friends);
+		String userNames = mData.mCreator.mName;
 		
-		mLayoutAddress = (RelativeLayout) layout.findViewById(R.id.relativeLayout_address);
-		
-		mTvAddress = (TextView) layout.findViewById(R.id.textView_address);
-		
-		mLayoutPhone = (RelativeLayout) layout.findViewById(R.id.relativeLayout_phone);
-		
-		mTvPhone = (TextView) layout.findViewById(R.id.textView_phone);
-		
-		mBtnAddFriends = (Button) layout.findViewById(R.id.button_addFriends);
-		mBtnAddFriends.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(ActivityDetailActivity.this, ActivityMembersActivity.class);
-				Bundle bundle = new Bundle();
-				bundle.putSerializable("members", mFriends);
-				intent.putExtra("members", bundle);
-				startActivityForResult(intent, 0);
-			}
-		});
-		
-		mTvFriends = (TextView) layout.findViewById(R.id.textView_friends);
-		
-		mBtnConfirm = (Button) layout.findViewById(R.id.button_confirm);
-		mBtnConfirm.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				MyUser currentUser = new MyUser();
-				currentUser.mName = DemoApplication.getInstance().getUserName();
-				ActivityData data = new ActivityData.ActivityBuilder().setComplexBusiness(mCBData).setUsers(mFriends).setCreator(currentUser).create();
-				if(mFriends.size() == 1)
-				{
-					sendActivityToSingle(data);
-				}
-				else if(mFriends.size() > 1)
-				{
-					sendActivityToGroup(data);
-				}
-				//ActivityManager.getInstance().addActivity(data);
-				ActivityDetailActivity.this.setResult(Activity.RESULT_OK);
-				ActivityDetailActivity.this.finish();
-			}
-			
-		});
-		
-		mBtnCancel = (Button)layout.findViewById(R.id.button_cancel);
-		mBtnCancel.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				ActivityDetailActivity.this.finish();
-			}
-		});
+		for(MyUser user:mData.mUsers)
+		{
+			userNames += ", " + user.mName;
+		}
+		mTvFriends.setText(userNames);
+//		mImgContent = (ImageView) layout.findViewById(R.id.imageView_img);
+//		
+//		mLayoutAddress = (RelativeLayout) layout.findViewById(R.id.relativeLayout_address);
+//		
+//		mTvAddress = (TextView) layout.findViewById(R.id.textView_address);
+//		
+//		mLayoutPhone = (RelativeLayout) layout.findViewById(R.id.relativeLayout_phone);
+//		
+//		mTvPhone = (TextView) layout.findViewById(R.id.textView_phone);
+//		
+//		mBtnAddFriends = (Button) layout.findViewById(R.id.button_addFriends);
+//		mBtnAddFriends.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				Intent intent = new Intent(ActivityDetailActivity.this, ActivityMembersActivity.class);
+//				Bundle bundle = new Bundle();
+//				bundle.putSerializable("members", mFriends);
+//				intent.putExtra("members", bundle);
+//				startActivityForResult(intent, 0);
+//			}
+//		});
+//		
+//		mTvFriends = (TextView) layout.findViewById(R.id.textView_friends);
+//		
+//		mBtnConfirm = (Button) layout.findViewById(R.id.button_confirm);
+//		mBtnConfirm.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				MyUser currentUser = new MyUser();
+//				currentUser.mName = DemoApplication.getInstance().getUserName();
+//				ActivityData data = new ActivityData.ActivityBuilder().setComplexBusiness(mCBData).setUsers(mFriends).setCreator(currentUser).create();
+//				if(mFriends.size() == 1)
+//				{
+//					sendActivityToSingle(data);
+//				}
+//				else if(mFriends.size() > 1)
+//				{
+//					sendActivityToGroup(data);
+//				}
+//				//ActivityManager.getInstance().addActivity(data);
+//				ActivityDetailActivity.this.setResult(Activity.RESULT_OK);
+//				ActivityDetailActivity.this.finish();
+//			}
+//			
+//		});
+//		
+//		mBtnCancel = (Button)layout.findViewById(R.id.button_cancel);
+//		mBtnCancel.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				ActivityDetailActivity.this.finish();
+//			}
+//		});
 		
 	}
 	

@@ -56,6 +56,19 @@ public class MyMessage implements Serializable {
 		
 	}
 	
+    /**  <p>
+     *   从JSONObject转化MyMessage对象，该方法会自动识别MyMessage的type，并向相应的子类型进行转换
+     *   </p>
+     *   <p>
+     * 		
+     *      if(json.getString("type").equals("activity"))
+			{
+				return ActivityMessage.fromJSON(json);
+			}
+		  </p>
+     * @param json
+     * @return
+     */
     public static MyMessage fromJSON(JSONObject json)
 	{
     	try {

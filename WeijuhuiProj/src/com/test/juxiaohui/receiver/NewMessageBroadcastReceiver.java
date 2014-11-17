@@ -11,8 +11,8 @@ import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.data.message.MyMessage;
-import com.test.juxiaohui.domain.ActivityManager;
 import com.test.juxiaohui.domain.MessageManager;
+import com.test.juxiaohui.domain.activity.ActivityManager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

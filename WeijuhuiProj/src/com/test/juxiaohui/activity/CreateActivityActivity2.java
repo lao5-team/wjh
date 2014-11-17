@@ -18,9 +18,9 @@ import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.data.message.MyMessage;
-import com.test.juxiaohui.domain.ActivityManager;
 import com.test.juxiaohui.domain.MessageManager;
 import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.R;
 
 import android.app.Activity;
@@ -49,8 +49,7 @@ public class CreateActivityActivity2 extends Activity {
 	
 	//Data
 	private ActivityData mActivityData;
-	private String mActivityID;
-	private com.test.juxiaohui.domain.Activity mActivity;
+	private com.test.juxiaohui.domain.activity.Activity mActivity;
 	private ComplexBusiness mComplexBusiness;
 	private Date mBeginDate;
 	private int mUse;
@@ -141,7 +140,7 @@ public class CreateActivityActivity2 extends Activity {
 					if(createActivityData())
 					{
 						mActivityData.mCreator = DemoApplication.getInstance().getUser();
-						com.test.juxiaohui.domain.Activity activity = ActivityManager.getInstance().createActivity(mActivityData);
+						com.test.juxiaohui.domain.activity.Activity activity = ActivityManager.getInstance().createActivity(mActivityData);
 						activity.startActivity();
 						CreateActivityActivity2.this.finish();					
 					}
@@ -158,7 +157,7 @@ public class CreateActivityActivity2 extends Activity {
 		}
 		else if(mActivityData.mState == ActivityData.BEGIN)
 		{
-			if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.Activity.CREATOR))
+			if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.CREATOR))
 			{
 				mBtnOK.setText("确认开始");
 				mBtnOK.setOnClickListener(new OnClickListener() {
@@ -180,7 +179,7 @@ public class CreateActivityActivity2 extends Activity {
 					}
 				});
 			}
-			else if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.Activity.JOINER))
+			else if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.JOINER))
 			{
 				mBtnOK.setText("同意加入");
 				mBtnOK.setOnClickListener(new OnClickListener() {
@@ -205,7 +204,7 @@ public class CreateActivityActivity2 extends Activity {
 		}
 		else if(mActivityData.mState == ActivityData.PROCESSING)
 		{
-			if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.Activity.CREATOR))
+			if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.CREATOR))
 			{
 				mBtnOK.setText("完成");
 				mBtnOK.setOnClickListener(new OnClickListener() {
@@ -227,7 +226,7 @@ public class CreateActivityActivity2 extends Activity {
 					}
 				});
 			}
-			else if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.Activity.JOINER))
+			else if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.JOINER))
 			{
 				mBtnOK.setVisibility(View.INVISIBLE);
 				mBtnOK.setText("同意加入");
@@ -316,7 +315,6 @@ public class CreateActivityActivity2 extends Activity {
 	 */
 	private boolean createActivityData()
 	{
-		mActivityID = MyServerManager.getInstance().getNewActivityID(DemoApplication.getInstance().getUserName());
 		String title;
 		if(mEtxTitle.getEditableText().toString().length() != 0)
 		{
@@ -355,7 +353,7 @@ public class CreateActivityActivity2 extends Activity {
 		{
 			mActivityData = new ActivityData.ActivityBuilder().setTitle(title).setContent(content).
 					setComplexBusiness(mComplexBusiness).setCreator(creator).setBeginTime(mBeginDate).
-					setUsers(mUsers).setID(mActivityID).create();			
+					setUsers(mUsers).create();			
 		}
 		/*3人或以上属于群聊，需要groupID*/
 		else if(mUsers.size()>1)
@@ -371,7 +369,7 @@ public class CreateActivityActivity2 extends Activity {
 				group = EMGroupManager.getInstance().createPrivateGroup("", "", usernames, false);
 				mActivityData = new ActivityData.ActivityBuilder().setTitle(title).setContent(content).
 						setComplexBusiness(mComplexBusiness).setCreator(creator).setBeginTime(mBeginDate).
-						setUsers(mUsers).setID(mActivityID).setGroupID(group.getGroupId()).create();
+						setUsers(mUsers).setGroupID(group.getGroupId()).create();
 			} catch (EaseMobException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

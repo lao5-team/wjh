@@ -4,12 +4,15 @@ import java.util.ArrayList;
 
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.activity.ActivityDetailActivity;
+import com.test.juxiaohui.activity.MessagesActivity;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -22,9 +25,10 @@ import android.os.IBinder;
  */
 public class MessageService extends Service {
 
+	ArrayList<MyMessage> mMessages = new ArrayList<>();
 	public class LocalService extends Binder
 	{
-		MessageService getService()
+		public MessageService getService()
 		{
 			return MessageService.this;
 		}
@@ -53,15 +57,21 @@ public class MessageService extends Service {
 						messages = MyServerManager.getInstance().getMessages(user);
 						if(null!=messages)
 						{
+							mMessages.addAll(messages);
 							//MyServerManager.getInstance().removeMessages(user, messages);		
 							NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 							for(MyMessage message : messages)
 							{
+								 Intent intent = new Intent(MessageService.this, MessagesActivity.class);
+								 
+								 intent.putExtra("Message", message.toJSON().toString());
+								 PendingIntent pi = PendingIntent.getActivity(MessageService.this, MessagesActivity.REQ_NOTIFICATION, intent, Intent.FLAG_ACTIVITY_NEW_TASK);
 								 Notification noti = new Notification.Builder(MessageService.this)
 						         .setContentTitle("new Message")
 						         .setContentText(message.toString(MessageService.this))
 						         .setSmallIcon(R.drawable.ic_launcher)
 						         .setDefaults(Notification.DEFAULT_SOUND)
+						         .setContentIntent(pi)
 						         .build();
 								 nm.notify("test", 0, noti);
 							}
@@ -80,6 +90,11 @@ public class MessageService extends Service {
 		});
 		t.start();
 		
+	}
+	
+	public ArrayList<MyMessage> getMessages()
+	{
+		return mMessages;
 	}
 
 }

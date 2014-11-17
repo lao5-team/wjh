@@ -1,4 +1,4 @@
-package com.test.juxiaohui.domain;
+package com.test.juxiaohui.domain.activity;
 
 import junit.framework.Assert;
 
@@ -7,9 +7,10 @@ import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.message.ActivityMessage;
 import com.test.juxiaohui.data.message.MyMessage;
+import com.test.juxiaohui.domain.MyServerManager;
 
 /**
- * 用来进行活动相关处理的类，该类大部分方法都会涉及到网络通信，应该放到线程中调用
+ * 用来进行活动相关处理的类，该类大部分方法都会涉及到网络通信，建议放到线程中调用
  * @author yh
  *
  */
@@ -18,7 +19,7 @@ public class Activity {
 	public static String JOINER = "joiner";
 	ActivityData mData;
 	
-    Activity(ActivityData data)
+    public Activity(ActivityData data)
 	{
 		Assert.assertNotNull(data);
 		mData = data;
@@ -30,8 +31,8 @@ public class Activity {
 	 */
 	public void startActivity()
 	{
-		Assert.assertTrue(mData.mState == ActivityData.UNBEGIN);
-		mData.mState = ActivityData.BEGIN;
+		//Assert.assertTrue(mData.mState == ActivityData.UNBEGIN);
+		//mData.mState = ActivityData.BEGIN;
 		mData.mID = MyServerManager.getInstance().createActivity(mData);
 		
 		/*该代码是为了增强数据的完整性*/
@@ -41,8 +42,8 @@ public class Activity {
 			mData.mUsers.set(i, user);  
 		}
 		
-		//创建者添加活动
-		MyServerManager.getInstance().addUserActivity(mData.mCreator.mID, mData.mID, "doingActivity");
+		//自己正在进行的活动+1
+		MyServerManager.getInstance().addUserActivity(DemoApplication.getInstance().getUser().mID, mData.mID, "doing_activity");
 		
 		//向被邀请者发送消息
 		ActivityMessage message = new ActivityMessage();
@@ -64,8 +65,8 @@ public class Activity {
 	 */
 	public void confirmActivity()
 	{
-		Assert.assertTrue(mData.mState == ActivityData.BEGIN);
-		mData.mState = ActivityData.PROCESSING;
+		//Assert.assertTrue(mData.mState == ActivityData.BEGIN);
+		//mData.mState = ActivityData.PROCESSING;
 		
 		if(mData.mUsers.size() == 1)
 		{
@@ -119,22 +120,22 @@ public class Activity {
 	 */
 	public void acceptActivity()
 	{
-		for(com.test.juxiaohui.data.MyUser user: mData.mUsers)
-		{
-			if(user.mName.equals(DemoApplication.getInstance().getUserName()))
-			{
-				//user.mActivityState = com.test.juxiaohui.data.MyUser.CONFIRMED;
-			}
-		}
-		if(mData.mUsers.size() == 1)
-		{
-			sendActivityToSingle(mData, "update");
-		}
-		else if(mData.mUsers.size() > 1)
-		{
-			sendActivityToGroup(mData, "update");
-		}	
-		ActivityManager.getInstance().updateActivity(this);
+		//Assert.assertTrue(mData.mState == ActivityData.UNBEGIN);
+		//mData.mState = ActivityData.BEGIN;
+		//mData.mID = MyServerManager.getInstance().createActivity(mData);
+		
+		//向创建者即消息发送者返回消息
+		ActivityMessage message = new ActivityMessage();
+		message.mType = "activity";
+		message.mActivityID = mData.mID;
+		message.mAction = "accept_invite";
+		message.mActivityName = mData.mTitle;
+		message.mFromUser = DemoApplication.getInstance().getUser();
+		MyServerManager.getInstance().sendMessage(mData.mCreator, message);
+		
+		//自己正在进行的活动+1
+		MyServerManager.getInstance().addUserActivity(DemoApplication.getInstance().getUser().mID, message.mActivityID, "doing_activity");
+		
 	}
 	
 	/**
@@ -142,7 +143,14 @@ public class Activity {
 	 */
 	public void refuseActivity()
 	{
-		
+		//向创建者即消息发送者返回消息
+		ActivityMessage message = new ActivityMessage();
+		message.mType = "activity";
+		message.mActivityID = mData.mID;
+		message.mAction = "refuse_invite";
+		message.mActivityName = mData.mTitle;
+		message.mFromUser = DemoApplication.getInstance().getUser();
+		MyServerManager.getInstance().sendMessage(mData.mCreator, message);		
 	}
 	
 	/**

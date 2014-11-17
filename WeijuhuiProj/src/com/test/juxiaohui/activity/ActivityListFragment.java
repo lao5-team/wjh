@@ -14,8 +14,9 @@ import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.adapter.ActivityAdapter;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
-import com.test.juxiaohui.domain.ActivityManager;
-import com.test.juxiaohui.domain.ActivityManager.DataChangedListener;
+import com.test.juxiaohui.domain.activity.ActivityManager;
+import com.test.juxiaohui.domain.activity.ActivityManager.DataChangedListener;
+import com.test.juxiaohui.domain.activity.IActivityLoader;
 import com.test.juxiaohui.R;
 
 import android.content.BroadcastReceiver;
@@ -41,13 +42,25 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class ActivityListFragment extends Fragment {
+	
+	
 	//Data
+	private IActivityLoader mLoader;
 	private ActivityAdapter mAdapter;
 	
 	//UI
 	ImageView mIvAdd;
 	ListView mListActivities;
 	ImageView mIvClear;
+	
+	public ActivityListFragment(IActivityLoader loader)
+	{
+		if(null==loader)
+		{
+			throw new IllegalArgumentException("IActivityLoader can not be null!");
+		}
+		mLoader = loader;
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
@@ -59,23 +72,23 @@ public class ActivityListFragment extends Fragment {
 	
 	private void initData()
 	{
-		mAdapter = new ActivityAdapter(this);
+		mAdapter = new ActivityAdapter(this, mLoader);
 		//mAdapter.setData(ActivityManager.getInstance().getActivities());
-		ActivityManager.getInstance().registerDataChangedListener(new DataChangedListener() {
-			
-			@Override
-			public void onDataChanged() {
-				//mAdapter.setData(ActivityManager.getInstance().getActivities());
-				getActivity().runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						mAdapter.notifyDataSetChanged();
-					}
-				});
-				
-			}
-		});
+//		ActivityManager.getInstance().registerDataChangedListener(new DataChangedListener() {
+//			
+//			@Override
+//			public void onDataChanged() {
+//				//mAdapter.setData(ActivityManager.getInstance().getActivities());
+//				getActivity().runOnUiThread(new Runnable() {
+//					
+//					@Override
+//					public void run() {
+//						mAdapter.notifyDataSetChanged();
+//					}
+//				});
+//				
+//			}
+//		});
 	}
 	
 	private View initUI(LayoutInflater inflater)

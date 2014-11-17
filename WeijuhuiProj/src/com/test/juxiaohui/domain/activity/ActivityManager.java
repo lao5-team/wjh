@@ -1,4 +1,4 @@
-package com.test.juxiaohui.domain;
+package com.test.juxiaohui.domain.activity;
 
 import java.io.File;
 import java.io.FileReader;
@@ -16,7 +16,9 @@ import android.util.Log;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
+import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.message.MyMessage;
+import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.MessageManager.MessageListener;
 
 public class ActivityManager {
@@ -42,29 +44,6 @@ public class ActivityManager {
 	{
 		mActivities = new ArrayList<Activity>();
 		mListeners = new ArrayList<ActivityManager.DataChangedListener>();
-//		MessageListener msglistener = new MessageListener() {
-//			
-//			@Override
-//			public void onReceiveMessage(MyMessage msg) {
-//				ActivityData data = ActivityData.fromJSON(msg.mData);
-//				
-//				if(null != data)
-//				{
-//					Activity activity = createActivity(data);
-//					if(msg.mAction.equals("create"))
-//					{
-//						addActivity(activity);
-//					}
-//					else if(msg.mAction.equals("update"))
-//					{
-//						updateActivity(activity);
-//					}
-//					Log.v(DemoApplication.TAG, "ActivityManager receive activity");
-//				}
-//			}
-//		};
-//		msglistener.filterType = "activity";
-//		MessageManager.getInstance().addMessageListener(msglistener);
 		loadFromFile();
 	}
 	
@@ -104,11 +83,6 @@ public class ActivityManager {
 		return mActivities.get(pos);
 	}
 	
-//	public ArrayList<Activity> getActivities()
-//	{
-//		return mActivities;
-//	}
-	
 	public void registerDataChangedListener(DataChangedListener listener)
 	{
 		if(null != listener)
@@ -133,6 +107,42 @@ public class ActivityManager {
 	{
 		Activity activity = new Activity(data);
 		return activity;
+	}
+	
+	public ArrayList<ActivityData> getHotActivity()
+	{
+		return null;
+	}
+	
+	/**
+	 * 获取User正在进行的活动
+	 * @return
+	 */
+	public ArrayList<ActivityData> getDoingActivities(String userID)
+	{
+		ArrayList<ArrayList<String>> activities = MyServerManager.getInstance().getUserActivity(userID);
+		ArrayList<String> doing_activity = activities.get(0);
+		ArrayList<ActivityData> result = new ArrayList<ActivityData>();
+		for(String id:doing_activity)
+		{
+			result.add(MyServerManager.getInstance().getActivity(id));
+		}
+		return result;
+	}
+
+	/**获取User已经完成的活动
+	 * @return
+	 */
+	public ArrayList<ActivityData> getFinishActivities(String userID)
+	{
+		ArrayList<ArrayList<String>> activities = MyServerManager.getInstance().getUserActivity(userID);
+		ArrayList<String> doing_activity = activities.get(1);
+		ArrayList<ActivityData> result = new ArrayList<ActivityData>();
+		for(String id:doing_activity)
+		{
+			result.add(MyServerManager.getInstance().getActivity(id));
+		}
+		return result;
 	}
 	
 	private void notifyDataChanged()
