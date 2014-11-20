@@ -1,6 +1,8 @@
 package com.test.juxiaohui.activity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMConversation;
@@ -19,6 +21,7 @@ import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.activity.ActivityManager;
+import com.test.juxiaohui.mediator.IActivityDetailMediator;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.R.id;
 import com.test.juxiaohui.R.layout;
@@ -81,13 +84,109 @@ public class ActivityDetailActivity extends FragmentActivity {
 		{
 			return mIntent.getStringExtra("activity_id");
 		}
-		
-		
 	};
 	
 	public static final int USE_CREATE = 4;
 	public static final int USE_EDIT = 5;
 	
+	private IActivityDetailMediator mMediator = new IActivityDetailMediator() {
+		
+		@Override
+		public void showTitle(String title) {
+			mTvName.setText(mData.mTitle);
+		}
+		
+		@Override
+		public void showTime(Date date) {
+			mTvTime.setText( new SimpleDateFormat(ActivityData.dataPattern).format(date));
+		}
+		
+		@Override
+		public void showMembers(ArrayList<MyUser> users) {
+			String result = "聚会参与人员: ";
+			for(int i=0; i<users.size(); i++)
+			{
+				if(i==users.size()-1)
+				{
+					result += users.get(i).mName;
+				}
+				else
+				{
+					result += users.get(i).mName + " , ";
+				}
+			}
+			mTvFriends.setText(result);
+		}
+		
+		@Override
+		public void showContent(String content) {
+			mTvContent.setText(mData.mContent);
+		}
+		
+		@Override
+		public void setActivityData(ActivityData data) {
+			mData = data;
+			showTitle(data.mTitle);
+			showContent(data.mContent);
+			showTime(data.mBeginDate);
+			showMembers(data.mUsers);
+			showPayType(data.mSpentType);
+			if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
+			{
+				mBtnConfirm.setText("完成");
+				mBtnCancel.setText("解散");
+			}
+			else if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.JOINER))
+			{
+				mBtnConfirm.setVisibility(View.GONE);
+				mBtnCancel.setText("退出");				
+			}
+		}
+		
+		@Override
+		public void changeMembers(ArrayList<MyUser> users) {
+			mData.mUsers = users;
+			showMembers(users);
+		}
+
+		@Override
+		public void showPayType(int type) {
+			if(mData.mSpentType == 0)
+			{
+				mCBPayMe.setChecked(true);
+			}
+			if(mData.mSpentType == 1)
+			{
+				mCBPayAA.setChecked(true);
+			}
+			if(mData.mSpentType == 2)
+			{
+				mCBPayOther.setChecked(true);
+			}
+		}
+
+		@Override
+		public void onOKClicked() {
+			if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
+			{
+				DemoApplication.getInstance().getUser().finishActivity(mData);
+			}
+		}
+
+		@Override
+		public void onCancelClicked() {
+			if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
+			{
+				DemoApplication.getInstance().getUser().dismissActivity(mData);
+			}
+			else if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.JOINER))
+			{
+				DemoApplication.getInstance().getUser().quitActivity(mData);
+			}
+		}
+
+
+	};
 	//data
 	private ComplexBusiness mCBData;
 	private int mActivityIndex;
@@ -102,6 +201,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 	private TextView mTvPhone;
 	private Button mBtnAddFriends;
 	private TextView mTvFriends;
+	private TextView mTvTime;
 	private Button mBtnConfirm;
 	private Button mBtnCancel;
 	private TextView mTvContent;
@@ -109,24 +209,11 @@ public class ActivityDetailActivity extends FragmentActivity {
 	private CheckBox mCBPayAA;
 	private CheckBox mCBPayOther;	
 	//Handler
-	private Handler mUIHandler;
 	private ArrayList<MyUser> mFriends = new ArrayList<MyUser>();
 	private ActivityData mData;
 	private void updateFriendsUI()
 	{
-		String result = "";
-		for(int i=0; i<mFriends.size(); i++)
-		{
-			if(i==mFriends.size()-1)
-			{
-				result += mFriends.get(i).mName;
-			}
-			else
-			{
-				result += mFriends.get(i).mName + " , ";
-			}
-		}
-		mTvFriends.setText(result);
+
 	}
 	
 	@Override
@@ -134,31 +221,21 @@ public class ActivityDetailActivity extends FragmentActivity {
 	{
 		super.onCreate(savedInstance);
 		
-		initData();
 		initUI();
+		initData();
 	}
 	
 	private void initData()
 	{
 		/*test code begin*/
-			Intent intent =  getIntent();
-			IntentBuilder ib = new IntentBuilder(intent);
-			mData = MyServerManager.getInstance().getActivity(ib.getActivityID());
-			if(mData == null)
-			{
-				Toast.makeText(this, "找不到活动内容", Toast.LENGTH_SHORT).show();
-				
-			}
-		/*test code end*/
-		mUIHandler = new Handler()
-		{
-			@Override
-			public void handleMessage(Message msg)
-			{
-				updateUI();
-			}
-		};
-		mActivityIndex = intent.getIntExtra("activityIndex", -1);
+		Intent intent = getIntent();
+		IntentBuilder ib = new IntentBuilder(intent);
+		mData = MyServerManager.getInstance().getActivity(ib.getActivityID());
+		if (mData == null) {
+			Toast.makeText(this, "找不到活动内容", Toast.LENGTH_SHORT).show();
+
+		}
+		mMediator.setActivityData(mData);
 		
 	}
 	
@@ -169,44 +246,23 @@ public class ActivityDetailActivity extends FragmentActivity {
 		setContentView(layout);
 		
 		mTvName = (TextView) layout.findViewById(R.id.textView_title_sub);
-		mTvName.setText(mData.mTitle);
+
+		mTvTime = (TextView)layout.findViewById(R.id.button_select_date);
 		
 		mTvContent = (TextView)layout.findViewById(R.id.editText_content_sub);
-		mTvContent.setText(mData.mContent);
 		
 		mTvFriends = (TextView) layout.findViewById(R.id.button_select_friends);
-		
-		String userNames = "活动参与者: ";
-		for(MyUser user:mData.mUsers)
-		{
-			userNames += user.mName;
-		}
-		mTvFriends.setText(userNames);
 		
 		mCBPayMe = (CheckBox)findViewById(R.id.checkBox_pay_me);
 		mCBPayAA = (CheckBox)findViewById(R.id.checkBox_pay_aa);
 		mCBPayOther = (CheckBox)findViewById(R.id.checkBox_pay_other);
-		
-		if(mData.mSpentType == 0)
-		{
-			mCBPayMe.setChecked(true);
-		}
-		if(mData.mSpentType == 1)
-		{
-			mCBPayAA.setChecked(true);
-		}
-		if(mData.mSpentType == 2)
-		{
-			mCBPayOther.setChecked(true);
-		}
 		
 		mBtnConfirm = (Button)findViewById(R.id.button_OK);
 		mBtnConfirm.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				com.test.juxiaohui.domain.activity.Activity activity = ActivityManager.getInstance().createActivity(mData);
-				activity.finishActivity();
+				mMediator.onOKClicked();
 				ActivityDetailActivity.this.finish();
 			}
 		});
@@ -216,114 +272,16 @@ public class ActivityDetailActivity extends FragmentActivity {
 			
 			@Override
 			public void onClick(View v) {
-				com.test.juxiaohui.domain.activity.Activity activity = ActivityManager.getInstance().createActivity(mData);
-				activity.dismissActivity();
+				mMediator.onCancelClicked();
 				ActivityDetailActivity.this.finish();				
 			}
 		});
-//		mImgContent = (ImageView) layout.findViewById(R.id.imageView_img);
-//		
-//		mLayoutAddress = (RelativeLayout) layout.findViewById(R.id.relativeLayout_address);
-//		
-//		mTvAddress = (TextView) layout.findViewById(R.id.textView_address);
-//		
-//		mLayoutPhone = (RelativeLayout) layout.findViewById(R.id.relativeLayout_phone);
-//		
-//		mTvPhone = (TextView) layout.findViewById(R.id.textView_phone);
-//		
-//		mBtnAddFriends = (Button) layout.findViewById(R.id.button_addFriends);
-//		mBtnAddFriends.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(ActivityDetailActivity.this, ActivityMembersActivity.class);
-//				Bundle bundle = new Bundle();
-//				bundle.putSerializable("members", mFriends);
-//				intent.putExtra("members", bundle);
-//				startActivityForResult(intent, 0);
-//			}
-//		});
-//		
-//		mTvFriends = (TextView) layout.findViewById(R.id.textView_friends);
-//		
-//		mBtnConfirm = (Button) layout.findViewById(R.id.button_confirm);
-//		mBtnConfirm.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				MyUser currentUser = new MyUser();
-//				currentUser.mName = DemoApplication.getInstance().getUserName();
-//				ActivityData data = new ActivityData.ActivityBuilder().setComplexBusiness(mCBData).setUsers(mFriends).setCreator(currentUser).create();
-//				if(mFriends.size() == 1)
-//				{
-//					sendActivityToSingle(data);
-//				}
-//				else if(mFriends.size() > 1)
-//				{
-//					sendActivityToGroup(data);
-//				}
-//				//ActivityManager.getInstance().addActivity(data);
-//				ActivityDetailActivity.this.setResult(Activity.RESULT_OK);
-//				ActivityDetailActivity.this.finish();
-//			}
-//			
-//		});
-//		
-//		mBtnCancel = (Button)layout.findViewById(R.id.button_cancel);
-//		mBtnCancel.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				ActivityDetailActivity.this.finish();
-//			}
-//		});
 		
 	}
 	
-	private void updateUI()
-	{
-		mTvName.setText(mCBData.mName + mCBData.mBranchName);
-		Picasso.with(this).load(mCBData.mImgUrl).into(mImgContent);
-		if(null!=mCBData.mAddress)
-		{
-			mTvAddress.setText(mCBData.mAddress);
-		}
-		else
-		{
-			mLayoutAddress.setVisibility(View.INVISIBLE);
-		}
-		if(null!=mCBData.mPhoneNumber)
-		{
-			mTvPhone.setText(mCBData.mPhoneNumber);
-		}
-		else
-		{
-			mLayoutPhone.setVisibility(View.INVISIBLE);
-		}
-		String buffer = "";
-		if(mFriends.size() > 1)
-		{
-			for(int i=0; i<mFriends.size() - 1; i++)
-			{
-				buffer += mFriends.get(i) + " , ";
-			}			
-		}
-
-		if(mFriends.size() > 0)
-		{
-			buffer += mFriends.get(mFriends.size()-1);
-		}
-		
-		mTvFriends.setText(buffer);
-		
-
-		mView.invalidate();
-		
-	}
 	
 	private void sendActivityToSingle(ActivityData data)
 	{
-		
 		EMConversation conversation = EMChatManager.getInstance().getConversation(data.mUsers.get(0).mName);
 		
 		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
@@ -379,7 +337,4 @@ public class ActivityDetailActivity extends FragmentActivity {
 		}
 
 	}
-	
-	
-	
 }

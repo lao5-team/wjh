@@ -57,6 +57,15 @@ public class ActivityAdapter extends BaseAdapter {
 		
 	}
 	
+	public void refresh()
+	{
+		if(null != mLoader)
+		{
+			mActivityList = mLoader.getActivityList();
+		}
+		this.notifyDataSetChanged();
+	}
+	
 	
 	@Override
 	public int getCount() {

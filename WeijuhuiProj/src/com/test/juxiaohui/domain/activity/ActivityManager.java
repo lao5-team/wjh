@@ -23,7 +23,7 @@ import com.test.juxiaohui.domain.MessageManager.MessageListener;
 
 public class ActivityManager {
 	private static ActivityManager mInstance = null;
-	private ArrayList<Activity> mActivities = null;
+	private ArrayList<ActivityData> mActivityList = null;
 	private ArrayList<DataChangedListener> mListeners;
 	
 	public static interface DataChangedListener
@@ -42,31 +42,31 @@ public class ActivityManager {
 	
 	private ActivityManager()
 	{
-		mActivities = new ArrayList<Activity>();
+		mActivityList = new ArrayList<ActivityData>();
 		mListeners = new ArrayList<ActivityManager.DataChangedListener>();
 		loadFromFile();
 	}
 	
-	public void addActivity(Activity activity)
+	public void addActivity(ActivityData activity)
 	{
-		mActivities.add(activity);
+		mActivityList.add(activity);
 		notifyDataChanged();
 		saveToFile();
 	}
 	
-	public void removeActivity(Activity activity)
+	public void removeActivity(ActivityData activity)
 	{
-		mActivities.remove(activity);
+		mActivityList.remove(activity);
 		notifyDataChanged();
 	}
 	
-	public void updateActivity(Activity activity)
+	public void updateActivity(ActivityData activity)
 	{
-		for(int i=0; i<mActivities.size(); i++)
+		for(int i=0; i<mActivityList.size(); i++)
 		{
-			if(mActivities.get(i).mData.mID.equals(activity.mData.mID))
+			if(mActivityList.get(i).mID.equals(activity.mID))
 			{
-				mActivities.set(i, activity);
+				mActivityList.set(i, activity);
 			}
 		}
 		notifyDataChanged();
@@ -75,12 +75,12 @@ public class ActivityManager {
 	
 	public int getActivitySize()
 	{
-		return mActivities.size();
+		return mActivityList.size();
 	}
 	
-	public Activity getActivity(int pos)
+	public ActivityData getActivity(int pos)
 	{
-		return mActivities.get(pos);
+		return mActivityList.get(pos);
 	}
 	
 	public void registerDataChangedListener(DataChangedListener listener)
@@ -99,15 +99,6 @@ public class ActivityManager {
 		}
 	}
 	
-	/** 创建一个新的活动
-	 * @param data 活动数据,不允许为空。 {@link ActivityData}
-	 * @return 返回新的活动 {@link Activity}
-	 */
-	public Activity createActivity(ActivityData data)
-	{
-		Activity activity = new Activity(data);
-		return activity;
-	}
 	
 	/**
 	 * 返回最近的活动
@@ -172,14 +163,13 @@ public class ActivityManager {
 			FileWriter fw = new FileWriter(DemoApplication.getInstance().getCacheDir() + File.separator + "activities.txt");
 			JSONObject obj = new JSONObject();
 			JSONArray array = new JSONArray();
-			for(int i=0; i<mActivities.size(); i++)
+			for(int i=0; i<mActivityList.size(); i++)
 			{
-				array.put(ActivityData.toJSON(mActivities.get(i).mData));
+				array.put(ActivityData.toJSON(mActivityList.get(i)));
 			}
 			try {
 				obj.put("activities", array);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			fw.write(obj.toString());
@@ -211,7 +201,7 @@ public class ActivityManager {
 				for(int i=0; i<array.length(); i++)
 				{
 					ActivityData data = ActivityData.fromJSON(array.getJSONObject(i));
-					mActivities.add(createActivity(data));
+					mActivityList.add(data);
 				}				
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -226,7 +216,7 @@ public class ActivityManager {
 	{
 		File file = new File(DemoApplication.getInstance().getCacheDir() + File.separator + "activities.txt");
 		file.delete();
-		mActivities.clear();
+		mActivityList.clear();
 		notifyDataChanged();
 	}
 

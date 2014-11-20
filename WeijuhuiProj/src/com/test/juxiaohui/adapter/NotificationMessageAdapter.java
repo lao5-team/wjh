@@ -2,13 +2,13 @@ package com.test.juxiaohui.adapter;
 
 import java.util.ArrayList;
 
+import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.activity.ActivityDetailActivity;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.message.ActivityMessage;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
-import com.test.juxiaohui.domain.activity.Activity;
 import com.test.juxiaohui.domain.activity.ActivityManager;
 
 import android.content.Context;
@@ -87,14 +87,13 @@ public class NotificationMessageAdapter extends BaseAdapter {
 		});
 		if(message instanceof ActivityMessage)
 		{
-			ActivityData data = MyServerManager.getInstance().getActivity(((ActivityMessage)message).mActivityID);
-			final Activity activity = ActivityManager.getInstance().createActivity(data);
+			final ActivityData data = MyServerManager.getInstance().getActivity(((ActivityMessage)message).mActivityID);
 			button.setText("接受");
 			button.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
-					activity.acceptActivity();
+					DemoApplication.getInstance().getUser().acceptActivity(data);
 					mMessages.remove(message);
 					((android.app.Activity)mContext).finish();
 				}
@@ -104,7 +103,7 @@ public class NotificationMessageAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					activity.refuseActivity();
+					DemoApplication.getInstance().getUser().refuseActivity(data);
 					mMessages.remove(message);
 					((android.app.Activity)mContext).finish();
 				}

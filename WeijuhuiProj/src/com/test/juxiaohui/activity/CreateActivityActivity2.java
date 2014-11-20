@@ -89,7 +89,6 @@ public class CreateActivityActivity2 extends Activity {
 	private CheckBox mCBPayOther;
 	//Data
 	private ActivityData mActivityData;
-	private com.test.juxiaohui.domain.activity.Activity mActivity;
 	private ComplexBusiness mComplexBusiness;
 	private Date mBeginDate;
 	private int mUseType;
@@ -139,7 +138,7 @@ public class CreateActivityActivity2 extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(CreateActivityActivity2.this, ActivityMembersActivity.class);
-				if(mActivity.getData().mStatus == ActivityData.BEGIN)
+				if(mActivityData.mStatus == ActivityData.BEGIN)
 				{
 					intent.putExtra("state", ActivityData.BEGIN);
 				}
@@ -284,8 +283,7 @@ public class CreateActivityActivity2 extends Activity {
 					
 					@Override
 					public void onClick(View v) {
-						com.test.juxiaohui.domain.activity.Activity activity = ActivityManager.getInstance().createActivity(mActivityData);
-						activity.finishActivity();
+						DemoApplication.getInstance().getUser().finishActivity(mActivityData);
 						CreateActivityActivity2.this.finish();		
 					}
 				});	
@@ -316,8 +314,7 @@ public class CreateActivityActivity2 extends Activity {
 					if(createActivityData())
 					{
 						mActivityData.mCreator = DemoApplication.getInstance().getUser();
-						com.test.juxiaohui.domain.activity.Activity activity = ActivityManager.getInstance().createActivity(mActivityData);
-						activity.startActivity();
+						DemoApplication.getInstance().getUser().startActivity(mActivityData);
 						CreateActivityActivity2.this.finish();					
 					}
 				}

@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView.FindListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -36,6 +37,7 @@ public class NavigationFragment extends Fragment {
 	GridView mGVCategory;
 	ListView mLvActivity;
 	ImageButton mIbNew;
+	Button mBtnRefresh;
 	
 	//data
 	String mCity;
@@ -114,6 +116,15 @@ public class NavigationFragment extends Fragment {
 				ib.setUseType(CreateActivityActivity2.USE_CREATE);
 				intent.setClass(getActivity(), CreateActivityActivity2.class);
 				getActivity().startActivity(intent);
+			}
+		});
+		
+		mBtnRefresh = (Button)getView().findViewById(R.id.button_refresh);
+		mBtnRefresh.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mRecentActivityAdapter.refresh();
 			}
 		});
 		
