@@ -358,8 +358,9 @@ public class MyServerManager {
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
 							mUser.mName, mToken));
-					post.setEntity(new StringEntity(ActivityData.toJSON(fData)
-							.toString(), "utf-8"));
+					String str = ActivityData.toJSON(fData)
+							.toString();
+					post.setEntity(new StringEntity(str, "utf-8"));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						try {
@@ -457,8 +458,8 @@ public class MyServerManager {
 	/**
 	 * 获取一条活动数据
 	 * 
-	 * @param id
-	 *            活动id
+	 * @param id 活动id
+	 *            
 	 * @return 活动数据，如果此id不存在，则返回null
 	 */
 
@@ -514,6 +515,69 @@ public class MyServerManager {
 		}			
 	}
 
+	/**
+	 * 返回全部活动数据
+	 * 
+	 *            
+	 * @return 活动数据，如果此id不存在，则返回null
+	 */
+
+	public ArrayList<ActivityData> getAllActivity() {
+		Callable<ArrayList<ActivityData>> callable = new Callable<ArrayList<ActivityData>>() {
+			@Override
+			public ArrayList<ActivityData> call() throws Exception {
+				ActivityData activityData = null;
+				ArrayList<ActivityData> result = null;
+				String url = String.format(
+						"%s/db?action=get_all_activity&table=activity", IP_ADDRESS);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUser.mName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						result = new ArrayList<ActivityData>();
+						try {
+							JSONObject jsonObj = new JSONObject(
+									EntityUtils.toString(
+											httpResponse.getEntity(), "utf-8"));
+							JSONArray jsonArr = jsonObj
+									.getJSONArray("data");
+							for(int i=0; i<jsonArr.length(); i++)
+							{
+								JSONObject jsonData = jsonArr.getJSONObject(i);
+								activityData = ActivityData.fromJSON(jsonData.getJSONObject("data"));
+								activityData.mID = jsonData.getString("_id");		
+								result.add(activityData);
+							}
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				return result;
+			}
+		};
+		Future<ArrayList<ActivityData>>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}			
+	}
+	
 	/**
 	 * @param userId
 	 *            用户id
@@ -575,6 +639,56 @@ public class MyServerManager {
 		
 	}
 
+	/**
+	 * 获取一条活动数据
+	 * 
+	 * @param id 活动id
+	 *            
+	 * @return 活动数据，如果此id不存在，则返回null
+	 */
+
+	public boolean removeActivity(String id) {
+		if (null == id) {
+			throw new IllegalArgumentException("id can not be null");
+		}
+		final String fId = id;
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				Boolean result = false;
+				String url = String.format(
+						"%s/db?action=del&table=activity&id=%s", IP_ADDRESS,
+						fId);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUser.mName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						result = true;
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				return result;
+			}
+		};
+		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}			
+	}
 
 	/**
 	 * 获取某个用户的活动列表
@@ -831,6 +945,127 @@ public class MyServerManager {
 			return false;
 		}
 	}
+	
+	/**
+	 * 在用户的Activity列表中删除某一个活动
+	 * @param userId
+	 * @param activityId
+	 * @param sourceField
+	 * @return
+	 */
+	public boolean removeUserActivity(String userId, String activityId, String field)
+	{
+		if (null == userId || null == activityId || null == field) {
+			throw new IllegalArgumentException(
+					"userId or activityId or field can not be null");
+		}
+
+		final String fUserId = userId;
+		final String fActivityID = activityId;
+		final String fField = field;
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			
+			@Override
+			public Boolean call() throws Exception {
+				Boolean result = false;
+				String url = String
+						.format("%s/db?action=remove_user_activity&table=user_activity&user_id=%s&field=%s&activity_id=%s",
+								IP_ADDRESS, fUserId, fField, fActivityID);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUser.mName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						result = true;
+					}
+
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				return result;
+			}
+		};
+		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get().booleanValue();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}		
+		
+	}
+	
+	/**
+	 * 将用户的Activity从一个列表中移到另一个列表里面
+	 * @param userId
+	 * @param activityId
+	 * @param sourceField
+	 * @param destField
+	 * @return
+	 */
+	public boolean moveActivity(String userId, String activityId, String sourceField, String destField)
+	{
+		if (null == userId || null == activityId || null == sourceField || null == destField) {
+			throw new IllegalArgumentException(
+					"userId or activityId or field can not be null");
+		}
+
+		final String fUserId = userId;
+		final String fActivityID = activityId;
+		final String fSourceField = sourceField;
+		final String fDestField = destField;
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			
+			@Override
+			public Boolean call() throws Exception {
+				Boolean result = false;
+				String url = String
+						.format("%s/db?action=move_user_activity&table=user_activity&user_id=%s&field_source=%s&field_dest=%s&activity_id=%s",
+								IP_ADDRESS, fUserId, fSourceField, fDestField, fActivityID);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUser.mName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						result = true;
+					}
+
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				return result;
+			}
+		};
+		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get().booleanValue();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}		
+		
+	}
+	
+	
+	
 	
 	
 }

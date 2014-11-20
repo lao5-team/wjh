@@ -99,9 +99,11 @@ public class ActivityListFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent =new  Intent();
-				intent.putExtra("use", CreateActivityActivity2.INTENT_CREATE);
+				
+				Intent intent = new Intent();
 				intent.setClass(getActivity(), CreateActivityActivity2.class);
+				CreateActivityActivity2.IntentBuilder ib = new CreateActivityActivity2.IntentBuilder(intent);
+				ib.setUseType(CreateActivityActivity2.USE_CREATE);
 				ActivityListFragment.this.startActivityForResult(intent, 0);
 			}
 		});

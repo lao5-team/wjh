@@ -70,8 +70,10 @@ public class MessageService extends Service {
 						         .setContentTitle("new Message")
 						         .setContentText(message.toString(MessageService.this))
 						         .setSmallIcon(R.drawable.ic_launcher)
+						         .setTicker("new Message")
 						         .setDefaults(Notification.DEFAULT_SOUND)
 						         .setContentIntent(pi)
+						         .setAutoCancel(true)
 						         .build();
 								 nm.notify("test", 0, noti);
 							}

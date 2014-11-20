@@ -108,10 +108,10 @@ public class ActivityAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent();
-					//intent.putExtra("business", mActivities.get(pos).mCB);
-					intent.putExtra("activityIndex", pos);
-					intent.putExtra("use", CreateActivityActivity2.INTENT_EDIT);
-					intent.setClass(mFragment.getActivity(), CreateActivityActivity2.class);
+					ActivityDetailActivity.IntentBuilder ib = new ActivityDetailActivity.IntentBuilder(intent);
+					ib.setUseType(ActivityDetailActivity.USE_EDIT);
+					ib.setActivityID(mActivityList.get(pos).mID);
+					intent.setClass(mFragment.getActivity(), ActivityDetailActivity.class);
 					mFragment.startActivityForResult(intent, 0);
 				}
 			});

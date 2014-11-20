@@ -109,25 +109,34 @@ public class ActivityManager {
 		return activity;
 	}
 	
-	public ArrayList<ActivityData> getHotActivity()
+	/**
+	 * 返回最近的活动
+	 * @return 
+	 */
+	public ArrayList<ActivityData> getRecentActivity()
 	{
-		return null;
+		return MyServerManager.getInstance().getAllActivity();
 	}
 	
 	/**
 	 * 获取User正在进行的活动
-	 * @return
+	 * @return 返回正在进行的活动或者null
 	 */
 	public ArrayList<ActivityData> getDoingActivities(String userID)
 	{
 		ArrayList<ArrayList<String>> activities = MyServerManager.getInstance().getUserActivity(userID);
-		ArrayList<String> doing_activity = activities.get(0);
-		ArrayList<ActivityData> result = new ArrayList<ActivityData>();
-		for(String id:doing_activity)
+		if(null!=activities&&activities.size()>0)
 		{
-			result.add(MyServerManager.getInstance().getActivity(id));
+			ArrayList<String> doing_activity = activities.get(0);
+			ArrayList<ActivityData> result = new ArrayList<ActivityData>();
+			for(String id:doing_activity)
+			{
+				result.add(MyServerManager.getInstance().getActivity(id));
+			}
+			return result;			
 		}
-		return result;
+		return null;
+
 	}
 
 	/**获取User已经完成的活动
@@ -135,14 +144,18 @@ public class ActivityManager {
 	 */
 	public ArrayList<ActivityData> getFinishActivities(String userID)
 	{
-		ArrayList<ArrayList<String>> activities = MyServerManager.getInstance().getUserActivity(userID);
-		ArrayList<String> doing_activity = activities.get(1);
-		ArrayList<ActivityData> result = new ArrayList<ActivityData>();
-		for(String id:doing_activity)
-		{
-			result.add(MyServerManager.getInstance().getActivity(id));
+		ArrayList<ArrayList<String>> activities = MyServerManager.getInstance()
+				.getUserActivity(userID);
+		if (null!=activities&&activities.size() > 0) {
+			ArrayList<String> doing_activity = activities.get(1);
+			ArrayList<ActivityData> result = new ArrayList<ActivityData>();
+			for (String id : doing_activity) {
+				result.add(MyServerManager.getInstance().getActivity(id));
+			}
+			return result;
 		}
-		return result;
+		return null;
+		
 	}
 	
 	private void notifyDataChanged()

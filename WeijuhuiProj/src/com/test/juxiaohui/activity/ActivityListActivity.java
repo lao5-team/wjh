@@ -12,7 +12,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-/**
+/** 
+ * 显示用户活动列表的Activity
  * @author yh
  *  需要在intent 中传递字符串"user_id","type"
  */

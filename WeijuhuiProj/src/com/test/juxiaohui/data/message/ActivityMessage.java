@@ -10,17 +10,79 @@ import com.test.juxiaohui.data.MyUser;
 
 /**
  * @author yh
- * 聚会邀请，申请，接受，拒绝相关消息
+ * 活动邀请，申请，接受，拒绝相关消息
  */
 public class ActivityMessage extends MyMessage {
 
-	private static final long serialVersionUID = -6511827765134217999L;
+	public static class MessageBuilder{
+		ActivityMessage mMessage;
+		public MessageBuilder()
+		{
+			mMessage = new ActivityMessage();
+			mMessage.mType = MyMessage.TYPE_ACTIVITY;
+		}
+		
+		public MessageBuilder setAction(String action)
+		{
+			if(null == action)
+			{
+				throw new IllegalArgumentException("setAction aciton can not be null");
+			}
+			mMessage.mAction = action;
+			return this;
+		}
+		
+		public MessageBuilder setActivityID(String id)
+		{
+			if(null == id)
+			{
+				throw new IllegalArgumentException("setActivityID id can not be null");
+			}
+			mMessage.mActivityID = id;
+			return this;
+		}
 
+		public MessageBuilder setActivityTitle(String title)
+		{
+			if(null == title)
+			{
+				throw new IllegalArgumentException("setActivityTitle title can not be null");
+			}
+			mMessage.mActivityName = title;
+			return this;
+		}		
+		
+		public MessageBuilder setFromUser(MyUser user)
+		{
+			if(null == user)
+			{
+				throw new IllegalArgumentException("setFromUser user can not be null");
+			}
+			mMessage.mFromUser = user;
+			return this;			
+		}
+		
+		public ActivityMessage create()
+		{
+			return mMessage;
+		}
+	}
+	
+	private static final long serialVersionUID = -6511827765134217999L;
+	public static final String ACTION_INVITE = "invite";
+	public static final String ACTION_ACCEPT_APPLY = "accept_apply";
+	public static final String ACTION_REFUSE_APPLY = "refuse_apply";
+	public static final String ACTION_DISMISS = "dismiss";
+	public static final String ACTION_APPLY = "apply";
+	public static final String ACTION_ACCEPT_INVITE = "accept_invite";
+	public static final String ACTION_REFUSE_INVITE = "refuse_invite";
+	public static final String ACTION_QUIT = "quit";
+	public static final String ACTION_FINISH = "finish";
 	/**
-	 * 定义消息行为 创建者可以使用"invite","accept_apply","refuse_apply","quit"
-	 *             分别表示邀请好友，接受陌生人申请，拒绝申请，退出聚会。
+	 * 定义消息行为 创建者可以使用"invite","accept_apply","refuse_apply","dismiss","finish"
+	 *             分别表示邀请好友，接受陌生人申请，拒绝申请，解散活动，完成活动
                                   参与者可以使用"apply","accept_invite","refuse_invite","quit"
-     *             分别表示申请加入聚会，接受创建者邀请，拒绝邀请，退出聚会          
+     *             分别表示申请加入聚会，接受创建者邀请，拒绝邀请，退出活动          
 	 */
 	public String mAction;
 	
@@ -48,29 +110,33 @@ public class ActivityMessage extends MyMessage {
 	{
 		if(null != mAction && mAction.length()>0)
 		{
-			if(mAction.equals("invite"))
+			if(mAction.equals(ACTION_INVITE))
 			{
 				return context.getString(R.string.invite_message, mFromUser.mName, mActivityName);
 			}
-			if(mAction.equals("accept_invite"))
+			if(mAction.equals(ACTION_ACCEPT_INVITE))
 			{
 				return context.getString(R.string.accept_invite_message, mFromUser.mName);
 			}
-			if(mAction.equals("refuse_invite"))
+			if(mAction.equals(ACTION_REFUSE_INVITE))
 			{
 				return context.getString(R.string.refuse_invite_message, mFromUser.mName);
 			}			
-			if(mAction.equals("apply"))
+			if(mAction.equals(ACTION_APPLY))
 			{
 				return context.getString(R.string.apply_message, mFromUser.mName, mActivityName);
 			}
-			if(mAction.equals("accept_apply"))
+			if(mAction.equals(ACTION_ACCEPT_APPLY))
 			{
 				return context.getString(R.string.accept_apply_message, mFromUser.mName);
 			}
-			if(mAction.equals("refuse_apply"))
+			if(mAction.equals(ACTION_REFUSE_APPLY))
 			{
 				return context.getString(R.string.refuse_apply_message, mFromUser.mName);
+			}	
+			if(mAction.equals(ACTION_FINISH))
+			{
+				return context.getString(R.string.finish_activity_message, mActivityName);
 			}			
 		}
 		else

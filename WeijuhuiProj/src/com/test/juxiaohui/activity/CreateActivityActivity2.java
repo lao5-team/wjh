@@ -31,11 +31,49 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 public class CreateActivityActivity2 extends Activity {
+	
+	public static class IntentBuilder
+	{
+		Intent mIntent;
+		/** 决定是用来创建一个活动还是用来处理一个活动
+		 *  
+		 * @param useType 可以是USE_CREATE,USE_EDIT
+		 */
+		public IntentBuilder(Intent intent)
+		{
+			if(null == intent)
+				throw new IllegalArgumentException("IntentBuilder intent cannot be null!");
+			mIntent = intent;
+		}
+		
+		public void setUseType(int useType)
+		{
+			mIntent.putExtra("use", useType);
+		}
+		
+		public void setActivityID(String activityID)
+		{
+			mIntent.putExtra("activity_id", activityID);
+		}
+		
+		public int getUseType()
+		{
+			return mIntent.getIntExtra("use", USE_CREATE);
+		}
+		
+		public String getActivityID()
+		{
+			return mIntent.getStringExtra("activity_id");
+		}
+		
+		
+	};
 
 	//UI Controls
 	private EditText mEtxTitle;
@@ -46,13 +84,15 @@ public class CreateActivityActivity2 extends Activity {
 	private Button mBtnSelectLocation;
 	private Button mBtnOK;
 	private Button mBtnCancel;
-	
+	private CheckBox mCBPayMe;
+	private CheckBox mCBPayAA;
+	private CheckBox mCBPayOther;
 	//Data
 	private ActivityData mActivityData;
 	private com.test.juxiaohui.domain.activity.Activity mActivity;
 	private ComplexBusiness mComplexBusiness;
 	private Date mBeginDate;
-	private int mUse;
+	private int mUseType;
 	//private float mLocation_Long
 	private ArrayList<MyUser> mUsers;
 	private final int INTENT_MEMBERS = 0;
@@ -60,8 +100,8 @@ public class CreateActivityActivity2 extends Activity {
 	private final int INTENT_DATE = 2;
 	private final int INTENT_LOCATION = 3;
 	
-	public static final int INTENT_CREATE = 4;
-	public static final int INTENT_EDIT = 5;
+	public static final int USE_CREATE = 4;
+	public static final int USE_EDIT = 5;
 	
 	
 	public void onCreate(Bundle savedInstanceState)
@@ -72,12 +112,6 @@ public class CreateActivityActivity2 extends Activity {
 		
 		initUI();
 		
-		if(DemoApplication.isDebug)
-		{
-			mActivityData = ActivityData.createTestData();
-			updateView();
-		}
-
 	}
 	
 	public void initUI()
@@ -85,6 +119,9 @@ public class CreateActivityActivity2 extends Activity {
 		setContentView(R.layout.activity_newactivity2);
 		mEtxTitle = (EditText)findViewById(R.id.editText_title);
 		mEtxContent = (EditText)findViewById(R.id.editText_content);
+		mCBPayMe = (CheckBox)findViewById(R.id.checkBox_pay_me);
+		mCBPayAA = (CheckBox)findViewById(R.id.checkBox_pay_aa);
+		mCBPayOther = (CheckBox)findViewById(R.id.checkBox_pay_other);
 		mBtnSelectBusiness = (Button)findViewById(R.id.button_select_business);
 		mBtnSelectBusiness.setOnClickListener(new OnClickListener() {
 			
@@ -102,11 +139,7 @@ public class CreateActivityActivity2 extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(CreateActivityActivity2.this, ActivityMembersActivity.class);
-				if(mActivity == null)
-				{
-					intent.putExtra("state", ActivityData.UNBEGIN);
-				}
-				else if(mActivity.getData().mState == ActivityData.BEGIN)
+				if(mActivity.getData().mStatus == ActivityData.BEGIN)
 				{
 					intent.putExtra("state", ActivityData.BEGIN);
 				}
@@ -130,8 +163,151 @@ public class CreateActivityActivity2 extends Activity {
 		
 		mBtnOK = (Button)findViewById(R.id.button_confirm);
 		mBtnCancel = (Button)findViewById(R.id.button_cancel);	
-		if(mActivityData == null||mActivityData.mState == ActivityData.UNBEGIN)
+//		if(mActivityData == null||mActivityData.mState == ActivityData.UNBEGIN)
+//		{
+
+//		}
+//		if(mActivityData.mStatus == ActivityData.BEGIN)
+//		{
+//			if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.CREATOR))
+//			{
+//				mBtnOK.setText("确认开始");
+//				mBtnOK.setOnClickListener(new OnClickListener() {
+//
+//					@Override
+//					public void onClick(View v) {
+//						mActivity.confirmActivity();
+//						CreateActivityActivity2.this.finish();
+//					}
+//				});	
+//				
+//				mBtnCancel.setText("活动取消");
+//				mBtnCancel.setOnClickListener(new OnClickListener() {
+//					
+//					@Override
+//					public void onClick(View v) {
+//						mActivity.cancelActivity();
+//						CreateActivityActivity2.this.finish();						
+//					}
+//				});
+//			}
+//			else if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.JOINER))
+//			{
+//				mBtnOK.setText("同意加入");
+//				mBtnOK.setOnClickListener(new OnClickListener() {
+//
+//					@Override
+//					public void onClick(View v) {
+//						mActivity.acceptActivity();
+//						CreateActivityActivity2.this.finish();
+//					}
+//				});	
+//				
+//				mBtnCancel.setText("拒绝加入");
+//				mBtnCancel.setOnClickListener(new OnClickListener() {
+//					
+//					@Override
+//					public void onClick(View v) {
+//						mActivity.cancelActivity();
+//						CreateActivityActivity2.this.finish();						
+//					}
+//				});				
+//			}
+//		}
+//		else if(mActivityData.mStatus == ActivityData.PROCESSING)
+//		{
+//			if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.CREATOR))
+//			{
+//				mBtnOK.setText("完成");
+//				mBtnOK.setOnClickListener(new OnClickListener() {
+//
+//					@Override
+//					public void onClick(View v) {
+//						mActivity.finishActivity();
+//						CreateActivityActivity2.this.finish();
+//					}
+//				});	
+//				
+//				mBtnCancel.setText("活动取消");
+//				mBtnCancel.setOnClickListener(new OnClickListener() {
+//					
+//					@Override
+//					public void onClick(View v) {
+//						mActivity.cancelActivity();
+//						CreateActivityActivity2.this.finish();						
+//					}
+//				});
+//			}
+//			else if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.JOINER))
+//			{
+//				mBtnOK.setVisibility(View.INVISIBLE);
+//				mBtnOK.setText("同意加入");
+//				mBtnOK.setOnClickListener(new OnClickListener() {
+//
+//					@Override
+//					public void onClick(View v) {
+//						mActivity.acceptActivity();
+//						CreateActivityActivity2.this.finish();
+//					}
+//				});	
+//				
+//				mBtnCancel.setText("退出");
+//				mBtnCancel.setOnClickListener(new OnClickListener() {
+//					
+//					@Override
+//					public void onClick(View v) {
+//						mActivity.quitActivity();
+//						CreateActivityActivity2.this.finish();						
+//					}
+//				});				
+//			}			
+//		}
+		
+		
+		if(mUseType == USE_EDIT)
 		{
+			mEtxTitle.setText(mActivityData.mTitle);
+			mEtxContent.setText(mActivityData.mContent);
+			if(null != mActivityData.mCB)
+			{
+				mBtnSelectBusiness.setText(mActivityData.mCB.mName);
+			}
+			if(null != mActivityData.mBeginDate)
+			{
+				mBtnSelectDate.setText(DateFormat.format(ActivityData.dataPattern, mActivityData.mBeginDate));
+			}
+			
+			if(DemoApplication.getInstance().getUser().mID.equals(mActivityData.mCreator.mID))
+			{
+				mBtnOK.setText("完成");
+				mBtnOK.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						com.test.juxiaohui.domain.activity.Activity activity = ActivityManager.getInstance().createActivity(mActivityData);
+						activity.finishActivity();
+						CreateActivityActivity2.this.finish();		
+					}
+				});	
+				mBtnCancel.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						CreateActivityActivity2.this.finish();						
+					}
+				});
+			}
+
+		}
+		
+		if(mUseType == USE_CREATE)
+		{
+			if(DemoApplication.isDebug)
+			{
+				mActivityData = ActivityData.createTestData();
+				updateView();
+			}
+			
 			mBtnOK.setText("发起聚会");
 			mBtnOK.setOnClickListener(new OnClickListener() {
 				
@@ -155,117 +331,6 @@ public class CreateActivityActivity2 extends Activity {
 				}
 			});
 		}
-		else if(mActivityData.mState == ActivityData.BEGIN)
-		{
-			if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.CREATOR))
-			{
-				mBtnOK.setText("确认开始");
-				mBtnOK.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						mActivity.confirmActivity();
-						CreateActivityActivity2.this.finish();
-					}
-				});	
-				
-				mBtnCancel.setText("活动取消");
-				mBtnCancel.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						mActivity.cancelActivity();
-						CreateActivityActivity2.this.finish();						
-					}
-				});
-			}
-			else if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.JOINER))
-			{
-				mBtnOK.setText("同意加入");
-				mBtnOK.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						mActivity.acceptActivity();
-						CreateActivityActivity2.this.finish();
-					}
-				});	
-				
-				mBtnCancel.setText("拒绝加入");
-				mBtnCancel.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						mActivity.cancelActivity();
-						CreateActivityActivity2.this.finish();						
-					}
-				});				
-			}
-		}
-		else if(mActivityData.mState == ActivityData.PROCESSING)
-		{
-			if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.CREATOR))
-			{
-				mBtnOK.setText("完成");
-				mBtnOK.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						mActivity.finishActivity();
-						CreateActivityActivity2.this.finish();
-					}
-				});	
-				
-				mBtnCancel.setText("活动取消");
-				mBtnCancel.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						mActivity.cancelActivity();
-						CreateActivityActivity2.this.finish();						
-					}
-				});
-			}
-			else if(mActivity.getMyRoleType().equals(com.test.juxiaohui.domain.activity.Activity.JOINER))
-			{
-				mBtnOK.setVisibility(View.INVISIBLE);
-				mBtnOK.setText("同意加入");
-				mBtnOK.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						mActivity.acceptActivity();
-						CreateActivityActivity2.this.finish();
-					}
-				});	
-				
-				mBtnCancel.setText("退出");
-				mBtnCancel.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						mActivity.quitActivity();
-						CreateActivityActivity2.this.finish();						
-					}
-				});				
-			}			
-		}
-		
-		
-		if(mUse == INTENT_EDIT)
-		{
-			mEtxTitle.setText(mActivityData.mTitle);
-			mEtxContent.setText(mActivityData.mContent);
-			if(null != mActivityData.mCB)
-			{
-				mBtnSelectBusiness.setText(mActivityData.mCB.mName);
-			}
-			if(null != mActivityData.mBeginDate)
-			{
-				mBtnSelectDate.setText(DateFormat.format(ActivityData.dataPattern, mActivityData.mBeginDate));
-			}
-		}
-		
 
 			
 	}
@@ -274,6 +339,14 @@ public class CreateActivityActivity2 extends Activity {
 	{
 		mUsers = new ArrayList<MyUser>();
 		mActivityData = null;
+		Intent intent =  getIntent();
+		IntentBuilder ib = new IntentBuilder(intent);
+		mUseType = ib.getUseType();
+		if(mUseType == USE_EDIT)
+		{
+			mActivityData = MyServerManager.getInstance().getActivity(ib.getActivityID());
+		}
+		
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -400,7 +473,20 @@ public class CreateActivityActivity2 extends Activity {
 			{
 				users += user.mName + " ";
 			}
-			mBtnSelectFriends.setText(users);			
+			mBtnSelectFriends.setText(users);		
+			
+			if(mActivityData.mSpentType == 0)
+			{
+				mCBPayMe.setChecked(true);
+			}
+			if(mActivityData.mSpentType == 1)
+			{
+				mCBPayAA.setChecked(true);
+			}
+			if(mActivityData.mSpentType == 2)
+			{
+				mCBPayOther.setChecked(true);
+			}
 		}
 		
 	}

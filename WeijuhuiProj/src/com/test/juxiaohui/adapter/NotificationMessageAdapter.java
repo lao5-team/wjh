@@ -9,6 +9,7 @@ import com.test.juxiaohui.data.message.ActivityMessage;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.activity.Activity;
+import com.test.juxiaohui.domain.activity.ActivityManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -87,13 +88,15 @@ public class NotificationMessageAdapter extends BaseAdapter {
 		if(message instanceof ActivityMessage)
 		{
 			ActivityData data = MyServerManager.getInstance().getActivity(((ActivityMessage)message).mActivityID);
-			final Activity activity = new Activity(data);
+			final Activity activity = ActivityManager.getInstance().createActivity(data);
 			button.setText("接受");
 			button.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
 					activity.acceptActivity();
+					mMessages.remove(message);
+					((android.app.Activity)mContext).finish();
 				}
 			});
 			btn_refuse.setText("拒绝");
@@ -102,6 +105,8 @@ public class NotificationMessageAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v) {
 					activity.refuseActivity();
+					mMessages.remove(message);
+					((android.app.Activity)mContext).finish();
 				}
 			});
 		}

@@ -40,7 +40,7 @@ public class NavigationFragment extends Fragment {
 	//data
 	String mCity;
 	ActivityCategoryAdapter mCategoryAdapter;
-	ActivityAdapter mHotActivityAdapter;
+	ActivityAdapter mRecentActivityAdapter;
 	//String []mCities =  {"北京","上海","广州","深圳"};
 	String []mCategories = {"吃饭", "打球", "恐龙", "泡妹子","喝咖啡","斗地主"};
 	@Override
@@ -61,20 +61,17 @@ public class NavigationFragment extends Fragment {
 		mCategoryAdapter = new ActivityCategoryAdapter(getActivity());
 		mCategoryAdapter.setData(mCategories);
 
-		mHotActivityAdapter = new ActivityAdapter(this, null);
-		
-		mCity = "北京";
-		
-		Thread t = new Thread(new Runnable() {
+		mRecentActivityAdapter = new ActivityAdapter(this, new IActivityLoader() {
 			
 			@Override
-			public void run() {
-				File file = new File("mnt/sdcard/1.png");
-				MyServerManager.getInstance().uploadImage(file);
+			public ArrayList<ActivityData> getActivityList() {
+				// TODO Auto-generated method stub
+				return ActivityManager.getInstance().getRecentActivity();
 			}
 		});
-		t.start();
 		
+		//temp code
+		mCity = "北京";
 	}
 	
 	private void initUI()
@@ -105,14 +102,17 @@ public class NavigationFragment extends Fragment {
 		mGVCategory.setAdapter(mCategoryAdapter);
 		
 		mLvActivity = (ListView)getView().findViewById(R.id.listView_activity);
-		mLvActivity.setAdapter(mHotActivityAdapter);
+		mLvActivity.setAdapter(mRecentActivityAdapter);
 		
 		mIbNew = (ImageButton)getView().findViewById(R.id.imageButton_new);
 		mIbNew.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(), CreateActivityActivity2.class);
+				Intent intent = new Intent();
+				CreateActivityActivity2.IntentBuilder ib = new CreateActivityActivity2.IntentBuilder(intent);
+				ib.setUseType(CreateActivityActivity2.USE_CREATE);
+				intent.setClass(getActivity(), CreateActivityActivity2.class);
 				getActivity().startActivity(intent);
 			}
 		});

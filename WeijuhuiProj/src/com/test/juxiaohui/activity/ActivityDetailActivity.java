@@ -12,6 +12,7 @@ import com.easemob.chat.TextMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.DemoApplication;
+import com.test.juxiaohui.activity.CreateActivityActivity2.IntentBuilder;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.DianpingDataHelper;
 import com.test.juxiaohui.data.MyUser;
@@ -33,6 +34,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,6 +48,45 @@ import android.widget.Toast;
  */
 public class ActivityDetailActivity extends FragmentActivity {
 
+	public static class IntentBuilder
+	{
+		Intent mIntent;
+		/** 决定是用来创建一个活动还是用来处理一个活动
+		 *  
+		 * @param useType 可以是USE_CREATE,USE_EDIT
+		 */
+		public IntentBuilder(Intent intent)
+		{
+			if(null == intent)
+				throw new IllegalArgumentException("IntentBuilder intent cannot be null!");
+			mIntent = intent;
+		}
+		
+		public void setUseType(int useType)
+		{
+			mIntent.putExtra("use", useType);
+		}
+		
+		public void setActivityID(String activityID)
+		{
+			mIntent.putExtra("activity_id", activityID);
+		}
+		
+		public int getUseType()
+		{
+			return mIntent.getIntExtra("use", USE_CREATE);
+		}
+		
+		public String getActivityID()
+		{
+			return mIntent.getStringExtra("activity_id");
+		}
+		
+		
+	};
+	
+	public static final int USE_CREATE = 4;
+	public static final int USE_EDIT = 5;
 	
 	//data
 	private ComplexBusiness mCBData;
@@ -63,7 +104,10 @@ public class ActivityDetailActivity extends FragmentActivity {
 	private TextView mTvFriends;
 	private Button mBtnConfirm;
 	private Button mBtnCancel;
-	
+	private TextView mTvContent;
+	private CheckBox mCBPayMe;
+	private CheckBox mCBPayAA;
+	private CheckBox mCBPayOther;	
 	//Handler
 	private Handler mUIHandler;
 	private ArrayList<MyUser> mFriends = new ArrayList<MyUser>();
@@ -97,18 +141,14 @@ public class ActivityDetailActivity extends FragmentActivity {
 	private void initData()
 	{
 		/*test code begin*/
-		final Intent intent = getIntent();
-		String activity_id = intent.getStringExtra("activity id");
-		if(null!=activity_id && activity_id.length()>0)
-		{
-			ActivityData data = MyServerManager.getInstance().getActivity(activity_id);
-			if(data == null)
+			Intent intent =  getIntent();
+			IntentBuilder ib = new IntentBuilder(intent);
+			mData = MyServerManager.getInstance().getActivity(ib.getActivityID());
+			if(mData == null)
 			{
 				Toast.makeText(this, "找不到活动内容", Toast.LENGTH_SHORT).show();
+				
 			}
-			mData = data;
-			Log.v(DemoApplication.TAG, ActivityData.toJSON(data).toString());
-		}
 		/*test code end*/
 		mUIHandler = new Handler()
 		{
@@ -120,40 +160,6 @@ public class ActivityDetailActivity extends FragmentActivity {
 		};
 		mActivityIndex = intent.getIntExtra("activityIndex", -1);
 		
-		if(-1 != mActivityIndex)
-		{
-			Thread t = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					ActivityData data = ActivityManager.getInstance().getActivity(mActivityIndex).getData();
-					//mCBData = DianpingDataHelper.getInstance().getBusinessByID(mBusinessID);
-					mCBData = data.mCB;
-					if(null != mCBData)
-					{
-						Message msg = mUIHandler.obtainMessage();
-						mUIHandler.sendMessage(msg);
-					}
-				}
-			});
-			t.start();
-		}
-		else
-		{
-
-			Thread t = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					String businessID = intent.getStringExtra("businessID");
-					mCBData = DianpingDataHelper.getInstance().getBusinessByID(businessID);
-					if(null != mCBData)
-					{
-						Message msg = mUIHandler.obtainMessage();
-						mUIHandler.sendMessage(msg);
-					}
-				}
-			});
-			t.start();
-		}
 	}
 	
 	private void initUI()
@@ -165,14 +171,56 @@ public class ActivityDetailActivity extends FragmentActivity {
 		mTvName = (TextView) layout.findViewById(R.id.textView_title_sub);
 		mTvName.setText(mData.mTitle);
 		
-		mTvFriends = (TextView) layout.findViewById(R.id.button_select_friends);
-		String userNames = mData.mCreator.mName;
+		mTvContent = (TextView)layout.findViewById(R.id.editText_content_sub);
+		mTvContent.setText(mData.mContent);
 		
+		mTvFriends = (TextView) layout.findViewById(R.id.button_select_friends);
+		
+		String userNames = "活动参与者: ";
 		for(MyUser user:mData.mUsers)
 		{
-			userNames += ", " + user.mName;
+			userNames += user.mName;
 		}
 		mTvFriends.setText(userNames);
+		
+		mCBPayMe = (CheckBox)findViewById(R.id.checkBox_pay_me);
+		mCBPayAA = (CheckBox)findViewById(R.id.checkBox_pay_aa);
+		mCBPayOther = (CheckBox)findViewById(R.id.checkBox_pay_other);
+		
+		if(mData.mSpentType == 0)
+		{
+			mCBPayMe.setChecked(true);
+		}
+		if(mData.mSpentType == 1)
+		{
+			mCBPayAA.setChecked(true);
+		}
+		if(mData.mSpentType == 2)
+		{
+			mCBPayOther.setChecked(true);
+		}
+		
+		mBtnConfirm = (Button)findViewById(R.id.button_OK);
+		mBtnConfirm.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				com.test.juxiaohui.domain.activity.Activity activity = ActivityManager.getInstance().createActivity(mData);
+				activity.finishActivity();
+				ActivityDetailActivity.this.finish();
+			}
+		});
+		
+		mBtnCancel = (Button)findViewById(R.id.button_Cancel);
+		mBtnCancel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				com.test.juxiaohui.domain.activity.Activity activity = ActivityManager.getInstance().createActivity(mData);
+				activity.dismissActivity();
+				ActivityDetailActivity.this.finish();				
+			}
+		});
 //		mImgContent = (ImageView) layout.findViewById(R.id.imageView_img);
 //		
 //		mLayoutAddress = (RelativeLayout) layout.findViewById(R.id.relativeLayout_address);
@@ -267,6 +315,8 @@ public class ActivityDetailActivity extends FragmentActivity {
 		}
 		
 		mTvFriends.setText(buffer);
+		
+
 		mView.invalidate();
 		
 	}

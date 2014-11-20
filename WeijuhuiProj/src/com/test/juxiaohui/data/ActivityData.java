@@ -18,33 +18,32 @@ import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.data.DianpingDao.SimpleBusiness;
+import com.test.juxiaohui.domain.MyServerManager;
 
 public class ActivityData implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3368450357726232660L;
 	
 	/*活动状态可选值*/
-	public final static int UNBEGIN = 0; //活动未开始，创建者还在填写活动信息，未发起的状态
+	//public final static int UNBEGIN = 0; //活动未开始，创建者还在填写活动信息，未发起的状态
 	public final static int BEGIN = 1;   //活动开始，创建者已经发起，等待报名的状态
-	public final static int PROCESSING = 2;  //活动进行中，指参与者已经报名和支付完成，正式开始的状态
-	public final static int END = 3;   //完成，活动发起人点击完成
-	public final static int CANCELED = 4;   //活动取消，发起人中途终止活动
+	//public final static int PROCESSING = 2;  //活动进行中，指参与者已经报名和支付完成，正式开始的状态
+	public final static int FINISH = 2;   //完成，活动发起人点击完成
+	public final static int CANCELED = 3;   //活动取消，发起人中途终止活动
 	
 	public final static String dataPattern = "yyyy年MM月dd日hh时";
+	public final static String dataPattern_test = "MM月dd日hh时mm分";
 	public String mID;
 	public ComplexBusiness mCB;
 	public Date mBeginDate;
 	public ArrayList<MyUser> mUsers;  //活动参与者，注意不包括创建者
 	public float mSpent;    //活动所需金额
 	public String mGroupID;  //多人活动的groupID，供环信使用
-	public int mState;       //活动状态
+	public int mStatus;       //活动状态
 	public MyUser mCreator;  //活动创建者
 	public String mTitle;    //活动标题
 	public String mContent;  //活动内容介绍
-	
+	public int mSpentType; //0 me, 1 aa, 2 other
 	private ActivityData()
 	{
 		mUsers = null;
@@ -52,12 +51,58 @@ public class ActivityData implements Serializable {
 		mTitle = null;
 		mContent = null;
 		mCreator = null;
-		mState = UNBEGIN;
+		mStatus = BEGIN;
 		mCB = null;
 		mGroupID = null;
 		mID = null;
 	}
 	
+	/** 添加活动参与者，如果参与者已经在活动中，则不会重复添加
+	 * @param user
+	 * 
+	 */
+	public void addUser(MyUser user)
+	{
+		if(null == user)
+		{
+			throw new IllegalArgumentException("addUser user can not be null");
+		}
+		if(null == mUsers)
+		{
+			mUsers = new ArrayList<MyUser>();
+		}
+		for(MyUser itemUser:mUsers)
+		{
+			if(itemUser.mID.equals(user.mID))
+			{
+				return;
+			}
+		}
+		mUsers.add(user);
+	}
+	
+	/** 移除活动参与者
+	 * @param user
+	 * 
+	 */
+	public void removeUser(MyUser user)
+	{
+		if(null == user)
+		{
+			throw new IllegalArgumentException("removeUser user can not be null");
+		}
+		if(null != mUsers)
+		{
+			for(MyUser itemUser:mUsers)
+			{
+				if(itemUser.mID.equals(user.mID))
+				{
+					mUsers.remove(itemUser);
+				}
+			}
+		}
+		
+	}	
 	public static JSONObject toJSON(ActivityData cb)
 	{
 		JSONObject obj = new JSONObject();
@@ -82,10 +127,11 @@ public class ActivityData implements Serializable {
 			}
 			obj.put("users", array);
 			obj.put("spent", cb.mSpent);
-			obj.put("state", cb.mState);
+			obj.put("state", cb.mStatus);
 			obj.put("creator", MyUser.toJSON(cb.mCreator));
 			obj.put("title", cb.mTitle);
 			obj.put("content", cb.mContent);
+			obj.put("spent_type", cb.mSpentType);
 			if(cb.mGroupID != null)
 			{
 				obj.put("groupID", cb.mGroupID);
@@ -106,10 +152,11 @@ public class ActivityData implements Serializable {
 				data.mCB = ComplexBusiness.fromJSON(obj.getJSONObject("business"));
 			}
 			data.mSpent = obj.getInt("spent");
-			data.mState = obj.getInt("state");
+			data.mStatus = obj.getInt("state");
 			data.mCreator = MyUser.fromJSON(obj.getJSONObject("creator"));
 			data.mContent = obj.getString("content");
 			data.mTitle = obj.getString("title");
+			data.mSpentType = obj.getInt("spent_type");
 			if(obj.has("id"))
 			{
 				data.mID = obj.getString("id");
@@ -141,21 +188,22 @@ public class ActivityData implements Serializable {
 	
 	public static ActivityData createTestData()
 	{
+		String test_title = "测试 war3 2v2 "+ new SimpleDateFormat(ActivityData.dataPattern_test).format(new Date());
 		ComplexBusiness testCB = new ComplexBusiness();
 		testCB.mName = "东来顺";
 		testCB.mImgUrl = "http://i2.dpfile.com//pc//e6801a8a0b89fa2dd93e582c69d2e7cd(700x700)//thumb.jpg";
 		testCB.mPhoneNumber = "12345678";
 		
-		MyUser testUser = new MyUser();
-		testUser.mName = "testCreator";
-		
+		MyUser testUser = DemoApplication.getInstance().getUser();
 		ArrayList<MyUser> users = new ArrayList<MyUser>();
-		MyUser testGuest = new MyUser();
-		testGuest.mName = "rlk";
+		MyUser testGuest = MyServerManager.getInstance().getUserInfo("rlk");
 		users.add(testGuest);
 			try {
 				ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2014年1月1日16时")
-						).setComplexBusiness(testCB).setCreator(testUser).setUsers(users).setTitle("test_title").setContent("test_content").setGroupID("testGroup0").create();
+						).setComplexBusiness(testCB).setCreator(testUser).
+						setUsers(users).setTitle(test_title).setContent("去年买了个表").
+						setGroupID("testGroup0").setSpentType(0).
+						create();
 				return data;
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
@@ -198,8 +246,8 @@ public class ActivityData implements Serializable {
 		
 		public ActivityBuilder setState(int state)
 		{
-			Assert.assertTrue(state<=CANCELED&&state>=UNBEGIN);
-			mData.mState = state;
+			Assert.assertTrue(state<=CANCELED&&state>=BEGIN);
+			mData.mStatus = state;
 			return this;
 		}
 		
@@ -235,6 +283,13 @@ public class ActivityData implements Serializable {
 		{
 			Assert.assertNotNull(groupID);
 			mData.mGroupID = groupID;
+			return this;			
+		}
+		
+		public ActivityBuilder setSpentType(int value)
+		{
+			Assert.assertTrue(0<=value && 2>=value);
+			mData.mSpentType = value;
 			return this;			
 		}
 		

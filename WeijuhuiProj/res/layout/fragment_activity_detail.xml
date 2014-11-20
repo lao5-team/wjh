@@ -26,7 +26,8 @@
             android1:layout_height="wrap_content"
             android1:layout_marginRight="10dp"
             android1:layout_toRightOf="@id/textView_title"
-             />
+            android1:textSize="18dp" />
+
     </RelativeLayout>
 
 
@@ -50,12 +51,14 @@
             android1:id="@+id/editText_content_sub"
             android1:layout_width="match_parent"
             android1:layout_height="wrap_content"
+            android1:layout_below="@+id/textView_content"
             android1:layout_marginLeft="10dp"
             android1:layout_marginRight="10dp"
             android1:layout_marginTop="10dp"
-            android1:layout_below="@+id/textView_content"
             android1:ems="10"
-            android1:scrollbarStyle="insideOverlay" />
+            android1:scrollbarStyle="insideOverlay"
+            android1:textSize="18dp" />
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -105,8 +108,7 @@
         android1:layout_below="@id/relativeLayout_paymentType"
         android1:layout_marginLeft="10dp"
         android1:layout_marginRight="10dp"
-        android1:layout_marginTop="10dp"
-        android1:text="@string/select_business_room" />
+        android1:layout_marginTop="10dp" />
 
     <TextView
         android1:id="@+id/button_select_friends"
@@ -129,5 +131,21 @@
         android1:layout_marginRight="10dp"
         android1:layout_marginTop="30dp"
         android1:text="@string/select_time" />
+
+    <Button
+        android1:id="@+id/button_OK"
+        android1:layout_width="wrap_content"
+        android1:layout_height="wrap_content"
+        android1:layout_alignLeft="@+id/button_select_date"
+        android1:layout_alignParentBottom="true"
+        android1:text="Button" />
+
+    <Button
+        android1:id="@+id/button_Cancel"
+        android1:layout_width="wrap_content"
+        android1:layout_height="wrap_content"
+        android1:layout_alignParentBottom="true"
+        android1:layout_alignRight="@+id/button_select_date"
+        android1:text="Button" />
 
 </RelativeLayout>

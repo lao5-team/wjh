@@ -24,6 +24,7 @@ public class MyMessage implements Serializable {
 	 */
 	private static final long serialVersionUID = 1130070227842759145L;
 
+	public static final String TYPE_ACTIVITY = "activity";
 	/**
 	 * 定义消息类型，"activity"(对应ActivityMessage)，“conversation”（数据用于对话，暂时不需要）
 	 */

@@ -147,7 +147,7 @@ public class ActivityMembersActivity extends FragmentActivity {
 			mFriends = new ArrayList<MyUser>( );
 		}
 		getContactList();
-		if(getIntent().getIntExtra("state", 0) == ActivityData.UNBEGIN)
+		if(getIntent().getIntExtra("state", 0) == ActivityData.BEGIN)
 		{
 			mAdapter = new ActivityMemberSelectAdapter(this, R.layout.row_contact, mContactList, mFriends, sidebar);
 			listView.setAdapter(mAdapter);
