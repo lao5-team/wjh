@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.test.juxiaohui"
+    package="com.test.art"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -14,27 +14,27 @@
         android:icon="@drawable/logo_uidemo"
         android:label="@string/app_name" >
         <activity
-            android:name="com.test.juxiaohui.activity.MainActivity"
+            android:name="com.test.art.activity.MainActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.test.juxiaohui.activity.CreateActivityActivity"
+            android:name="com.test.art.activity.CreateActivityActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.juxiaohui.activity.EntryActivity"
+            android:name="com.test.art.activity.EntryActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.juxiaohui.activity.RegisterActivity"
+            android:name="com.test.art.activity.RegisterActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.juxiaohui.activity.AlertDialog"
+            android:name="com.test.art.activity.AlertDialog"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.juxiaohui.activity.LoginActivity"
+            android:name="com.test.art.activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide" >
             <intent-filter>
@@ -44,8 +44,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.test.juxiaohui.service.ContactChangeService" />
-        <service android:name="com.test.juxiaohui.service.MessageService" />
+        <service android:name="com.test.art.service.ContactChangeService" />
+        <service android:name="com.test.art.service.MessageService" />
         <!-- 设置环信应用的appkey -->
         <meta-data
             android:name="EASEMOB_APPKEY"
@@ -54,39 +54,39 @@
         <service android:name="com.easemob.chat.EMChatService" />
 
         <activity
-            android:name="com.test.juxiaohui.activity.ActivityDetailActivity"
+            android:name="com.test.art.activity.ActivityDetailActivity"
             android:configChanges="orientation|keyboardHidden"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.juxiaohui.activity.AddContactActivity"
+            android:name="com.test.art.activity.AddContactActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
-        <activity android:name="com.test.juxiaohui.activity.NewFriendsMsgActivity" >
+        <activity android:name="com.test.art.activity.NewFriendsMsgActivity" >
         </activity>
 
         <uses-library android:name="android.test.runner" />
 
         <activity
-            android:name="com.test.juxiaohui.activity.ActivityMembersActivity"
+            android:name="com.test.art.activity.ActivityMembersActivity"
             android:configChanges="orientation|keyboardHidden"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.juxiaohui.activity.CreateActivityActivity2"
+            android:name="com.test.art.activity.CreateActivityActivity2"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.juxiaohui.activity.CustomActivityActivity"
+            android:name="com.test.art.activity.CustomActivityActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.juxiaohui.activity.DateActivity"
+            android:name="com.test.art.activity.DateActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
-        <activity android:name="com.test.juxiaohui.activity.PhotoSelectActivity"
+        <activity android:name="com.test.art.activity.PhotoSelectActivity"
             android:theme="@style/horizontal_slide"></activity>
-        <activity android:name="com.test.juxiaohui.activity.ActivityPayment"></activity>
+        <activity android:name="com.test.art.activity.ActivityPayment"></activity>
         <activity android:name=".activity.MessagesActivity" android:theme="@style/horizontal_slide"></activity>
         <activity android:name=".activity.ActivityListActivity"></activity>
     </application>
@@ -107,6 +107,6 @@
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:label="Test Activty"
-        android:targetPackage="com.test.juxiaohui" />
+        android:targetPackage="com.test.art" />
 
 </manifest>
