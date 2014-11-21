@@ -23,6 +23,9 @@ import com.test.juxiaohui.domain.MyServerManager;
 public class ActivityData implements Serializable {
 
 	private static final long serialVersionUID = 3368450357726232660L;
+	public static int PAY_ME = 0;
+	public static int PAY_AA = 1;
+	public static int PAY_OTHER = 2;
 	
 	/*活动状态可选值*/
 	//public final static int UNBEGIN = 0; //活动未开始，创建者还在填写活动信息，未发起的状态
