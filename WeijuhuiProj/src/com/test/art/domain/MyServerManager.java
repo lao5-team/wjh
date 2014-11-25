@@ -29,7 +29,9 @@ import org.json.JSONObject;
 
 import com.test.art.DemoApplication;
 import com.test.art.data.ActivityData;
+import com.test.art.data.MyArtUser;
 import com.test.art.data.MyUser;
+import com.test.art.data.PictureInfo;
 import com.test.art.data.message.MyMessage;
 
 import android.util.Log;
@@ -161,7 +163,8 @@ public class MyServerManager {
 	}
 	
 	/** 向华为云存储上传文件，如果上传成功，则会返回对应文件的一个url
-	 * @param file
+	 *  
+	 * @param file 会影响上传文件的url
 	 * @return String 上传文件的url
 	 */
 	public String uploadImage(File file) {
@@ -333,7 +336,68 @@ public class MyServerManager {
 		}			
 	}
 
-
+	/**
+	 * 获取art用户信息
+	 * 
+	 * @param username
+	 * @return MyUser
+	 */
+	public MyArtUser getArtUserInfo(String username) {
+		if(null == username)
+		{
+			throw new IllegalArgumentException("getUserInfo username can not be null");
+		}
+		final String fUserName = username;
+		Callable<MyArtUser> callable = new Callable<MyArtUser>() {
+			@Override
+			public MyArtUser call() throws Exception {
+				MyArtUser user = null;
+				String url = String.format(
+						"%s/db?action=get_user&table=user&username=%s",
+						IP_ADDRESS, fUserName);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							fUserName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						try {
+							JSONObject jsonObj = new JSONObject(
+									EntityUtils.toString(
+											httpResponse.getEntity(), "utf-8"));
+							user = MyArtUser.fromJSON(jsonObj
+									.getJSONObject("data"));
+							user.mID = jsonObj.getString("_id");
+							mUser = user;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				Log.v(DemoApplication.TAG,
+						"getUserInfo result is " + MyUser.toJSON(user).toString());
+				return user;
+			}
+		};
+		
+		Future<MyArtUser>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}			
+	}
 	/**
 	 * 在服务器端创建一个活动数据
 	 * 
@@ -1064,7 +1128,123 @@ public class MyServerManager {
 		
 	}
 	
+	public String createPicture(PictureInfo picInfo)
+	{
+		if (null == picInfo) {
+			throw new IllegalArgumentException("PictureInfo can not be null");
+		}
+		final PictureInfo fInfo = picInfo;
+		Callable<String> callable = new Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				String activityID = null;
+				String url = String.format("%s/db?action=set&table=picture_info",
+						IP_ADDRESS);
+				HttpPost post = new HttpPost(url);
+				// 第2步：使用execute方法发送HTTP GET请求，并返回HttpResponse对象
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUser.mName, mToken));
+					String str = PictureInfo.toJSON(fInfo)
+							.toString();
+					post.setEntity(new StringEntity(str, "utf-8"));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						try {
+							JSONObject jsonObj = new JSONObject(
+									EntityUtils.toString(
+											httpResponse.getEntity(), "utf-8"));
+							activityID = jsonObj.getString("id");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 	
+				return activityID;
+			}
+		};
+		
+		Future<String>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}			
+	}
 	
+	/**
+	 * 返回全部图片数据
+	 * 
+	 *            
+	 * @return 活动数据，如果此id不存在，则返回null
+	 */
+
+	public ArrayList<PictureInfo> getAllPictureInfo() {
+		Callable<ArrayList<PictureInfo>> callable = new Callable<ArrayList<PictureInfo>>() {
+			@Override
+			public ArrayList<PictureInfo> call() throws Exception {
+				PictureInfo picInfo = null;
+				ArrayList<PictureInfo> result = null;
+				String url = String.format(
+						"%s/db?action=get_all_picture_info&table=picture_info", IP_ADDRESS);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUser.mName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						result = new ArrayList<PictureInfo>();
+						try {
+							JSONObject jsonObj = new JSONObject(
+									EntityUtils.toString(
+											httpResponse.getEntity(), "utf-8"));
+							JSONArray jsonArr = jsonObj
+									.getJSONArray("data");
+							for(int i=0; i<jsonArr.length(); i++)
+							{
+								JSONObject jsonData = jsonArr.getJSONObject(i);
+								picInfo = PictureInfo.fromJSON(jsonData.getJSONObject("data"));
+								picInfo.mID = jsonData.getString("_id");		
+								result.add(picInfo);
+							}
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				return result;
+			}
+		};
+		Future<ArrayList<PictureInfo>>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}			
+	}	
 	
 	
 	

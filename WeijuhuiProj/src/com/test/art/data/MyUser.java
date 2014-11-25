@@ -26,6 +26,7 @@ public class MyUser implements Serializable {
 	public ArrayList<String> mDoingActivities = new ArrayList<String>();
 	public ArrayList<String> mFinishedActivities = new ArrayList<String>();
 	public String mID;
+	public String mType;
 	/**
 	 * 用户的聚会状态，包括待确定 {@link UNCONFIRMED}，确定{@link CONFIRMED}
 	 * 报名，待支付

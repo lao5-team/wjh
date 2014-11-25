@@ -6,10 +6,14 @@ import java.util.ArrayList;
 import com.test.art.R;
 import com.test.art.adapter.ActivityAdapter;
 import com.test.art.adapter.ActivityCategoryAdapter;
+import com.test.art.adapter.PictureInfoAdapter;
 import com.test.art.data.ActivityData;
+import com.test.art.data.MyArtUser;
+import com.test.art.data.PictureInfo;
 import com.test.art.domain.MyServerManager;
 import com.test.art.domain.activity.ActivityManager;
 import com.test.art.domain.activity.IActivityLoader;
+import com.test.art.domain.activity.IPictureInfoLoader;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,19 +36,12 @@ import android.widget.TextView;
 public class NavigationFragment extends Fragment {
 
 	//ui widgets
-	TextView mTvCitySelect;
-	SearchView mEtxSearch;
-	GridView mGVCategory;
-	ListView mLvActivity;
+	ListView mLvPicInfo;
 	ImageButton mIbNew;
 	Button mBtnRefresh;
 	
 	//data
-	String mCity;
-	ActivityCategoryAdapter mCategoryAdapter;
-	ActivityAdapter mRecentActivityAdapter;
-	//String []mCities =  {"北京","上海","广州","深圳"};
-	String []mCategories = {"吃饭", "打球", "恐龙", "泡妹子","喝咖啡","斗地主"};
+	PictureInfoAdapter mAdapter;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_navigation, container, false);
@@ -60,51 +57,30 @@ public class NavigationFragment extends Fragment {
 	
 	private void initData()
 	{
-		mCategoryAdapter = new ActivityCategoryAdapter(getActivity());
-		mCategoryAdapter.setData(mCategories);
-
-		mRecentActivityAdapter = new ActivityAdapter(this, new IActivityLoader() {
+		mAdapter = new PictureInfoAdapter(getActivity(), new IPictureInfoLoader() {
 			
 			@Override
-			public ArrayList<ActivityData> getActivityList() {
+			public ArrayList<MyArtUser> getUserList(ArrayList<PictureInfo> pictureList) {
+				ArrayList<MyArtUser> userList = new ArrayList<MyArtUser>();
+				for(PictureInfo picInfo : pictureList)
+				{
+					userList.add(MyServerManager.getInstance().getArtUserInfo(picInfo.mUserName));
+				}
+				return userList;
+			}
+			
+			@Override
+			public ArrayList<PictureInfo> getPictureList() {
 				// TODO Auto-generated method stub
-				return ActivityManager.getInstance().getRecentActivity();
+				return MyServerManager.getInstance().getAllPictureInfo();
 			}
 		});
-		
-		//temp code
-		mCity = "北京";
 	}
 	
 	private void initUI()
 	{
-		mTvCitySelect = (TextView)getView().findViewById(R.id.textView_city);
-		mTvCitySelect.setText(mCity);
-		mTvCitySelect.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//拉起城市选择Activity
-				
-			}
-		});
-		
-		mEtxSearch = (SearchView)getView().findViewById(R.id.searchView_search);
-		mEtxSearch.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//拉起搜索Activity
-			}
-		});
-		
-		mGVCategory = (GridView)getView().findViewById(R.id.gridView_category);
-		mGVCategory.setAdapter(mCategoryAdapter);
-		
-		mLvActivity = (ListView)getView().findViewById(R.id.listView_activity);
-		mLvActivity.setAdapter(mRecentActivityAdapter);
+		mLvPicInfo = (ListView)getView().findViewById(R.id.listView_picture_list);
+		mLvPicInfo.setAdapter(mAdapter);
 		
 		mIbNew = (ImageButton)getView().findViewById(R.id.imageButton_new);
 		mIbNew.setOnClickListener(new OnClickListener() {
@@ -112,9 +88,7 @@ public class NavigationFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
-				CreateActivityActivity2.IntentBuilder ib = new CreateActivityActivity2.IntentBuilder(intent);
-				ib.setUseType(CreateActivityActivity2.USE_CREATE);
-				intent.setClass(getActivity(), CreateActivityActivity2.class);
+				intent.setClass(getActivity(), CreatePictureActivity.class);
 				getActivity().startActivity(intent);
 			}
 		});
@@ -124,7 +98,7 @@ public class NavigationFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				mRecentActivityAdapter.refresh();
+				mAdapter.refresh();
 			}
 		});
 		
