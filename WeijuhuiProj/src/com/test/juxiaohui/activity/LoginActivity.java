@@ -39,6 +39,7 @@ import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.UserDao;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.User;
+import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.utils.CommonUtils;
 import com.test.juxiaohui.R;
 import com.easemob.util.HanziToPinyin;
@@ -62,7 +63,9 @@ public class LoginActivity extends BaseActivity {
 		passwordEditText = (EditText) findViewById(R.id.password);
 		// 如果用户名密码都有，直接进入主页面
 		if (DemoApplication.getInstance().getUserName() != null && DemoApplication.getInstance().getPassword() != null) {
-			loginMyServer();
+			String userName = DemoApplication.getInstance().getUserName();
+			String password = DemoApplication.getInstance().getPassword();
+			UserManager.getInstance().login(userName, password);
 			startActivity(new Intent(this, EntryActivity.class));
 			finish();
 			
@@ -120,11 +123,7 @@ public class LoginActivity extends BaseActivity {
 					if (!progressShow) {
 						return;
 					}
-					runOnUiThread(new Runnable() {
-						public void run() {
-							loginMyServer();
-						}
-					});
+					UserManager.getInstance().login(username, password);
 					// 登陆成功，保存用户名密码
 					DemoApplication.getInstance().setUserName(username);
 					DemoApplication.getInstance().setPassword(password);
@@ -247,12 +246,4 @@ public class LoginActivity extends BaseActivity {
 		}
 	}
 	
-	private void loginMyServer()
-	{
-		/*调用自己的服务器逻辑login*/
-		MyServerManager.getInstance().login(DemoApplication.getInstance().getUserName());
-		MyUser user = MyServerManager.getInstance().getUserInfo(DemoApplication.getInstance().getUserName());
-		MyServerManager.getInstance().updateUserInfo(user);
-		DemoApplication.getInstance().setUser(user);
-	}
 }

@@ -58,6 +58,7 @@ import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MessageManager;
 import com.test.juxiaohui.domain.User;
+import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.utils.PreferenceUtils;
 import com.test.juxiaohui.R;
 //import com.easemob.chatuidemo.activity.ChatActivity;
@@ -77,7 +78,6 @@ public class DemoApplication extends Application {
 	private String password = null;
 	private Map<String, User> contactList;
 	private NotificationManager mNotificationManager;
-	private MyUser mUser = null;
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -279,21 +279,6 @@ public class DemoApplication extends Application {
 		return userName;
 	}
 	
-	public void setUser(MyUser user)
-	{
-		Assert.assertNotNull(user);
-		mUser = user;
-	}
-	
-	/**
-	 * 返回当前登录的用户，如果该用户注销，则返回为null
-	 * @return
-	 */
-	public MyUser getUser()
-	{
-		return mUser;
-
-	}
 
 	/**
 	 * 获取密码
@@ -341,13 +326,10 @@ public class DemoApplication extends Application {
 	 * 退出登录,清空数据
 	 */
 	public void logout() {
-		// 先调用sdk logout，在清理app中自己的数据
-		EMChatManager.getInstance().logout();
-		DbOpenHelper.getInstance(applicationContext).closeDB();
+		UserManager.getInstance().logout();
 		// reset password to null
 		setPassword(null);
 		setContactList(null);
-		mUser = null;
 
 	}
 

@@ -132,20 +132,68 @@
         android1:layout_marginTop="30dp"
         android1:text="@string/select_time" />
 
+    <ListView
+        android1:id="@+id/listView_comment"
+        android1:layout_width="match_parent"
+        android1:layout_height="match_parent"
+        android1:layout_above="@+id/button_OK"
+        android1:layout_alignParentLeft="true"
+        android1:layout_alignRight="@+id/button_Cancel"
+        android1:layout_below="@+id/button_select_date"
+        android1:layout_marginTop="16dp"
+        android1:background="@color/Red" >
+
+    </ListView>
+
+
+
+    <RelativeLayout
+        android1:id="@+id/layout_comment"
+        android1:layout_width="match_parent"
+        android1:layout_height="wrap_content"
+        android1:visibility = "invisible"
+        android1:layout_alignParentBottom="true"
+        >
+
+        <EditText
+            android1:id="@+id/editText_comment"
+            android1:layout_width="wrap_content"
+            android1:layout_height="wrap_content"
+            android1:ems="10" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android1:id="@+id/button_send"
+            android1:layout_width="wrap_content"
+            android1:layout_height="wrap_content"
+            android1:layout_alignParentRight="true"
+            android1:layout_alignParentTop="true"
+            android1:text="发送" />
+
+    </RelativeLayout>
     <Button
         android1:id="@+id/button_OK"
         android1:layout_width="wrap_content"
         android1:layout_height="wrap_content"
         android1:layout_alignLeft="@+id/button_select_date"
-        android1:layout_alignParentBottom="true"
+        android1:layout_above="@+id/layout_comment"
         android1:text="Button" />
 
     <Button
         android1:id="@+id/button_Cancel"
         android1:layout_width="wrap_content"
         android1:layout_height="wrap_content"
-        android1:layout_alignParentBottom="true"
+        android1:layout_above="@+id/layout_comment"
         android1:layout_alignRight="@+id/button_select_date"
         android1:text="Button" />
-
+    
+        <Button
+        android1:id="@+id/button_comment"
+        android1:layout_width="wrap_content"
+        android1:layout_height="wrap_content"
+        android1:layout_above="@+id/layout_comment"
+        android1:layout_centerHorizontal="true"
+        android1:text="评论" />
 </RelativeLayout>

@@ -19,6 +19,7 @@ import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.data.DianpingDao.SimpleBusiness;
 import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.UserManager;
 
 public class ActivityData implements Serializable {
 
@@ -197,9 +198,9 @@ public class ActivityData implements Serializable {
 		testCB.mImgUrl = "http://i2.dpfile.com//pc//e6801a8a0b89fa2dd93e582c69d2e7cd(700x700)//thumb.jpg";
 		testCB.mPhoneNumber = "12345678";
 		
-		MyUser testUser = DemoApplication.getInstance().getUser();
+		MyUser testUser = UserManager.getInstance().getCurrentUser();
 		ArrayList<MyUser> users = new ArrayList<MyUser>();
-		MyUser testGuest = MyServerManager.getInstance().getUserInfo("rlk");
+		MyUser testGuest = MyServerManager.getInstance().getUserInfo("rlk_local");
 		users.add(testGuest);
 			try {
 				ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2014年1月1日16时")

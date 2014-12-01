@@ -34,21 +34,31 @@ import org.json.JSONObject;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
+import com.test.juxiaohui.data.comment.ActivityComment;
+import com.test.juxiaohui.data.comment.Comment;
 import com.test.juxiaohui.data.message.ActivityMessage;
+import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.UserManager;
 
 import android.test.AndroidTestCase;
 import android.util.Log;
 
 public class ServerTest extends AndroidTestCase {
 
-	final String IP_ADDRESS = "http://117.78.3.87:80";
+	String IP_ADDRESS = "http://117.78.3.87:80";
 	final String TAG = "weijuhuitest";
+	boolean LOCAL_DEBUG = true;
 	String cookie = "";
 	protected void setUp() throws Exception {
 		super.setUp();
-		MyServerManager.getInstance().login("yh");
-		MyServerManager.getInstance().getUserInfo("yh");
+		if(LOCAL_DEBUG)
+		{
+			IP_ADDRESS = "http://127.0.0.1:80";
+		}
+		UserManager.getInstance().login("test", "test");
+//		MyServerManager.getInstance().login("test");
+//		MyServerManager.getInstance().getUserInfo("test");
 	}
 	
 //	public void testLogin()
@@ -256,47 +266,47 @@ public class ServerTest extends AndroidTestCase {
 //				
 //	}
 	
-	public void testLogin()
-	{
-		String userName = "yihao";
-		String url = String.format("%s/login?user=%s", IP_ADDRESS, userName);//"http://192.168.1.103:8080/login?user=" + userName;
-        HttpGet httpGet = new HttpGet(url);  
-        HttpResponse httpResponse;
-		try {
-			httpResponse = new DefaultHttpClient().execute(httpGet);
-	        if (httpResponse.getStatusLine().getStatusCode() == 200)  
-	        {  
-	            String result = EntityUtils.toString(httpResponse.getEntity());  
-	            Log.v("weijuhuiTest", result);
-	            Header[] headers = httpResponse.getHeaders("Set-Cookie");
-	            if(null != headers)
-	            {
-		            for(int i=0; i<headers.length; i++)
-		            {
-		            	Log.v("weijuhuiTest", headers[i].getValue());
-		            	String str = headers[i].getValue();
-		            	if(str.contains("token="))
-		            	{
-			            	int first = str.indexOf("token=");
-			            	int last = str.indexOf(';');	
-			            	cookie = str.substring(first + "token=".length(), last);
-			            	break;
-		            	}
-		            }
-	            }
-	        }
-	        else
-	        {
-	        	Assert.fail("login failed");
-	        }
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//testAddData(cookie);
-	}
+//	public void testLogin()
+//	{
+//		String userName = "yihao";
+//		String url = String.format("%s/login?user=%s", IP_ADDRESS, userName);//"http://192.168.1.103:8080/login?user=" + userName;
+//        HttpGet httpGet = new HttpGet(url);  
+//        HttpResponse httpResponse;
+//		try {
+//			httpResponse = new DefaultHttpClient().execute(httpGet);
+//	        if (httpResponse.getStatusLine().getStatusCode() == 200)  
+//	        {  
+//	            String result = EntityUtils.toString(httpResponse.getEntity());  
+//	            Log.v("weijuhuiTest", result);
+//	            Header[] headers = httpResponse.getHeaders("Set-Cookie");
+//	            if(null != headers)
+//	            {
+//		            for(int i=0; i<headers.length; i++)
+//		            {
+//		            	Log.v("weijuhuiTest", headers[i].getValue());
+//		            	String str = headers[i].getValue();
+//		            	if(str.contains("token="))
+//		            	{
+//			            	int first = str.indexOf("token=");
+//			            	int last = str.indexOf(';');	
+//			            	cookie = str.substring(first + "token=".length(), last);
+//			            	break;
+//		            	}
+//		            }
+//	            }
+//	        }
+//	        else
+//	        {
+//	        	Assert.fail("login failed");
+//	        }
+//		}
+//		catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		//testAddData(cookie);
+//	}
 	
 //	public void testAddData(String cookie)
 //	{
@@ -372,25 +382,33 @@ public class ServerTest extends AndroidTestCase {
 //		}		
 //	}
 	private String activityID;
-	public void testCreateActivity()
+	public void testActivity()
 	{
+		//create activity
 		ActivityData data = ActivityData.createTestData();
 		activityID = MyServerManager.getInstance().createActivity(data);
 		Assert.assertNotNull(activityID);
 		
+		//get activity
 		data = MyServerManager.getInstance().getActivity(activityID);
 		Assert.assertNotNull(data);
 		
+		//update activity
 		Assert.assertEquals(true, MyServerManager.getInstance().updateActivity(data, activityID));
 		
-		MyServerManager.getInstance().addUserActivity("545f496d1c63a0f5756c7bd0", activityID, "doing_activity");
+//		MyServerManager.getInstance().addUserActivity("545f496d1c63a0f5756c7bd0", activityID, "doing_activity");		
+//		ArrayList list = MyServerManager.getInstance().getUserActivity("545f496d1c63a0f5756c7bd0");
+//		Assert.assertTrue(list.size()>0);
+//		Log.v("juxiaohuitest", list.size() + "");
 		
-		ArrayList list = MyServerManager.getInstance().getUserActivity("545f496d1c63a0f5756c7bd0");
-		Assert.assertTrue(list.size()>0);
-		Log.v("juxiaohuitest", list.size() + "");
+		//get all activity
+		ArrayList<ActivityData> activityList = MyServerManager.getInstance().getAllActivity();
+		Assert.assertTrue(activityList.size() > 0);
 	}
 	
-	public void testSendMessage()
+
+	
+	public void testMessage()
 	{
 		ActivityMessage message = new ActivityMessage();
 		MyUser user = new MyUser();
@@ -399,13 +417,61 @@ public class ServerTest extends AndroidTestCase {
 		message.mAction = "invite";
 		message.mActivityName = "war3 2v2";
 		
-		MyUser me = new MyUser();
-		me.mID = "545f496d1c63a0f5756c7bd0";
-		MyServerManager.getInstance().login("yh");
-		MyServerManager.getInstance().getUserInfo("yh");
-		MyServerManager.getInstance().sendMessage(me, message);
+		//发送消息，查询消息
+		MyUser me = MyServerManager.getInstance().getUserInfo("yh");
+		MyServerManager.getInstance().sendMessage(me.mID, message);
+		ArrayList<MyMessage> messageList = MyServerManager.getInstance().getMessages(me.mID);
+		Assert.assertTrue(messageList.size() > 0);
 		Log.v("juxiaohuitest", message.toJSON().toString());
+		
+		//删除消息
+		MyServerManager.getInstance().removeMessages(me.mID, messageList);
+		messageList = MyServerManager.getInstance().getMessages(me.mID);
+		Assert.assertTrue(messageList.size() == 0);
 	}
+	
+	public void testUser()
+	{
+		//新增一个用户和查询一个用户
+		MyUser newUser = new MyUser();
+		newUser.mName = "test_local";
+		newUser.mSex = "female";
+		MyServerManager.getInstance().updateUserInfo(newUser);
+		MyUser getUser = MyServerManager.getInstance().getUserInfo("test_local");
+		Assert.assertNotNull(getUser);
+		Assert.assertNotNull(getUser.mID);
+		Assert.assertTrue(getUser.mName.equals(newUser.mName));
+		Assert.assertTrue(getUser.mSex.equals(newUser.mSex));
+		
+		//删除一个用户
+		MyServerManager.getInstance().removeUser(getUser.mID);
+		getUser = MyServerManager.getInstance().getUserInfo("test_local");
+		Assert.assertNull(getUser);
+	}
+	
+	public void testComment()
+	{
+		ActivityComment comment = new ActivityComment();
+		comment.mUserName = UserManager.getInstance().getCurrentUser().mName;
+		comment.mActivityID = "547b49162d3a8c110032669a";
+		comment.mContent = "What a good party!";
+		//对一个Activity进行评论
+		String commentID = UserManager.getInstance().getCurrentUser().postComment(comment);
+		ActivityComment getComment = MyServerManager.getInstance().getComment(commentID);
+		Assert.assertNotNull(getComment);
+		ArrayList<String> activity_comments = MyServerManager.getInstance().getActivityComment("547b49162d3a8c110032669a");
+		Assert.assertTrue(activity_comments.size()>0);
+		for(String id:activity_comments)
+		{
+			Log.v(TAG, "activity's comment_id is " + id);
+		}
+		//对上一个评论进行评论
+		
+		//删除一个有权限的评论
+		 
+		//删除一个没有权限的评论
+	}
+	
 	
 
 //	private void testGetData()

@@ -33,6 +33,7 @@ import com.test.juxiaohui.data.UserDao;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.domain.InviteMessage;
 import com.test.juxiaohui.domain.User;
+import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.domain.InviteMessage.InviteMesageStatus;
 import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.receiver.NewMessageBroadcastReceiver;
@@ -103,7 +104,7 @@ public class EntryActivity extends FragmentActivity {
 		//mSettingFragment = new SettingsFragment();
 		mNaviFragment = new NavigationFragment();
 		
-		mUserinfoFragment = new UserinfoFragment(DemoApplication.getInstance().getUser());
+		mUserinfoFragment = new UserinfoFragment(UserManager.getInstance().getCurrentUser());
 		
 		fragments = new Fragment[] { mNaviFragment, mContactListFragment, mUserinfoFragment };
 		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mNaviFragment)

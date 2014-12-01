@@ -30,19 +30,34 @@ import org.json.JSONObject;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
+import com.test.juxiaohui.data.comment.ActivityComment;
+import com.test.juxiaohui.data.comment.Comment;
 import com.test.juxiaohui.data.message.MyMessage;
 
 import android.util.Log;
 
 public class MyServerManager {
+	public static class ServerException extends RuntimeException
+	{
+		public ServerException(String detailMessage)
+		{
+			super(detailMessage);
+		}
+	}
+	
 	private static MyServerManager mInstance = null;
 	private Object mLock = new Object();
-	final String IP_ADDRESS = "http://117.78.3.87:80";
+	String IP_ADDRESS = "http://117.78.3.87:80";
 	final String IP_ADDRESS_UPLOAD = "http://117.78.3.87:81/upload";
+	public final String EXCEPTION_NOT_LOGIN = "You have not login!";
 	String mToken;
-	MyUser mUser;
-
+	String mUserName;
+	boolean LOCAL_DEBUG = true;
 	private MyServerManager() {
+		if(LOCAL_DEBUG)
+		{
+			IP_ADDRESS = "http://192.168.1.102:80";
+		}
 	}
 
 	public static MyServerManager getInstance() {
@@ -57,14 +72,16 @@ public class MyServerManager {
 	 * @return 登录是否成功
 	 */
 	public boolean login(String username) {
-		final String fUsername = username;
+		mUserName = username;
 		
 		Callable<Boolean> callable = new Callable<Boolean>() {
 			@Override
 			public Boolean call() throws Exception {
 				Boolean result = false;
 				String url = String.format("%s/login?user=%s", IP_ADDRESS,
-						fUsername);
+						mUserName);
+				String a = "adsf";
+				a = a + 10;
 				HttpGet httpGet = new HttpGet(url);
 				HttpResponse httpResponse;
 				try {
@@ -96,7 +113,7 @@ public class MyServerManager {
 			}
 		};
 		
-		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
+		Future<Boolean>future = Executors.newCachedThreadPool().submit(callable);
 		try {
 			return future.get().booleanValue();
 		} catch (InterruptedException e) {
@@ -193,7 +210,6 @@ public class MyServerManager {
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpPost post = new HttpPost(IP_ADDRESS_UPLOAD);
-			fileName = mToken + "_" + fileName;
 			post.setEntity(new StringEntity(String.format("%s\r\n%s\r\n",
 					fileName, fileContent), "ISO-8859-1"));
 			HttpResponse response = httpClient.execute(post);
@@ -217,7 +233,7 @@ public class MyServerManager {
 	}
 
 	/**
-	 * 更新用户信息
+	 * 更新用户信息，如果该用户信息不存在，则会新增一个用户信息
 	 * 
 	 * @param user
 	 * @return
@@ -226,6 +242,11 @@ public class MyServerManager {
 		if(null == user)
 		{
 			throw new IllegalArgumentException("updateUserInfo user can not be null");
+		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
 		}
 		
 		final MyUser fUser = user;
@@ -281,6 +302,11 @@ public class MyServerManager {
 		{
 			throw new IllegalArgumentException("getUserInfo username can not be null");
 		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 		final String fUserName = username;
 		Callable<MyUser> callable = new Callable<MyUser>() {
 			@Override
@@ -303,7 +329,6 @@ public class MyServerManager {
 							user = MyUser.fromJSON(jsonObj
 									.getJSONObject("data"));
 							user.mID = jsonObj.getString("_id");
-							mUser = user;
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -345,6 +370,11 @@ public class MyServerManager {
 		if (null == data) {
 			throw new IllegalArgumentException("ActivityData can not be null");
 		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 		final ActivityData fData = data;
 		Callable<String> callable = new Callable<String>() {
 			@Override
@@ -357,7 +387,7 @@ public class MyServerManager {
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					String str = ActivityData.toJSON(fData)
 							.toString();
 					post.setEntity(new StringEntity(str, "utf-8"));
@@ -409,6 +439,11 @@ public class MyServerManager {
 			throw new IllegalArgumentException(
 					"ActivityData or id can not be null");
 		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 		final ActivityData fData = data;
 		final String fId = id;
 		Callable<Boolean> callable = new Callable<Boolean>() {
@@ -424,7 +459,7 @@ public class MyServerManager {
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					post.setEntity(new StringEntity(ActivityData.toJSON(fData)
 							.toString(), "utf-8"));
 					httpResponse = new DefaultHttpClient().execute(post);
@@ -467,6 +502,11 @@ public class MyServerManager {
 		if (null == id) {
 			throw new IllegalArgumentException("id can not be null");
 		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 		final String fId = id;
 		Callable<ActivityData> callable = new Callable<ActivityData>() {
 			@Override
@@ -479,7 +519,7 @@ public class MyServerManager {
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						try {
@@ -523,6 +563,10 @@ public class MyServerManager {
 	 */
 
 	public ArrayList<ActivityData> getAllActivity() {
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 		Callable<ArrayList<ActivityData>> callable = new Callable<ArrayList<ActivityData>>() {
 			@Override
 			public ArrayList<ActivityData> call() throws Exception {
@@ -534,7 +578,7 @@ public class MyServerManager {
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						result = new ArrayList<ActivityData>();
@@ -593,6 +637,11 @@ public class MyServerManager {
 			throw new IllegalArgumentException(
 					"userId or activityId or field can not be null");
 		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 
 		final String fUserId = userId;
 		final String fActivityID = activityId;
@@ -610,7 +659,7 @@ public class MyServerManager {
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						result = true;
@@ -651,6 +700,11 @@ public class MyServerManager {
 		if (null == id) {
 			throw new IllegalArgumentException("id can not be null");
 		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 		final String fId = id;
 		Callable<Boolean> callable = new Callable<Boolean>() {
 			@Override
@@ -663,7 +717,7 @@ public class MyServerManager {
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						result = true;
@@ -701,6 +755,11 @@ public class MyServerManager {
 		if (null == userId) {
 			throw new IllegalArgumentException("userId can not be null");
 		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 		final String fUserId = userId;
 		Callable<ArrayList<ArrayList<String>>> callable = new Callable<ArrayList<ArrayList<String>>>() {
 			
@@ -714,7 +773,7 @@ public class MyServerManager {
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						try {
@@ -768,13 +827,18 @@ public class MyServerManager {
 	 * @param user
 	 * @param message
 	 */
-	public boolean sendMessage(MyUser user, MyMessage message)
+	public boolean sendMessage(String userId, MyMessage message)
 	{
-		if (null == user || null == message) {
+		if (null == userId || null == message) {
 			throw new IllegalArgumentException(
-					"user or message can not be null");
+					"userId or message can not be null");
 		}
-		final MyUser fUser = user;
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
+		final String fUserId = userId;
 		final MyMessage fMessage = message;
 		
 		Callable<Boolean> callable = new Callable<Boolean>() {
@@ -784,12 +848,12 @@ public class MyServerManager {
 				Boolean result = false;
 				String url = String
 						.format("%s/db?action=add_user_message&table=user_message&user_id=%s",
-								IP_ADDRESS, fUser.mID);
+								IP_ADDRESS, fUserId);
 				HttpPost post = new HttpPost(url);
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					JSONArray jsonArray = new JSONArray();
 					post.setEntity(new StringEntity(fMessage.toJSON().toString(), "utf-8"));
 					httpResponse = new DefaultHttpClient().execute(post);
@@ -824,12 +888,17 @@ public class MyServerManager {
 	 * @param user
 	 * @return
 	 */
-	public ArrayList<MyMessage> getMessages(MyUser user)
+	public ArrayList<MyMessage> getMessages(String userId)
 	{
-		if (null == user) {
+		if (null == userId) {
 			throw new IllegalArgumentException("userId can not be null");
 		}
-		final MyUser fUser = user;
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
+		final String fUserId = userId;
 		Callable <ArrayList<MyMessage>> callable = new Callable<ArrayList<MyMessage>>() {
 			
 			@Override
@@ -837,12 +906,12 @@ public class MyServerManager {
 				ArrayList<MyMessage> messages = null;
 				String url = String
 						.format("%s/db?action=get_user_message&table=user_message&user_id=%s",
-								IP_ADDRESS, fUser.mID);
+								IP_ADDRESS, fUserId);
 				HttpPost post = new HttpPost(url);
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						try {
@@ -889,12 +958,17 @@ public class MyServerManager {
 	 * 删除用户消息，该接口可用于阅读完消息后，删除未读的消息
 	 * @param messages
 	 */
-	public boolean removeMessages(MyUser user, ArrayList<MyMessage> messages)
+	public boolean removeMessages(String userID, ArrayList<MyMessage> messages)
 	{
-		if (null == user || null == messages) {
-			throw new IllegalArgumentException("user or messages can not be null");
+		if (null == userID || null == messages) {
+			throw new IllegalArgumentException("userID or messages can not be null");
 		}
-		final MyUser fUser = user;
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
+		final String fUserID = userID;
 		final ArrayList<MyMessage> fMessages  = messages;
 		Callable<Boolean> callable = new Callable<Boolean>() {
 			
@@ -903,12 +977,12 @@ public class MyServerManager {
 				Boolean result = false;
 				String url = String
 						.format("%s/db?action=remove_user_message&table=user_message&user_id=%s",
-								IP_ADDRESS, fUser.mID);
+								IP_ADDRESS, fUserID);
 				HttpPost post = new HttpPost(url);
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					JSONArray jsonArray = new JSONArray();
 					String data = "[";
 					for(MyMessage message : fMessages)
@@ -960,6 +1034,10 @@ public class MyServerManager {
 					"userId or activityId or field can not be null");
 		}
 
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 		final String fUserId = userId;
 		final String fActivityID = activityId;
 		final String fField = field;
@@ -975,7 +1053,7 @@ public class MyServerManager {
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						result = true;
@@ -1019,6 +1097,10 @@ public class MyServerManager {
 					"userId or activityId or field can not be null");
 		}
 
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
 		final String fUserId = userId;
 		final String fActivityID = activityId;
 		final String fSourceField = sourceField;
@@ -1035,7 +1117,7 @@ public class MyServerManager {
 				HttpResponse httpResponse;
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
-							mUser.mName, mToken));
+							mUserName, mToken));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						result = true;
@@ -1064,8 +1146,317 @@ public class MyServerManager {
 		
 	}
 	
+	/** 删除一个用户
+	 * @param id
+	 * @return
+	 */
+	public boolean removeUser(String id) {
+		if (null == id) {
+			throw new IllegalArgumentException("id can not be null");
+		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
+		final String fId = id;
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				Boolean result = false;
+				String url = String.format(
+						"%s/db?action=del&table=user&id=%s", IP_ADDRESS,
+						fId);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUserName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						result = true;
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				return result;
+			}
+		};
+		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}			
+	}
 	
+	/**
+	 * 登出用户
+	 */
+	public void logout()
+	{
+		mToken = null;
+		mUserName = null;
+	}
 	
+	public String addComment(Comment comment)
+	{
+		if (null == comment) {
+			throw new IllegalArgumentException("Comment can not be null");
+		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
+		final Comment fComment = comment;
+		Callable<String> callable = new Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				String commentID = null;
+				String url = String.format("%s/db?action=addComment&table=comment",
+						IP_ADDRESS);
+				HttpPost post = new HttpPost(url);
+				// 第2步：使用execute方法发送HTTP GET请求，并返回HttpResponse对象
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUserName, mToken));
+					String str = fComment.toJSON().toString();
+					post.setEntity(new StringEntity(str, "utf-8"));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						try {
+							JSONObject jsonObj = new JSONObject(
+									EntityUtils.toString(
+											httpResponse.getEntity(), "utf-8"));
+							commentID = jsonObj.getString("id");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 	
+				return commentID;
+			}
+		};
+		
+		Future<String>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}	
+	}
+	
+	/**读取评论
+	 * @param id
+	 * @return
+	 */
+	public ActivityComment getComment(String id) {
+		if (null == id) {
+			throw new IllegalArgumentException("id can not be null");
+		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
+		final String fId = id;
+		Callable<ActivityComment> callable = new Callable<ActivityComment>() {
+			@Override
+			public ActivityComment call() throws Exception {
+				ActivityComment comment = null;
+				String url = String.format(
+						"%s/db?action=getComment&table=comment&id=%s", IP_ADDRESS,
+						fId);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUserName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						try {
+							String str = EntityUtils.toString(
+									httpResponse.getEntity(), "utf-8");
+							JSONObject jsonObj = new JSONObject(
+									str);
+							comment = ActivityComment.fromJSON(jsonObj
+									.getJSONObject("data"));
+							comment.mID = fId;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				return comment;
+			}
+		};
+		Future<ActivityComment>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return null;
+		}			
+	}
+	
+	/** 删除评论
+	 * @param id
+	 * @return
+	 */
+	public boolean removeComment(String id)
+	{
+		if (null == id) {
+			throw new IllegalArgumentException("id can not be null");
+		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
+		final String fId = id;
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				Boolean result = false;
+				String url = String.format(
+						"%s/db?action=removeComment&table=comment&id=%s", IP_ADDRESS,
+						fId);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUserName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						result = true;
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				return result;
+			}
+		};
+		Future<Boolean>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}	
+	}
+
+	/**获取某个活动的所有评论
+	 * @param activityID
+	 * @return
+	 */
+	public ArrayList<String> getActivityComment(String activityID) {
+		if (null == activityID) {
+			throw new IllegalArgumentException("activityID can not be null");
+		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
+		final String fActivityId = activityID;
+		Callable<ArrayList<String>> callable = new Callable<ArrayList<String>>() {
+			
+			@Override
+			public ArrayList<String> call() throws Exception {
+				ArrayList<String> commentList = null;
+				String url = String
+						.format("%s/db?action=get_activity_comment&table=activity&activity_id=%s",
+								IP_ADDRESS, fActivityId);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUserName, mToken));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						try {
+							commentList = new ArrayList<String>();
+							JSONObject jsonObj = new JSONObject(
+									EntityUtils.toString(
+											httpResponse.getEntity(), "utf-8"));
+							JSONArray jComments = jsonObj
+									.getJSONArray("comment_ids");						
+							for (int i = 0; i < jComments.length(); i++) 
+							{
+								commentList.add(jComments.getString(i));
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return commentList;
+			}
+		};
+		Future<ArrayList<String>> future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	boolean checklogin()
+	{
+		if(mToken == null|| mUserName == null)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
 	
 	
 }

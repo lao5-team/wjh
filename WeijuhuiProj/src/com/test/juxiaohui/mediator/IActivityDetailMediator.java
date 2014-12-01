@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
+import com.test.juxiaohui.data.comment.ActivityComment;
 
 public interface IActivityDetailMediator {
 	public void setActivityData(ActivityData data);
@@ -53,6 +54,8 @@ public interface IActivityDetailMediator {
 	 * 当右（取消）按钮按下时触发
 	 */
 	public void onCancelClicked();
+	
+	public void postComment(ActivityComment comment);
 	
 	
 }

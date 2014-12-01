@@ -15,11 +15,15 @@ import com.easemob.exceptions.EaseMobException;
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.activity.CreateActivityActivity2.IntentBuilder;
+import com.test.juxiaohui.adapter.CommentAdapter;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.DianpingDataHelper;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
+import com.test.juxiaohui.data.comment.ActivityComment;
+import com.test.juxiaohui.data.comment.IActivityCommentLoader;
 import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.mediator.IActivityDetailMediator;
 import com.test.juxiaohui.R;
@@ -38,7 +42,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -131,12 +137,12 @@ public class ActivityDetailActivity extends FragmentActivity {
 			showTime(data.mBeginDate);
 			showMembers(data.mUsers);
 			showPayType(data.mSpentType);
-			if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
+			if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
 			{
 				mBtnConfirm.setText("完成");
 				mBtnCancel.setText("解散");
 			}
-			else if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.JOINER))
+			else if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.JOINER))
 			{
 				mBtnConfirm.setVisibility(View.GONE);
 				mBtnCancel.setText("退出");				
@@ -167,22 +173,28 @@ public class ActivityDetailActivity extends FragmentActivity {
 
 		@Override
 		public void onOKClicked() {
-			if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
+			if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
 			{
-				DemoApplication.getInstance().getUser().finishActivity(mData);
+				UserManager.getInstance().getCurrentUser().finishActivity(mData);
 			}
 		}
 
 		@Override
 		public void onCancelClicked() {
-			if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
+			if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
 			{
-				DemoApplication.getInstance().getUser().dismissActivity(mData);
+				UserManager.getInstance().getCurrentUser().dismissActivity(mData);
 			}
-			else if(DemoApplication.getInstance().getUser().getMyRoleType(mData).endsWith(MyUser.JOINER))
+			else if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.JOINER))
 			{
-				DemoApplication.getInstance().getUser().quitActivity(mData);
+				UserManager.getInstance().getCurrentUser().quitActivity(mData);
 			}
+		}
+
+		@Override
+		public void postComment(ActivityComment comment) {
+			UserManager.getInstance().getCurrentUser().postComment(comment);
+			mCommentAdapter.refresh();
 		}
 
 
@@ -190,6 +202,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 	//data
 	private ComplexBusiness mCBData;
 	private int mActivityIndex;
+	private CommentAdapter mCommentAdapter;
 	
 	//UI
 	private RelativeLayout mView;
@@ -204,13 +217,19 @@ public class ActivityDetailActivity extends FragmentActivity {
 	private TextView mTvTime;
 	private Button mBtnConfirm;
 	private Button mBtnCancel;
+	private Button mBtnComment;
 	private TextView mTvContent;
 	private CheckBox mCBPayMe;
 	private CheckBox mCBPayAA;
 	private CheckBox mCBPayOther;	
+	private ListView mListViewComment;
+	private RelativeLayout mLayoutComment;
+	private EditText mEtxComment;
+	private Button mBtnSend;
 	//Handler
 	private ArrayList<MyUser> mFriends = new ArrayList<MyUser>();
 	private ActivityData mData;
+
 	private void updateFriendsUI()
 	{
 
@@ -229,12 +248,33 @@ public class ActivityDetailActivity extends FragmentActivity {
 	{
 		/*test code begin*/
 		Intent intent = getIntent();
-		IntentBuilder ib = new IntentBuilder(intent);
+		final IntentBuilder ib = new IntentBuilder(intent);
 		mData = MyServerManager.getInstance().getActivity(ib.getActivityID());
+
 		if (mData == null) {
 			Toast.makeText(this, "找不到活动内容", Toast.LENGTH_SHORT).show();
-
+			this.finish();
 		}
+		
+		mCommentAdapter = new CommentAdapter(this, new IActivityCommentLoader() {
+			
+			@Override
+			public ArrayList<ActivityComment> getCommentList() {
+				ArrayList<ActivityComment> commentList = new ArrayList<ActivityComment>();
+				ArrayList<String> commentID_list = MyServerManager.getInstance().getActivityComment(ib.getActivityID());
+				if(null!= commentID_list)
+				{
+					for(String id:commentID_list)
+					{
+						ActivityComment comment = MyServerManager.getInstance().getComment(id);
+						commentList.add(comment);
+					}
+						
+				}
+				return commentList;				
+			}
+		});
+		mListViewComment.setAdapter(mCommentAdapter);
 		mMediator.setActivityData(mData);
 		
 	}
@@ -257,6 +297,8 @@ public class ActivityDetailActivity extends FragmentActivity {
 		mCBPayAA = (CheckBox)findViewById(R.id.checkBox_pay_aa);
 		mCBPayOther = (CheckBox)findViewById(R.id.checkBox_pay_other);
 		
+		mListViewComment = (ListView)findViewById(R.id.listView_comment);
+		
 		mBtnConfirm = (Button)findViewById(R.id.button_OK);
 		mBtnConfirm.setOnClickListener(new OnClickListener() {
 			
@@ -274,6 +316,38 @@ public class ActivityDetailActivity extends FragmentActivity {
 			public void onClick(View v) {
 				mMediator.onCancelClicked();
 				ActivityDetailActivity.this.finish();				
+			}
+		});		
+		
+		mBtnComment = (Button)findViewById(R.id.button_comment);
+		mBtnComment.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mLayoutComment.setVisibility(View.VISIBLE);
+			}
+		});
+		
+		mLayoutComment = (RelativeLayout)findViewById(R.id.layout_comment);
+		
+		mEtxComment = (EditText)findViewById(R.id.editText_comment);
+		
+		mBtnSend = (Button)findViewById(R.id.button_send);
+		mBtnSend.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				String content = mEtxComment.getEditableText().toString();
+				if(null!=content && content.length()>0)
+				{
+					ActivityComment comment = new ActivityComment();
+					comment.mContent = content;
+					comment.mActivityID = mData.mID;
+					mMediator.postComment(comment);
+				}
+				mLayoutComment.setVisibility(View.INVISIBLE);
+				
+				
 			}
 		});
 		

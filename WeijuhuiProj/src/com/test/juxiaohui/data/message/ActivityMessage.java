@@ -178,7 +178,6 @@ public class ActivityMessage extends MyMessage {
 	@Override
 	public JSONObject toJSON()
 	{
-
 		JSONObject obj = new JSONObject();
 		try {
 			obj.put("type", this.mType);

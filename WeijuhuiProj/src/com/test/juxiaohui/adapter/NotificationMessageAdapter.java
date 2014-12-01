@@ -9,6 +9,7 @@ import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.message.ActivityMessage;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.domain.activity.ActivityManager;
 
 import android.content.Context;
@@ -93,7 +94,7 @@ public class NotificationMessageAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					DemoApplication.getInstance().getUser().acceptActivity(data);
+					UserManager.getInstance().getCurrentUser().acceptActivity(data);
 					mMessages.remove(message);
 					((android.app.Activity)mContext).finish();
 				}
@@ -103,7 +104,7 @@ public class NotificationMessageAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					DemoApplication.getInstance().getUser().refuseActivity(data);
+					UserManager.getInstance().getCurrentUser().refuseActivity(data);
 					mMessages.remove(message);
 					((android.app.Activity)mContext).finish();
 				}

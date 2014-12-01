@@ -21,12 +21,14 @@ import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MessageManager;
 import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.mediator.IActivityCreateMediator;
 import com.test.juxiaohui.mediator.IActivityDetailMediator;
 import com.test.juxiaohui.R;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextWatcher;
@@ -163,14 +165,50 @@ public class CreateActivityActivity2 extends Activity {
 		
 		@Override
 		public void onOKClicked() {
-			mMediator.setCreator(DemoApplication.getInstance().getUser());
-			if(null != (mActivityData = mMediator.createActivityData()))
-			{
-				DemoApplication.getInstance().getUser().startActivity(mActivityData);
-				CreateActivityActivity2.this.finish();	
-			}
-	
-			
+			final ProgressDialog pd = new ProgressDialog(CreateActivityActivity2.this);
+			pd.setMessage("正在创建活动...");
+			pd.show();
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					if(DemoApplication.isDebug)
+					{
+						UserManager.getInstance().getCurrentUser().startActivity(mActivityData);
+						runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								if (!CreateActivityActivity2.this.isFinishing())
+									pd.dismiss();
+								Toast.makeText(getApplicationContext(), "创建活动成功", 0).show();
+								CreateActivityActivity2.this.finish();		
+							}
+						});
+									
+					}
+					else
+					{
+						mMediator.setCreator(UserManager.getInstance().getCurrentUser());
+						if(null != (mActivityData = mMediator.createActivityData()))
+						{
+							UserManager.getInstance().getCurrentUser().startActivity(mActivityData);
+							runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									if (!CreateActivityActivity2.this.isFinishing())
+										pd.dismiss();
+									Toast.makeText(getApplicationContext(), "创建活动成功", 0).show();
+									CreateActivityActivity2.this.finish();		
+								}
+							});
+						}				
+					}
+					
+				}
+			});
+			thread.start();
+
 		}
 		
 		@Override
@@ -358,6 +396,7 @@ public class CreateActivityActivity2 extends Activity {
 			mEtxTitle.setText(mActivityData.mTitle);
 			mEtxContent.setText(mActivityData.mContent);
 			mBeginDate = mActivityData.mBeginDate;
+			mMediator.setTime(mBeginDate);
 			mBtnSelectDate.setText(DateFormat.format(ActivityData.dataPattern, mBeginDate));
 			String users = "";
 			for(MyUser user:mActivityData.mUsers)
@@ -365,7 +404,6 @@ public class CreateActivityActivity2 extends Activity {
 				users += user.mName + " ";
 			}
 			mBtnSelectFriends.setText(users);		
-			
 			if(mActivityData.mSpentType == 0)
 			{
 				mCBPayMe.setChecked(true);

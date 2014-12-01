@@ -28,6 +28,7 @@ import com.easemob.exceptions.EaseMobException;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.data.MyUser;
 /**
  * 注册页
@@ -80,13 +81,10 @@ public class RegisterActivity extends BaseActivity {
 			new Thread(new Runnable() {
 				public void run() {
 					try {
-						// 调用sdk注册方法
-						EMChatManager.getInstance().createAccountOnServer(username, pwd);
-						/*将用户信息上传到自己的服务器*/
-						MyServerManager.getInstance().login(username);
-						MyUser user = new MyUser();
-						user.mName = username;
-						MyServerManager.getInstance().updateUserInfo(user);
+						MyUser newUser = new MyUser();
+						newUser.mName = username;
+						newUser.mPassword = pwd;
+						UserManager.getInstance().register(newUser);
 						runOnUiThread(new Runnable() {
 							public void run() {
 								if (!RegisterActivity.this.isFinishing())

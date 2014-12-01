@@ -9,6 +9,7 @@ import com.test.juxiaohui.activity.MessagesActivity;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
+import com.test.juxiaohui.domain.UserManager;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -50,11 +51,11 @@ public class MessageService extends Service {
 				while(true)
 				{
 					ArrayList<MyMessage> messages;
-					MyUser user = DemoApplication.getInstance().getUser();
+					MyUser user = UserManager.getInstance().getCurrentUser();
 					/**/
 					if(null != user)
 					{
-						messages = MyServerManager.getInstance().getMessages(user);
+						messages = MyServerManager.getInstance().getMessages(user.mID);
 						if(null!=messages)
 						{
 							mMessages.addAll(messages);
