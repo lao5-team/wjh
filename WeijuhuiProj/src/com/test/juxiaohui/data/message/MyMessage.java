@@ -17,7 +17,7 @@ import com.test.juxiaohui.data.MyUser;
  * 
  * 本应用使用的消息数据
  */
-public class MyMessage implements Serializable {
+public abstract class MyMessage implements Serializable {
 
 	/**
 	 * 
@@ -25,8 +25,9 @@ public class MyMessage implements Serializable {
 	private static final long serialVersionUID = 1130070227842759145L;
 
 	public static final String TYPE_ACTIVITY = "activity";
+	public static final String TYPE_COMMENT = "comment";
 	/**
-	 * 定义消息类型，"activity"(对应ActivityMessage)，“conversation”（数据用于对话，暂时不需要）
+	 * 定义消息类型，TYPE_ACTIVITY(对应ActivityMessage), TYPE_COMMENT(对应CommentMessage)“conversation”（数据用于对话，暂时不需要）
 	 */
 	public String mType;
 	
@@ -42,20 +43,7 @@ public class MyMessage implements Serializable {
 		mType = null;
 	}
 	
-	public JSONObject toJSON()
-	{
-		JSONObject obj = new JSONObject();
-		try {
-			obj.put("type", this.mType);
-			obj.put("from", MyUser.toJSON(this.mFromUser));
-			//obj.put("action", msg.mAction);
-			return obj;
-		} catch (JSONException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-	}
+	abstract public JSONObject toJSON();
 	
     /**  <p>
      *   从JSONObject转化MyMessage对象，该方法会自动识别MyMessage的type，并向相应的子类型进行转换
@@ -73,9 +61,13 @@ public class MyMessage implements Serializable {
     public static MyMessage fromJSON(JSONObject json)
 	{
     	try {
-			if(json.getString("type").equals("activity"))
+			if(json.getString("type").equals(TYPE_ACTIVITY))
 			{
 				return ActivityMessage.fromJSON(json);
+			}
+			if(json.getString("type").equals(TYPE_COMMENT))
+			{
+				return CommentMessage.fromJSON(json);
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -100,10 +92,10 @@ public class MyMessage implements Serializable {
 		return "未知消息";
 	}
 	
-	 public String toString(Context context)
-	 {
-		 return null;
-	 }
+	 abstract public String toString(Context context);
+	 
+	 
+
 	
 //	public static class MessageBuilder
 //	{

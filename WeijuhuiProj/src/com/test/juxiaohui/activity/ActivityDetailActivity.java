@@ -40,6 +40,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -193,7 +195,14 @@ public class ActivityDetailActivity extends FragmentActivity {
 
 		@Override
 		public void postComment(ActivityComment comment) {
-			UserManager.getInstance().getCurrentUser().postComment(comment);
+			if(null!=comment.mReplyTo)
+			{
+				UserManager.getInstance().getCurrentUser().replyComment(comment);
+			}
+			else
+			{
+				UserManager.getInstance().getCurrentUser().postComment(comment);
+			}
 			mCommentAdapter.refresh();
 		}
 
@@ -229,7 +238,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 	//Handler
 	private ArrayList<MyUser> mFriends = new ArrayList<MyUser>();
 	private ActivityData mData;
-
+	private String mTempReplyTo = null;
 	private void updateFriendsUI()
 	{
 
@@ -264,17 +273,39 @@ public class ActivityDetailActivity extends FragmentActivity {
 				ArrayList<String> commentID_list = MyServerManager.getInstance().getActivityComment(ib.getActivityID());
 				if(null!= commentID_list)
 				{
+					ArrayList<String> ids = new ArrayList<String>();
 					for(String id:commentID_list)
 					{
-						ActivityComment comment = MyServerManager.getInstance().getComment(id);
-						commentList.add(comment);
+						//ActivityComment comment = MyServerManager.getInstance().getComment(id);
+						//commentList.add(comment);
+						ids.add(id);
 					}
+					commentList = MyServerManager.getInstance().getCommentList(ids);
 						
 				}
 				return commentList;				
 			}
 		});
 		mListViewComment.setAdapter(mCommentAdapter);
+		mListViewComment.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				ActivityComment comment = (ActivityComment)mCommentAdapter.getItem(position);
+				if(!comment.mUserName.equals(UserManager.getInstance().getCurrentUser().mName))
+				{
+					mTempReplyTo = comment.mUserName;
+					mEtxComment.setHint("回复 " + comment.mUserName);
+					mLayoutComment.setVisibility(View.VISIBLE);
+				}
+				else
+				{
+					mLayoutComment.setVisibility(View.INVISIBLE);
+				}
+			}
+				
+		});
 		mMediator.setActivityData(mData);
 		
 	}
@@ -324,6 +355,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 			
 			@Override
 			public void onClick(View v) {
+				mTempReplyTo = null;
 				mLayoutComment.setVisibility(View.VISIBLE);
 			}
 		});
@@ -343,8 +375,10 @@ public class ActivityDetailActivity extends FragmentActivity {
 					ActivityComment comment = new ActivityComment();
 					comment.mContent = content;
 					comment.mActivityID = mData.mID;
+					comment.mReplyTo = mTempReplyTo;
 					mMediator.postComment(comment);
 				}
+				mTempReplyTo = null;
 				mLayoutComment.setVisibility(View.INVISIBLE);
 				
 				

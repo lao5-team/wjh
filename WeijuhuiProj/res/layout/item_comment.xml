@@ -9,7 +9,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="TextView" />
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:text="TextView"
+        android:textSize="@dimen/normal_font_size" />
 
     <TextView
         android:id="@+id/textView_content"
@@ -17,8 +21,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="14dp"
+        android:layout_marginTop="10dp"
         android:layout_toRightOf="@+id/textView_username"
-        android:text="asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfsa" />
+        android:text="asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfsa"
+        android:textSize="@dimen/normal_font_size" />
 
 </RelativeLayout>

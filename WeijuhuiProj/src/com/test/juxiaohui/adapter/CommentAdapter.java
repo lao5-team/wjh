@@ -8,12 +8,12 @@ import com.test.juxiaohui.data.comment.IActivityCommentLoader;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class CommentAdapter extends BaseAdapter {
-	
 	Activity mContext;
 	IActivityCommentLoader mLoader;
 	ArrayList<ActivityComment> mCommentList;
@@ -36,14 +36,27 @@ public class CommentAdapter extends BaseAdapter {
 	
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
-		return mCommentList.size();
+		if(null!=mCommentList)
+		{
+			return mCommentList.size();
+		}
+		else
+		{
+			return 0;
+		}
+		
 	}
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
-		return null;
+		if(null!=mCommentList)
+		{
+			return mCommentList.get(position);
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	@Override
@@ -54,13 +67,22 @@ public class CommentAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View view = mContext.getLayoutInflater().inflate(R.layout.item_comment, null);
-		TextView tvUserName = (TextView)view.findViewById(R.id.textView_username);
-		tvUserName.setText(mCommentList.get(position).mUserName);
-		
-		TextView tvContent = (TextView)view.findViewById(R.id.textView_content);
+		if(null == convertView)
+		{
+			convertView = mContext.getLayoutInflater().inflate(R.layout.item_comment, null);
+		}
+		TextView tvUserName = (TextView)convertView.findViewById(R.id.textView_username);
+		if(null==mCommentList.get(position).mReplyTo)
+		{
+			tvUserName.setText(mCommentList.get(position).mUserName+":");
+		}
+		else
+		{
+			tvUserName.setText(mCommentList.get(position).mUserName + " 回复 " + mCommentList.get(position).mReplyTo+":");
+		}
+		TextView tvContent = (TextView)convertView.findViewById(R.id.textView_content);
 		tvContent.setText(mCommentList.get(position).mContent);
-		return view;
+		return convertView;
 	}
 
 }

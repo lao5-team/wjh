@@ -96,8 +96,10 @@
     <string name="apply_message">%1$s申请加入“%2$s”</string>
     <string name="accept_apply_message">%1$s接受了你的申请</string>    
     <string name="refuse_apply_message">%1$s拒绝了你的申请</string>    
-    <string name="finish_activity_message">活动“%1$”已经完成</string>   
+	<string name="finish_activity_message">活动“%1$s”已经完成</string>
     <string name="doing_activity">正在进行的活动</string>    
     <string name="finish_activity">已经完成的活动</string>    
-    <string name="none_intro_content">未填写简介</string>        
+    <string name="none_intro_content">未填写简介</string>    
+    <string name="post_comment_message">“%1$s”评论了您的活动:%2$s</string>     
+    <string name="reply_comment_message">“%1$s”回复了您的评论:%2$s</string>      
 </resources>

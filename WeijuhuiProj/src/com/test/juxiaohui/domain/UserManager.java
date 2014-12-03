@@ -47,7 +47,7 @@ public class UserManager {
 	public MyUser login(String userName, String password)
 	{
 		MyServerManager.getInstance().login(userName);
-		mCurrentUser = MyServerManager.getInstance().getUserInfo(DemoApplication.getInstance().getUserName());
+		mCurrentUser = MyServerManager.getInstance().getUserInfo(userName);
 		return mCurrentUser;
 	}
 	

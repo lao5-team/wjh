@@ -203,9 +203,9 @@ public class ActivityData implements Serializable {
 		MyUser testGuest = MyServerManager.getInstance().getUserInfo("rlk_local");
 		users.add(testGuest);
 			try {
-				ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2014年1月1日16时")
+				ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2014年12月31日16时")
 						).setComplexBusiness(testCB).setCreator(testUser).
-						setUsers(users).setTitle(test_title).setContent("去年买了个表").
+						setUsers(users).setTitle(test_title).setContent("一起在东来顺吃饭\n，去年买了个表，送你").
 						setGroupID("testGroup0").setSpentType(0).
 						create();
 				return data;

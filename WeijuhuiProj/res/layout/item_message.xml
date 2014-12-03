@@ -18,7 +18,9 @@
         android:layout_alignBaseline="@+id/button_confirm"
         android:layout_alignBottom="@+id/button_confirm"
         android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/button_confirm"
         android:text="TextView"
         android:textSize="@dimen/normal_font_size" />

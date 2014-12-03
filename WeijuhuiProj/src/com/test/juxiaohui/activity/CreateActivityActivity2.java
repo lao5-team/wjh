@@ -1,7 +1,9 @@
 package com.test.juxiaohui.activity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import junit.framework.Assert;
 
@@ -29,8 +31,14 @@ import com.test.juxiaohui.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract.Events;
+import android.provider.CalendarContract.Reminders;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -180,6 +188,7 @@ public class CreateActivityActivity2 extends Activity {
 							public void run() {
 								if (!CreateActivityActivity2.this.isFinishing())
 									pd.dismiss();
+								addActivityToCalendar(mActivityData);
 								Toast.makeText(getApplicationContext(), "创建活动成功", 0).show();
 								CreateActivityActivity2.this.finish();		
 							}
@@ -198,6 +207,7 @@ public class CreateActivityActivity2 extends Activity {
 								public void run() {
 									if (!CreateActivityActivity2.this.isFinishing())
 										pd.dismiss();
+									addActivityToCalendar(mActivityData);
 									Toast.makeText(getApplicationContext(), "创建活动成功", 0).show();
 									CreateActivityActivity2.this.finish();		
 								}
@@ -253,6 +263,56 @@ public class CreateActivityActivity2 extends Activity {
 		@Override
 		public void setCreator(MyUser user) {
 			mActivityBuilder.setCreator(user);
+		}
+		
+		private void addActivityToCalendar(ActivityData data)
+		{
+			try
+			{
+				String[] projection = new String[] { "_id", "name" };
+				Uri calendars = Uri.parse("content://com.android.calendar/calendars");
+				Cursor managedCursor = getContentResolver().query(calendars, projection,
+						null, null, null);
+				if (managedCursor.moveToFirst()) {
+					String calName;
+					String calId;
+					int nameColumn = managedCursor.getColumnIndex("name");
+					int idColumn = managedCursor.getColumnIndex("_id");
+					do {
+						calName = managedCursor.getString(nameColumn);
+						calId = managedCursor.getString(idColumn);
+					} while (managedCursor.moveToNext());
+					
+					long startMillis = 0; 
+					long endMillis = 0;     
+					Calendar beginTime = Calendar.getInstance();
+					beginTime.set(2014, 11, 31, 10, 30);
+					startMillis = beginTime.getTimeInMillis();
+					Calendar endTime = Calendar.getInstance();
+					endTime.set(2014, 11, 31, 11, 0);
+					endMillis = endTime.getTimeInMillis();	
+				ContentValues event = new ContentValues(); 
+				event.put(Events.DTSTART, data.mBeginDate.getTime());
+				event.put(Events.DTEND, data.mBeginDate.getTime() + 3600000);
+				event.put(Events.CALENDAR_ID, calId); 	 
+				event.put(Events.TITLE, data.mTitle); 
+				event.put(Events.DESCRIPTION, data.mContent); 
+				event.put(Events.EVENT_TIMEZONE, TimeZone.getDefault().getID().toString());
+				Uri uri = getContentResolver().insert(Events.CONTENT_URI, event);
+				long eventID = Long.parseLong(uri.getLastPathSegment());
+				event = new ContentValues(); 
+				event.put(Reminders.MINUTES, 15);
+				event.put(Reminders.EVENT_ID, eventID);
+				event.put(Reminders.METHOD, Reminders.METHOD_ALERT);
+				uri = getContentResolver().insert(Reminders.CONTENT_URI, event);
+				} 
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			
 		}
 	};
 	

@@ -919,9 +919,8 @@ public class MyServerManager {
 							JSONObject jsonObj = new JSONObject(
 									EntityUtils.toString(
 											httpResponse.getEntity(), "utf-8"));
-							jsonObj = jsonObj.getJSONObject("data");
 							JSONArray jMessages = jsonObj
-									.getJSONArray("messages");
+									.getJSONArray("data");
 							for (int i = 0; i < jMessages.length(); i++) {
 								JSONObject obj = new JSONObject(jMessages.getString(i));
 								messages.add(MyMessage.fromJSON(obj));
@@ -1301,7 +1300,7 @@ public class MyServerManager {
 									str);
 							comment = ActivityComment.fromJSON(jsonObj
 									.getJSONObject("data"));
-							comment.mID = fId;
+							//comment.mID = fId;
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -1325,6 +1324,79 @@ public class MyServerManager {
 			return null;
 		}			
 	}
+
+	public ArrayList<ActivityComment> getCommentList(ArrayList<String> ids) {
+		if (null == ids) {
+			throw new IllegalArgumentException("ids can not be null");
+		}
+		
+		if(!checklogin())
+		{
+			throw new ServerException(EXCEPTION_NOT_LOGIN);
+		}
+		final ArrayList<String> fIds = ids;
+		Callable<ArrayList<ActivityComment>> callable = new Callable<ArrayList<ActivityComment>>() {
+			@Override
+			public ArrayList<ActivityComment> call() throws Exception {
+				ActivityComment comment = null;
+				ArrayList<ActivityComment> commentList = null;
+				String url = String.format(
+						"%s/db?action=getCommentList&table=comment", IP_ADDRESS);
+				HttpPost post = new HttpPost(url);
+				HttpResponse httpResponse;
+				try {
+					post.addHeader("Cookie", String.format("user=%s;token=%s",
+							mUserName, mToken));
+					JSONObject jsonObj = new JSONObject();
+					JSONArray jsonArray = new JSONArray();
+					for(String id:fIds)
+					{
+						jsonArray.put(id);
+					}
+					jsonObj.put("ids", jsonArray);
+					String str = jsonObj.toString();
+					post.setEntity(new StringEntity(str, "utf-8"));
+					httpResponse = new DefaultHttpClient().execute(post);
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						try {
+							commentList = new ArrayList<ActivityComment>();
+							str = EntityUtils.toString(
+									httpResponse.getEntity(), "utf-8");
+							jsonObj = new JSONObject(
+									str);
+							jsonArray = jsonObj.getJSONArray("data");
+							for(int i=0; i<jsonArray.length(); i++)
+							{
+								JSONObject jsonItem = (JSONObject) jsonArray.get(i);
+								comment = ActivityComment.fromJSON(jsonItem);
+								commentList.add(comment);
+							}
+
+						} catch (Exception e) {
+							e.printStackTrace();
+							commentList = null;
+						}
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				return commentList;
+			}
+		};
+		Future<ArrayList<ActivityComment>>future = Executors.newSingleThreadExecutor().submit(callable);
+		try {
+			return future.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return null;
+		}			
+	}	
+	
 	
 	/** 删除评论
 	 * @param id

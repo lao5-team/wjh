@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView.FindListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -105,6 +107,20 @@ public class NavigationFragment extends Fragment {
 		
 		mLvActivity = (ListView)getView().findViewById(R.id.listView_activity);
 		mLvActivity.setAdapter(mRecentActivityAdapter);
+		mLvActivity.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent();
+				ActivityDetailActivity.IntentBuilder ib = new ActivityDetailActivity.IntentBuilder(
+						intent);
+				ib.setUseType(ActivityDetailActivity.USE_EDIT);
+				ib.setActivityID(((ActivityData)mRecentActivityAdapter.getItem(position)).mID);
+				intent.setClass(getActivity(), ActivityDetailActivity.class);
+				startActivityForResult(intent, 0);
+			}
+		});
 		
 		mIbNew = (ImageButton)getView().findViewById(R.id.imageButton_new);
 		mIbNew.setOnClickListener(new OnClickListener() {

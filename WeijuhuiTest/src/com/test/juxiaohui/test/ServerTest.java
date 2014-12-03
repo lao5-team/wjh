@@ -48,7 +48,7 @@ public class ServerTest extends AndroidTestCase {
 
 	String IP_ADDRESS = "http://117.78.3.87:80";
 	final String TAG = "weijuhuitest";
-	boolean LOCAL_DEBUG = true;
+	boolean LOCAL_DEBUG = false;
 	String cookie = "";
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -56,7 +56,7 @@ public class ServerTest extends AndroidTestCase {
 		{
 			IP_ADDRESS = "http://127.0.0.1:80";
 		}
-		UserManager.getInstance().login("test", "test");
+		UserManager.getInstance().login("yh", "yh");
 //		MyServerManager.getInstance().login("test");
 //		MyServerManager.getInstance().getUserInfo("test");
 	}

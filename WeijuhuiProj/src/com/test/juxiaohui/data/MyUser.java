@@ -10,8 +10,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.test.juxiaohui.DemoApplication;
+import com.test.juxiaohui.data.comment.ActivityComment;
 import com.test.juxiaohui.data.comment.Comment;
 import com.test.juxiaohui.data.message.ActivityMessage;
+import com.test.juxiaohui.data.message.CommentMessage;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.UserManager;
 
@@ -296,11 +298,63 @@ public class MyUser implements Serializable {
 	 * @param comment
 	 * @return 评论的ID
 	 */
-	public String postComment(Comment comment)
+	public String postComment(ActivityComment comment)
+	{	
+		if(null!=comment.mActivityID)
+		{
+			comment.mUserName = mName;
+			
+			ActivityData data = MyServerManager.getInstance().getActivity(comment.mActivityID);
+			String commentID = MyServerManager.getInstance().addComment(comment);
+			/*检查活动数据是否有效*/
+			if(null != data)
+			{
+				/*如果是非活动创建者评论，则要让创建者收到消息*/
+				if(!(data.mCreator.mName.equals(UserManager.getInstance().getCurrentUser().mName)))
+				{
+					CommentMessage message = new CommentMessage();
+					message.mFromUser = UserManager.getInstance().getCurrentUser();
+					message.mAction = CommentMessage.ACTION_POST;
+					message.mCommentID = commentID;
+					MyUser user = MyServerManager.getInstance().getUserInfo(data.mCreator.mName);
+					MyServerManager.getInstance().sendMessage(user.mID, message);
+				}				
+			}
+			return commentID;	
+		}
+		return null;
+
+	}
+
+	/**回复一个评论
+	 * @param comment
+	 * @return 如果成功则返回评论的id，否则返回null
+	 */
+	public String replyComment(ActivityComment comment)
 	{		
 		comment.mUserName = mName;
-		return MyServerManager.getInstance().addComment(comment);
-	}
+		if(null!=comment.mReplyTo)
+		{
+			MyUser user = MyServerManager.getInstance().getUserInfo(comment.mReplyTo);
+			/*被回复的人不能为空*/
+			if(null!=user)
+			{
+				/*被回复的人不能是自己*/
+				if(!user.mName.equals(mName))
+				{
+					String commentID = MyServerManager.getInstance().addComment(comment);
+					CommentMessage message = new CommentMessage();
+					message.mFromUser = UserManager.getInstance().getCurrentUser();
+					message.mAction = CommentMessage.ACTION_REPLY;
+					message.mCommentID = commentID;
+					MyServerManager.getInstance().sendMessage(user.mID, message);	
+					return	commentID;					
+				}
+			}
+		}
+		return null;
+
+	}	
 	
 	/** 删除一个评论
 	 * @param commentID

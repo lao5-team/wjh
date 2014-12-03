@@ -6,7 +6,9 @@ import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.activity.ActivityDetailActivity;
 import com.test.juxiaohui.data.ActivityData;
+import com.test.juxiaohui.data.comment.ActivityComment;
 import com.test.juxiaohui.data.message.ActivityMessage;
+import com.test.juxiaohui.data.message.CommentMessage;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.UserManager;
@@ -76,17 +78,30 @@ public class NotificationMessageAdapter extends BaseAdapter {
 			
 			@Override
 			public void onClick(View v) {
-				if(message instanceof ActivityMessage)
+				if(message.mType.equals(MyMessage.TYPE_ACTIVITY))
 				{
 					ActivityMessage aMessage = (ActivityMessage)message;
-					Intent intent = new Intent(mContext, ActivityDetailActivity.class);
-					intent.putExtra("activity id", aMessage.mActivityID);
+					Intent intent = new Intent();
+					ActivityDetailActivity.IntentBuilder ib = new ActivityDetailActivity.IntentBuilder(intent);
+					ib.setUseType(ActivityDetailActivity.USE_EDIT);
+					ib.setActivityID(aMessage.mActivityID);
+					intent.setClass(mContext, ActivityDetailActivity.class);
 					mContext.startActivity(intent);
 				}
-
+				if(message.mType.equals(MyMessage.TYPE_COMMENT))
+				{
+					CommentMessage cMessage = (CommentMessage)message;
+					ActivityComment comment = MyServerManager.getInstance().getComment(cMessage.mCommentID);
+					Intent intent = new Intent();
+					ActivityDetailActivity.IntentBuilder ib = new ActivityDetailActivity.IntentBuilder(intent);
+					ib.setUseType(ActivityDetailActivity.USE_EDIT);
+					ib.setActivityID(comment.mActivityID);
+					intent.setClass(mContext, ActivityDetailActivity.class);
+					mContext.startActivity(intent);
+				}
 			}
 		});
-		if(message instanceof ActivityMessage)
+		if(message.mType.equals(MyMessage.TYPE_ACTIVITY))
 		{
 			final ActivityData data = MyServerManager.getInstance().getActivity(((ActivityMessage)message).mActivityID);
 			button.setText("接受");
@@ -109,6 +124,11 @@ public class NotificationMessageAdapter extends BaseAdapter {
 					((android.app.Activity)mContext).finish();
 				}
 			});
+		}
+		if(message.mType.equals(MyMessage.TYPE_COMMENT))
+		{
+			button.setVisibility(View.GONE);
+			btn_refuse.setVisibility(View.GONE);
 		}
 		return view;
 	}

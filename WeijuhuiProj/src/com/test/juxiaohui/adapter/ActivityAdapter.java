@@ -112,18 +112,6 @@ public class ActivityAdapter extends BaseAdapter {
 			holder.createFromView(layout);
 			convertView = layout;
 			convertView.setTag(holder);
-			final int pos = position;
-			convertView.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent();
-					ActivityDetailActivity.IntentBuilder ib = new ActivityDetailActivity.IntentBuilder(intent);
-					ib.setUseType(ActivityDetailActivity.USE_EDIT);
-					ib.setActivityID(mActivityList.get(pos).mID);
-					intent.setClass(mFragment.getActivity(), ActivityDetailActivity.class);
-					mFragment.startActivityForResult(intent, 0);
-				}
-			});
 		}
 		else
 		{
@@ -131,27 +119,7 @@ public class ActivityAdapter extends BaseAdapter {
 		}
 		ActivityData data = (ActivityData)getItem(position);
 		holder.mTvName.setText(data.mTitle);
-		try
-		{
-			holder.mFromUser.setText("组织者: " + data.mCreator.mName);
-//			if(data.mState == ActivityData.BEGIN)
-//			{
-//				holder.mTvState.setText("待确定");
-//			}
-//			else if(data.mState == ActivityData.PROCESSING)
-//			{
-//				holder.mTvState.setText("进行中");
-//			}
-//			else if(data.mState == ActivityData.END)
-//			{
-//				holder.mTvState.setText("完成");
-//			}
-			
-		}
-		catch(Exception e)
-		{
-			Log.v(DemoApplication.TAG, e.toString());
-		}
+		holder.mFromUser.setText("组织者: " + data.mCreator.mName);			
 		//Picasso.with(mFragment.getActivity()).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
 		return convertView;
 	}

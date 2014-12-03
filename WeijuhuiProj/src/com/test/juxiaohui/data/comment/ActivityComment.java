@@ -9,7 +9,11 @@ import com.test.juxiaohui.domain.MyServerManager;
 
 public class ActivityComment extends Comment {
 
-	public String mActivityID;
+	public String mActivityID = null;
+	/**
+	 * 要回复的对象
+	 */
+	public String mReplyTo = null; 
 	
 	public static ActivityComment fromJSON(JSONObject json)	
 	{
@@ -22,6 +26,10 @@ public class ActivityComment extends Comment {
 			comment.mContent = json.getString("content");
 			comment.mActivityID = json.getString("activity_id");
 			comment.mUserName = json.getString("user_name");
+			if(json.has("replyTo"))
+			{
+				comment.mReplyTo = json.getString("replyTo");
+			}
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -42,6 +50,11 @@ public class ActivityComment extends Comment {
 			obj.put("content", this.mContent);
 			obj.put("activity_id", this.mActivityID);
 			obj.put("user_name", this.mUserName);
+			if(null != this.mReplyTo)
+			{
+				obj.put("replyTo", this.mReplyTo);
+			}
+			
 			return obj;
 		} catch (JSONException e) {
 			e.printStackTrace();

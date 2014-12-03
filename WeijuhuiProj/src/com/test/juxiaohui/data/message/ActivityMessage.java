@@ -99,7 +99,7 @@ public class ActivityMessage extends MyMessage {
 	public ActivityMessage()
 	{
 		mAction = null;
-		mType = "activity";
+		mType = MyMessage.TYPE_ACTIVITY;
 	}
 	
 	/** 消息转化为字符串
@@ -144,7 +144,7 @@ public class ActivityMessage extends MyMessage {
 			throw new NullPointerException("ActivityMessage's mAction is null or is empty!");
 		}
 
-		return mAction;
+		return "";
 		
 	}
 	
@@ -191,7 +191,6 @@ public class ActivityMessage extends MyMessage {
 			e.printStackTrace();
 			return null;
 		}
-		
 	}
 	
 }
