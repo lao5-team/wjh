@@ -58,7 +58,7 @@ public class MessageService extends Service {
 						messages = MyServerManager.getInstance().getMessages(user.mID);
 						if(null!=messages)
 						{
-							mMessages.addAll(messages);
+							mMessages = messages;
 							//MyServerManager.getInstance().removeMessages(user, messages);		
 							NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 							for(MyMessage message : messages)

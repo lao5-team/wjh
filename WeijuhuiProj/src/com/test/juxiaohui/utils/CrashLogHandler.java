@@ -33,23 +33,6 @@ public class CrashLogHandler implements UncaughtExceptionHandler {
 			PrintWriter printWriter = new PrintWriter(
 					writer);
 			throwable.printStackTrace(printWriter);
-//			Intent intent = new Intent(
-//					android.content.Intent.ACTION_SEND);
-//			intent.setType("plain/text");
-//			String[] strEmailReciver = {
-//					"yhchinabest@163.com"};
-//			String strEmailBody = writer.toString();
-//			intent.putExtra(
-//					android.content.Intent.EXTRA_EMAIL,
-//					strEmailReciver); // 设置收件人
-//			intent.putExtra(Intent.EXTRA_SUBJECT,
-//					mActivity.getString(R.string.application_crashed, (int)(Math.random()*100000)));
-//			intent.putExtra(
-//					android.content.Intent.EXTRA_TEXT,
-//					strEmailBody); // 设置内容
-//			mActivity.startActivity(Intent
-//					.createChooser(intent,
-//							mActivity.getString(R.string.send_crash_report)));
 			String[] subs = {"yhchinabest@163.com"};
 			Intent data=new Intent(Intent.ACTION_SEND); 
 			data.setType("plain/text");

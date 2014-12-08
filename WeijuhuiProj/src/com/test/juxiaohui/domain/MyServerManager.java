@@ -46,13 +46,12 @@ public class MyServerManager {
 	}
 	
 	private static MyServerManager mInstance = null;
-	private Object mLock = new Object();
 	String IP_ADDRESS = "http://117.78.3.87:80";
 	final String IP_ADDRESS_UPLOAD = "http://117.78.3.87:81/upload";
 	public final String EXCEPTION_NOT_LOGIN = "You have not login!";
 	String mToken;
 	String mUserName;
-	boolean LOCAL_DEBUG = true;
+	boolean LOCAL_DEBUG = false;
 	private MyServerManager() {
 		if(LOCAL_DEBUG)
 		{
@@ -80,8 +79,6 @@ public class MyServerManager {
 				Boolean result = false;
 				String url = String.format("%s/login?user=%s", IP_ADDRESS,
 						mUserName);
-				String a = "adsf";
-				a = a + 10;
 				HttpGet httpGet = new HttpGet(url);
 				HttpResponse httpResponse;
 				try {
@@ -1206,6 +1203,10 @@ public class MyServerManager {
 		mUserName = null;
 	}
 	
+	/**向服务器增加一条评论
+	 * @param comment
+	 * @return
+	 */
 	public String addComment(Comment comment)
 	{
 		if (null == comment) {
@@ -1265,7 +1266,7 @@ public class MyServerManager {
 		}	
 	}
 	
-	/**读取评论
+	/**读取一条评论，注意当获取多条评论时，应该使用{@link #getCommentList}
 	 * @param id
 	 * @return
 	 */
@@ -1325,6 +1326,10 @@ public class MyServerManager {
 		}			
 	}
 
+	/** 获取一组评论
+	 * @param ids 包含评论id的数组
+	 * @return
+	 */
 	public ArrayList<ActivityComment> getCommentList(ArrayList<String> ids) {
 		if (null == ids) {
 			throw new IllegalArgumentException("ids can not be null");
@@ -1347,6 +1352,7 @@ public class MyServerManager {
 				try {
 					post.addHeader("Cookie", String.format("user=%s;token=%s",
 							mUserName, mToken));
+					/*拼一个comment id 数组的json*/
 					JSONObject jsonObj = new JSONObject();
 					JSONArray jsonArray = new JSONArray();
 					for(String id:fIds)
@@ -1355,6 +1361,7 @@ public class MyServerManager {
 					}
 					jsonObj.put("ids", jsonArray);
 					String str = jsonObj.toString();
+					
 					post.setEntity(new StringEntity(str, "utf-8"));
 					httpResponse = new DefaultHttpClient().execute(post);
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
@@ -1362,8 +1369,7 @@ public class MyServerManager {
 							commentList = new ArrayList<ActivityComment>();
 							str = EntityUtils.toString(
 									httpResponse.getEntity(), "utf-8");
-							jsonObj = new JSONObject(
-									str);
+							jsonObj = new JSONObject(str);
 							jsonArray = jsonObj.getJSONArray("data");
 							for(int i=0; i<jsonArray.length(); i++)
 							{
@@ -1371,7 +1377,6 @@ public class MyServerManager {
 								comment = ActivityComment.fromJSON(jsonItem);
 								commentList.add(comment);
 							}
-
 						} catch (Exception e) {
 							e.printStackTrace();
 							commentList = null;
@@ -1451,7 +1456,7 @@ public class MyServerManager {
 		}	
 	}
 
-	/**获取某个活动的所有评论
+	/**获取某个活动的所有评论的id
 	 * @param activityID
 	 * @return
 	 */
@@ -1518,6 +1523,9 @@ public class MyServerManager {
 		}
 	}
 	
+	/**检查是否已经登录
+	 * @return
+	 */
 	boolean checklogin()
 	{
 		if(mToken == null|| mUserName == null)

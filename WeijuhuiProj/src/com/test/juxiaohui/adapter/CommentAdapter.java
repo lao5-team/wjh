@@ -72,16 +72,16 @@ public class CommentAdapter extends BaseAdapter {
 			convertView = mContext.getLayoutInflater().inflate(R.layout.item_comment, null);
 		}
 		TextView tvUserName = (TextView)convertView.findViewById(R.id.textView_username);
-		if(null==mCommentList.get(position).mReplyTo)
+		if(null==mCommentList.get(position).getReplyTo())
 		{
-			tvUserName.setText(mCommentList.get(position).mUserName+":");
+			tvUserName.setText(mCommentList.get(position).getUserName() +":");
 		}
 		else
 		{
-			tvUserName.setText(mCommentList.get(position).mUserName + " 回复 " + mCommentList.get(position).mReplyTo+":");
+			tvUserName.setText(mCommentList.get(position).getUserName() + " 回复 " + mCommentList.get(position).getReplyTo() +":");
 		}
 		TextView tvContent = (TextView)convertView.findViewById(R.id.textView_content);
-		tvContent.setText(mCommentList.get(position).mContent);
+		tvContent.setText(mCommentList.get(position).getContent());
 		return convertView;
 	}
 

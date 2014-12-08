@@ -40,7 +40,8 @@ public class ActivityData implements Serializable {
 	public String mID;
 	public ComplexBusiness mCB;
 	public Date mBeginDate;
-	public ArrayList<MyUser> mUsers;  //活动参与者，注意不包括创建者
+	final public ArrayList<MyUser> mInvitingUsers;   //被邀请的活动参与者
+	final public ArrayList<MyUser> mUsers;  //活动参与者，注意不包括创建者
 	public float mSpent;    //活动所需金额
 	public String mGroupID;  //多人活动的groupID，供环信使用
 	public int mStatus;       //活动状态
@@ -50,7 +51,8 @@ public class ActivityData implements Serializable {
 	public int mSpentType; //0 me, 1 aa, 2 other
 	private ActivityData()
 	{
-		mUsers = null;
+		mUsers = new ArrayList<MyUser>();
+		mInvitingUsers = new ArrayList<>();
 		mBeginDate = null;
 		mTitle = null;
 		mContent = null;
@@ -70,10 +72,6 @@ public class ActivityData implements Serializable {
 		if(null == user)
 		{
 			throw new IllegalArgumentException("addUser user can not be null");
-		}
-		if(null == mUsers)
-		{
-			mUsers = new ArrayList<MyUser>();
 		}
 		for(MyUser itemUser:mUsers)
 		{
@@ -120,16 +118,21 @@ public class ActivityData implements Serializable {
 				obj.put("date", DateFormat.format(dataPattern, cb.mBeginDate));				
 			}
 
-			JSONArray array = new JSONArray();
-			for(int i = 0; i < cb.mUsers.size(); i++)
+			if(null!=cb.mUsers)
 			{
-				array.put(MyUser.toJSON(cb.mUsers.get(i)));
+				JSONArray array = new JSONArray();
+				for(int i = 0; i < cb.mUsers.size(); i++)
+				{
+					array.put(MyUser.toJSON(cb.mUsers.get(i)));
+				}	
+				obj.put("users", array);
 			}
+
 			if(null != cb.mID)
 			{
 				obj.put("id", cb.mID);
 			}
-			obj.put("users", array);
+			
 			obj.put("spent", cb.mSpent);
 			obj.put("state", cb.mStatus);
 			obj.put("creator", MyUser.toJSON(cb.mCreator));
@@ -165,14 +168,16 @@ public class ActivityData implements Serializable {
 			{
 				data.mID = obj.getString("id");
 			}
-			JSONArray array = obj.getJSONArray("users");
-
-			data.mUsers = new ArrayList<MyUser>();
-			for(int i=0; i<array.length(); i++)
+			if(obj.has("users"))
 			{
-				MyUser user = MyUser.fromJSON(array.getJSONObject(i));
-				data.mUsers.add(user);
+				JSONArray array = obj.getJSONArray("users");
+				for(int i=0; i<array.length(); i++)
+				{
+					MyUser user = MyUser.fromJSON(array.getJSONObject(i));
+					data.mUsers.add(user);
+				}				
 			}
+
 			data.mBeginDate = new SimpleDateFormat(dataPattern).parse(obj.getString("date"));
 			
 			if(obj.has("groupID"))
@@ -192,7 +197,7 @@ public class ActivityData implements Serializable {
 	
 	public static ActivityData createTestData()
 	{
-		String test_title = "测试 war3 2v2 "+ new SimpleDateFormat(ActivityData.dataPattern_test).format(new Date());
+		String test_title = "讨论聚会app";//"测试 war3 2v2 "+ new SimpleDateFormat(ActivityData.dataPattern_test).format(new Date());
 		ComplexBusiness testCB = new ComplexBusiness();
 		testCB.mName = "东来顺";
 		testCB.mImgUrl = "http://i2.dpfile.com//pc//e6801a8a0b89fa2dd93e582c69d2e7cd(700x700)//thumb.jpg";
@@ -200,12 +205,12 @@ public class ActivityData implements Serializable {
 		
 		MyUser testUser = UserManager.getInstance().getCurrentUser();
 		ArrayList<MyUser> users = new ArrayList<MyUser>();
-		MyUser testGuest = MyServerManager.getInstance().getUserInfo("rlk_local");
+		MyUser testGuest = MyServerManager.getInstance().getUserInfo("rlk");
 		users.add(testGuest);
 			try {
 				ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2014年12月31日16时")
 						).setComplexBusiness(testCB).setCreator(testUser).
-						setUsers(users).setTitle(test_title).setContent("一起在东来顺吃饭\n，去年买了个表，送你").
+						setInviteUsers(users).setTitle(test_title).setContent("中午一起吃个吃饭。\n，讨论一下聚会app的事儿。").
 						setGroupID("testGroup0").setSpentType(0).
 						create();
 				return data;
@@ -232,10 +237,14 @@ public class ActivityData implements Serializable {
 		
 		public ActivityBuilder setUsers(ArrayList<MyUser> users)
 		{
-			mData.mUsers = (ArrayList<MyUser>)users.clone();
+			mData.mUsers.addAll(users);
 			return this;
 		}
-		
+		public ActivityBuilder setInviteUsers(ArrayList<MyUser> users)
+		{
+			mData.mInvitingUsers.addAll(users);
+			return this;
+		}		
 		public ActivityBuilder setCreator(MyUser user)
 		{
 			mData.mCreator = user;
@@ -304,11 +313,11 @@ public class ActivityData implements Serializable {
 			Assert.assertNotNull("ActivityData must have Content!",mData.mContent);
 			Assert.assertNotNull("ActivityData must have Begin Date!",mData.mBeginDate);
 			Assert.assertNotNull("ActivityData must have Creator!",mData.mCreator);
-			Assert.assertNotNull("ActivityData must have Users!", mData.mUsers);
-			if(mData.mUsers.size()>1)
-			{
-				Assert.assertNotNull("Multiple ActivityData must have GroupID!", mData.mGroupID);
-			}
+			//Assert.assertNotNull("ActivityData must have Users!", mData.mUsers);
+//			if(mData.mUsers.size()>1)
+//			{
+//				Assert.assertNotNull("Multiple ActivityData must have GroupID!", mData.mGroupID);
+//			}
 			return mData;
 		}
 	}

@@ -14,6 +14,7 @@ import com.test.juxiaohui.data.comment.ActivityComment;
 import com.test.juxiaohui.data.comment.Comment;
 import com.test.juxiaohui.data.message.ActivityMessage;
 import com.test.juxiaohui.data.message.CommentMessage;
+import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.UserManager;
 
@@ -24,6 +25,7 @@ public class MyUser implements Serializable {
 	private static final long serialVersionUID = 7204887748188714747L;
 	public static String CREATOR = "creator";
 	public static String JOINER = "joiner";
+	public static String STRANGER = "stranger"; 
 	public String mName;
 	public String mPassword;
 	public String mSex = "male";
@@ -100,29 +102,61 @@ public class MyUser implements Serializable {
 		data.mID = MyServerManager.getInstance().createActivity(data);
 		
 		/*该代码是为了增强数据的完整性*/
-		for(int i=0; i<data.mUsers.size(); i++)
+		for(int i=0; i<data.mInvitingUsers.size(); i++)
 		{
-			MyUser user = MyServerManager.getInstance().getUserInfo(data.mUsers.get(i).mName);
-			data.mUsers.set(i, user);  
+			MyUser user = MyServerManager.getInstance().getUserInfo(data.mInvitingUsers.get(i).mName);
+			data.mInvitingUsers.set(i, user);  
 		}
+		
+		data.mCreator = MyServerManager.getInstance().getUserInfo(data.mCreator.mName);
 		
 		//自己正在进行的活动+1
 		MyServerManager.getInstance().addUserActivity(UserManager.getInstance().getCurrentUser().mID, data.mID, "doing_activity");
+		inviteUsers(data);
 		
-		//向被邀请者发送消息
+	}
+	
+	/**向被邀请这发送聚会邀请消息
+	 * @param data
+	 */
+	public void inviteUsers(ActivityData data)
+	{
+		if(null != data.mInvitingUsers)
+		{
+			//向被邀请者发送消息
+			ActivityMessage message = new ActivityMessage();
+			message.mType = "activity";
+			message.mActivityID = data.mID;
+			message.mAction = ActivityMessage.ACTION_INVITE;
+			message.mActivityName = data.mTitle;
+			message.mFromUser = UserManager.getInstance().getCurrentUser();
+			for(MyUser user:data.mInvitingUsers)
+			{
+				MyServerManager.getInstance().sendMessage(user.mID, message);
+			}			
+		}
+
+	}
+	
+	/**
+	 * 报名参加活动。此方法会进行网络通信，且不会涉及任何UI的操作，所以建议放在子线程中调用
+	 * 
+	 */
+	public void applyActivity(ActivityData data)
+	{
+		//向创建者发送消息
 		ActivityMessage message = new ActivityMessage();
-		message.mType = "activity";
+		message.mType = MyMessage.TYPE_ACTIVITY;
 		message.mActivityID = data.mID;
-		message.mAction = ActivityMessage.ACTION_INVITE;
+		message.mAction = ActivityMessage.ACTION_APPLY;
 		message.mActivityName = data.mTitle;
 		message.mFromUser = UserManager.getInstance().getCurrentUser();
 		
-		for(MyUser user:data.mUsers)
-		{
-			MyServerManager.getInstance().sendMessage(user.mID, message);
-		}
+		MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);
 		
-	}
+	}	
+	
+	
 	
 	/**
 	 * 确认活动开始，进入进行中状态
@@ -207,16 +241,16 @@ public class MyUser implements Serializable {
 	}
 	
 	/**
-	 * 同意加入
+	 * 接受邀请
 	 * @param data 活动数据
 	 */
-	public void acceptActivity(ActivityData data)
+	public void acceptInviteActivity(ActivityData data)
 	{
 		//向创建者即消息发送者返回消息
 		ActivityMessage message = new ActivityMessage();
 		message.mType = "activity";
 		message.mActivityID = data.mID;
-		message.mAction = "accept_invite";
+		message.mAction = ActivityMessage.ACTION_ACCEPT_INVITE;
 		message.mActivityName = data.mTitle;
 		message.mFromUser = UserManager.getInstance().getCurrentUser();
 		MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);
@@ -228,12 +262,38 @@ public class MyUser implements Serializable {
 		data.addUser(UserManager.getInstance().getCurrentUser());
 		MyServerManager.getInstance().updateActivity(data, data.mID);
 	}
-	
+
 	/**
-	 * 拒绝加入活动
+	 * 接受报名
 	 * @param data 活动数据
 	 */
-	public void refuseActivity(ActivityData data)
+	public void acceptApplyActivity(ActivityData data, MyUser user)
+	{
+		if(null != data && null != user)
+		{
+			//向报名者即消息发送者返回消息
+			ActivityMessage message = new ActivityMessage();
+			message.mType = "activity";
+			message.mActivityID = data.mID;
+			message.mAction = ActivityMessage.ACTION_APPLY;
+			message.mActivityName = data.mTitle;
+			message.mFromUser = UserManager.getInstance().getCurrentUser();
+			MyServerManager.getInstance().sendMessage(user.mID, message);
+			
+			//报名者正在进行的活动+1
+			MyServerManager.getInstance().addUserActivity(user.mID, message.mActivityID, "doing_activity");
+			
+			//活动参与者添加报名者
+			data.addUser(user);
+			MyServerManager.getInstance().updateActivity(data, data.mID);			
+		}
+	}	
+	
+	/**
+	 * 拒绝邀请
+	 * @param data 活动数据
+	 */
+	public void refuseInvite(ActivityData data)
 	{
 		//向创建者即消息发送者返回消息
 		ActivityMessage message = new ActivityMessage();
@@ -245,11 +305,30 @@ public class MyUser implements Serializable {
 		MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);	
 		
 		//活动参与者移除自己
-		data.removeUser(UserManager.getInstance().getCurrentUser());
-		MyServerManager.getInstance().updateActivity(data, data.mID);	
-		
-		
+		//data.removeUser(UserManager.getInstance().getCurrentUser());
+		//MyServerManager.getInstance().updateActivity(data, data.mID);		
 	}
+
+	/**
+	 * 拒绝报名
+	 * @param data
+	 * @param user 报名用户
+	 */
+	public void refuseApply(ActivityData data, MyUser user)
+	{
+		//向报名者即消息发送者返回消息
+		ActivityMessage message = new ActivityMessage();
+		message.mType = "activity";
+		message.mActivityID = data.mID;
+		message.mAction = ActivityMessage.ACTION_REFUSE_APPLY;
+		message.mActivityName = data.mTitle;
+		message.mFromUser = UserManager.getInstance().getCurrentUser();
+		MyServerManager.getInstance().sendMessage(user.mID, message);	
+		
+		//活动参与者移除自己
+		//data.removeUser(UserManager.getInstance().getCurrentUser());
+		//MyServerManager.getInstance().updateActivity(data, data.mID);		
+	}	
 	
 	/**
 	 * 中途退出活动
@@ -277,7 +356,7 @@ public class MyUser implements Serializable {
 	/**
 	 * 返回自己在当前聚会的角色
 	 * @param data 活动数据
-	 * @return Creator 活动创建者, Joiner参与者
+	 * @return Creator 活动创建者, Joiner参与者, Stranger 陌生人
 	 * 
 	 */
 	public String getMyRoleType(ActivityData data)
@@ -287,9 +366,13 @@ public class MyUser implements Serializable {
 		{
 			return CREATOR;
 		}
-		else
+		else if(data.mUsers.contains(UserManager.getInstance().getCurrentUser()))
 		{
 			return JOINER;
+		}
+		else 
+		{
+			return STRANGER;
 		}
 	}
 	
@@ -300,11 +383,9 @@ public class MyUser implements Serializable {
 	 */
 	public String postComment(ActivityComment comment)
 	{	
-		if(null!=comment.mActivityID)
+		if(null!=comment.getActivityID())
 		{
-			comment.mUserName = mName;
-			
-			ActivityData data = MyServerManager.getInstance().getActivity(comment.mActivityID);
+			ActivityData data = MyServerManager.getInstance().getActivity(comment.getActivityID());
 			String commentID = MyServerManager.getInstance().addComment(comment);
 			/*检查活动数据是否有效*/
 			if(null != data)
@@ -332,10 +413,9 @@ public class MyUser implements Serializable {
 	 */
 	public String replyComment(ActivityComment comment)
 	{		
-		comment.mUserName = mName;
-		if(null!=comment.mReplyTo)
+		if(null!=comment.getReplyTo())
 		{
-			MyUser user = MyServerManager.getInstance().getUserInfo(comment.mReplyTo);
+			MyUser user = MyServerManager.getInstance().getUserInfo(comment.getReplyTo());
 			/*被回复的人不能为空*/
 			if(null!=user)
 			{
@@ -369,6 +449,21 @@ public class MyUser implements Serializable {
 				MyServerManager.getInstance().removeComment(commentID);
 			}
 		}
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(obj instanceof MyUser)
+		{
+			if(mName.equals(((MyUser)obj).mName))
+			{
+				return true;	
+			}
+				
+		}
+		return false;
+		
 	}
 	
 }

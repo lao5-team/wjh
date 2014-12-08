@@ -75,11 +75,11 @@ public class CommentMessage extends MyMessage {
 			{
 				if(mAction.equals(ACTION_POST))
 				{
-					return context.getString(R.string.post_comment_message, mFromUser.mName, comment.mContent);
+					return context.getString(R.string.post_comment_message, mFromUser.mName, comment.getContent());
 				}
 				else if(mAction.equals(ACTION_REPLY))
 				{
-					return context.getString(R.string.reply_comment_message, mFromUser.mName, comment.mContent);
+					return context.getString(R.string.reply_comment_message, mFromUser.mName, comment.getContent());
 				}				
 			}
 

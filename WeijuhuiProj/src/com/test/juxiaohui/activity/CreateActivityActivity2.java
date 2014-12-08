@@ -162,7 +162,7 @@ public class CreateActivityActivity2 extends Activity {
 				usersString += user.mName + " ";
 			}
 			mBtnSelectFriends.setText(usersString);
-			mActivityBuilder.setUsers(users);
+			mActivityBuilder.setInviteUsers(users);
 			
 		}
 		
@@ -459,7 +459,7 @@ public class CreateActivityActivity2 extends Activity {
 			mMediator.setTime(mBeginDate);
 			mBtnSelectDate.setText(DateFormat.format(ActivityData.dataPattern, mBeginDate));
 			String users = "";
-			for(MyUser user:mActivityData.mUsers)
+			for(MyUser user:mActivityData.mInvitingUsers)
 			{
 				users += user.mName + " ";
 			}

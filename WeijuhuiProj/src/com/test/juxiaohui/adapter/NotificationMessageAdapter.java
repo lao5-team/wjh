@@ -6,6 +6,7 @@ import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.activity.ActivityDetailActivity;
 import com.test.juxiaohui.data.ActivityData;
+import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.comment.ActivityComment;
 import com.test.juxiaohui.data.message.ActivityMessage;
 import com.test.juxiaohui.data.message.CommentMessage;
@@ -26,7 +27,7 @@ import android.widget.TextView;
 public class NotificationMessageAdapter extends BaseAdapter {
 
 	Context mContext = null;
-	ArrayList<MyMessage> mMessages = null;
+	ArrayList<MyMessage> mMessages = new ArrayList<MyMessage>();
 	
 	public NotificationMessageAdapter(Context context)
 	{
@@ -37,9 +38,9 @@ public class NotificationMessageAdapter extends BaseAdapter {
 		mContext = context;
 	}
 	
-	public void setMessages(ArrayList<MyMessage> messages)
+	public void addMessages(ArrayList<MyMessage> messages)
 	{
-		mMessages = messages;
+		mMessages.addAll(messages);
 	}
 	
 	@Override
@@ -82,7 +83,7 @@ public class NotificationMessageAdapter extends BaseAdapter {
 				{
 					ActivityMessage aMessage = (ActivityMessage)message;
 					Intent intent = new Intent();
-					ActivityDetailActivity.IntentBuilder ib = new ActivityDetailActivity.IntentBuilder(intent);
+					ActivityDetailActivity.IntentWrapper ib = new ActivityDetailActivity.IntentWrapper(intent);
 					ib.setUseType(ActivityDetailActivity.USE_EDIT);
 					ib.setActivityID(aMessage.mActivityID);
 					intent.setClass(mContext, ActivityDetailActivity.class);
@@ -93,9 +94,9 @@ public class NotificationMessageAdapter extends BaseAdapter {
 					CommentMessage cMessage = (CommentMessage)message;
 					ActivityComment comment = MyServerManager.getInstance().getComment(cMessage.mCommentID);
 					Intent intent = new Intent();
-					ActivityDetailActivity.IntentBuilder ib = new ActivityDetailActivity.IntentBuilder(intent);
+					ActivityDetailActivity.IntentWrapper ib = new ActivityDetailActivity.IntentWrapper(intent);
 					ib.setUseType(ActivityDetailActivity.USE_EDIT);
-					ib.setActivityID(comment.mActivityID);
+					ib.setActivityID(comment.getActivityID());
 					intent.setClass(mContext, ActivityDetailActivity.class);
 					mContext.startActivity(intent);
 				}
@@ -104,30 +105,67 @@ public class NotificationMessageAdapter extends BaseAdapter {
 		if(message.mType.equals(MyMessage.TYPE_ACTIVITY))
 		{
 			final ActivityData data = MyServerManager.getInstance().getActivity(((ActivityMessage)message).mActivityID);
-			button.setText("接受");
+			ActivityMessage activityMessage = (ActivityMessage)message;
+			if(activityMessage.mAction.equals(ActivityMessage.ACTION_INVITE))
+			{
+				button.setText("接受");
+				button.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						UserManager.getInstance().getCurrentUser().acceptInviteActivity(data);
+						mMessages.remove(message);
+						((android.app.Activity)mContext).finish();
+					}
+				});
+				btn_refuse.setText("拒绝");
+				btn_refuse.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						UserManager.getInstance().getCurrentUser().refuseInvite(data);
+						mMessages.remove(message);
+						((android.app.Activity)mContext).finish();
+					}
+				});				
+			}
+			else if(activityMessage.mAction.equals(ActivityMessage.ACTION_APPLY))
+			{
+				final MyUser fromUser = activityMessage.mFromUser;
+				button.setText("接受");
+				button.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						UserManager.getInstance().getCurrentUser().acceptApplyActivity(data, fromUser);
+						mMessages.remove(message);
+						((android.app.Activity)mContext).finish();
+					}
+				});
+				btn_refuse.setText("拒绝");
+				btn_refuse.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						UserManager.getInstance().getCurrentUser().refuseApply(data, fromUser);
+						mMessages.remove(message);
+						((android.app.Activity)mContext).finish();
+					}
+				});
+			}
+			
+		}
+		if(message.mType.equals(MyMessage.TYPE_COMMENT))
+		{
+			button.setText("确认");
 			button.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
-					UserManager.getInstance().getCurrentUser().acceptActivity(data);
 					mMessages.remove(message);
 					((android.app.Activity)mContext).finish();
 				}
 			});
-			btn_refuse.setText("拒绝");
-			btn_refuse.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					UserManager.getInstance().getCurrentUser().refuseActivity(data);
-					mMessages.remove(message);
-					((android.app.Activity)mContext).finish();
-				}
-			});
-		}
-		if(message.mType.equals(MyMessage.TYPE_COMMENT))
-		{
-			button.setVisibility(View.GONE);
 			btn_refuse.setVisibility(View.GONE);
 		}
 		return view;

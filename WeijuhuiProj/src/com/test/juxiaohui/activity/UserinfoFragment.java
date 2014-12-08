@@ -62,7 +62,13 @@ public class UserinfoFragment extends Fragment {
 	
 	public UserinfoFragment(MyUser user)
 	{
-		Assert.assertNotNull(user);
+		//Assert.assertNotNull(user);
+		if(null == user)
+		{
+			Toast.makeText(getActivity(), "No current user, do you test in local mode?", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
 		mUser = user;
 		Log.v(DemoApplication.TAG, String.format("Userinfo is %s", MyUser.toJSON(user).toString()));
 	}

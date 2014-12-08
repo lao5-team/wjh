@@ -9,11 +9,63 @@ import com.test.juxiaohui.domain.MyServerManager;
 
 public class ActivityComment extends Comment {
 
-	public String mActivityID = null;
 	/**
-	 * 要回复的对象
+	 * 评论针对的活动ID
 	 */
-	public String mReplyTo = null; 
+	protected String mActivityID = null;
+	/**
+	 * 评论回复的对象名称
+	 */
+	protected String mReplyTo = null; 
+	
+	/**
+	 * @param userName 发表评论的用户名称
+	 * @param Content  评论内容
+	 * @param activityID 评论针对的活动ID
+	 * @param replyTo 评论回复的对象名称，可以为null，如果是回复别人的评论，则要输入别人的名字
+	 */
+	public ActivityComment(String userName, String content, String activityID, String replyTo)
+	{
+		if(null == userName)
+		{
+			throw new IllegalArgumentException("userName can not be null!");
+		}
+		
+		if(null == content)
+		{
+			throw new IllegalArgumentException("content can not be null!");
+		}
+		
+		if(null == activityID)
+		{
+			throw new IllegalArgumentException("activityID can not be null!");
+		}
+		mUserName = userName;
+		mContent = content;
+		mActivityID = activityID;
+		mReplyTo = replyTo;
+	}
+	
+	private ActivityComment()
+	{
+		
+	}
+	
+	/** 返回评论针对的活动ID
+	 * @return
+	 */
+	public String getActivityID()
+	{
+		return mActivityID;
+	}
+	
+	/**返回评论回复的对象名称
+	 * @return
+	 */
+	public String getReplyTo()
+	{
+		return mReplyTo;
+	}
 	
 	public static ActivityComment fromJSON(JSONObject json)	
 	{

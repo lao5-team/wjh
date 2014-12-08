@@ -113,7 +113,7 @@ public class NavigationFragment extends Fragment {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent intent = new Intent();
-				ActivityDetailActivity.IntentBuilder ib = new ActivityDetailActivity.IntentBuilder(
+				ActivityDetailActivity.IntentWrapper ib = new ActivityDetailActivity.IntentWrapper(
 						intent);
 				ib.setUseType(ActivityDetailActivity.USE_EDIT);
 				ib.setActivityID(((ActivityData)mRecentActivityAdapter.getItem(position)).mID);

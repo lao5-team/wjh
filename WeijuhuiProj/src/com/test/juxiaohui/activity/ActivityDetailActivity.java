@@ -59,17 +59,20 @@ import android.widget.Toast;
  */
 public class ActivityDetailActivity extends FragmentActivity {
 
-	public static class IntentBuilder
+	/** 
+	 * 用来对intent数据进行规范式处理
+	 * 
+	 * @param setUseType 决定是用来创建一个活动还是用来处理一个活动，可以是USE_CREATE,USE_EDIT
+	 * @param setActivityID 设置活动的ID
+	 */
+	public static class IntentWrapper
 	{
 		Intent mIntent;
-		/** 决定是用来创建一个活动还是用来处理一个活动
-		 *  
-		 * @param useType 可以是USE_CREATE,USE_EDIT
-		 */
-		public IntentBuilder(Intent intent)
+
+		public IntentWrapper(Intent intent)
 		{
 			if(null == intent)
-				throw new IllegalArgumentException("IntentBuilder intent cannot be null!");
+				throw new IllegalArgumentException("intent cannot be null!");
 			mIntent = intent;
 		}
 		
@@ -112,17 +115,21 @@ public class ActivityDetailActivity extends FragmentActivity {
 		@Override
 		public void showMembers(ArrayList<MyUser> users) {
 			String result = "聚会参与人员: ";
-			for(int i=0; i<users.size(); i++)
+			if(null != users)
 			{
-				if(i==users.size()-1)
+				for(int i=0; i<users.size(); i++)
 				{
-					result += users.get(i).mName;
-				}
-				else
-				{
-					result += users.get(i).mName + " , ";
-				}
+					if(i==users.size()-1)
+					{
+						result += users.get(i).mName;
+					}
+					else
+					{
+						result += users.get(i).mName + " , ";
+					}
+				}				
 			}
+
 			mTvFriends.setText(result);
 		}
 		
@@ -149,11 +156,17 @@ public class ActivityDetailActivity extends FragmentActivity {
 				mBtnConfirm.setVisibility(View.GONE);
 				mBtnCancel.setText("退出");				
 			}
+			else if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.STRANGER))
+			{
+				mBtnConfirm.setText("报名");
+				mBtnCancel.setText("取消");				
+			}
 		}
 		
 		@Override
 		public void changeMembers(ArrayList<MyUser> users) {
-			mData.mUsers = users;
+			mData.mUsers.clear();
+			mData.mUsers.addAll(users);
 			showMembers(users);
 		}
 
@@ -175,9 +188,18 @@ public class ActivityDetailActivity extends FragmentActivity {
 
 		@Override
 		public void onOKClicked() {
-			if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
+			MyUser currentUser = UserManager.getInstance().getCurrentUser();
+			if(currentUser.getMyRoleType(mData).equals(MyUser.CREATOR))
 			{
-				UserManager.getInstance().getCurrentUser().finishActivity(mData);
+				currentUser.finishActivity(mData);
+			}
+			else if(currentUser.getMyRoleType(mData).equals(MyUser.STRANGER))
+			{
+				currentUser.applyActivity(mData);
+			}
+			else if(currentUser.getMyRoleType(mData).equals(MyUser.JOINER))
+			{
+				;			
 			}
 		}
 
@@ -195,7 +217,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 
 		@Override
 		public void postComment(ActivityComment comment) {
-			if(null!=comment.mReplyTo)
+			if(null!=comment.getReplyTo())
 			{
 				UserManager.getInstance().getCurrentUser().replyComment(comment);
 			}
@@ -293,10 +315,10 @@ public class ActivityDetailActivity extends FragmentActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				ActivityComment comment = (ActivityComment)mCommentAdapter.getItem(position);
-				if(!comment.mUserName.equals(UserManager.getInstance().getCurrentUser().mName))
+				if(!comment.getUserName().equals(UserManager.getInstance().getCurrentUser().mName))
 				{
-					mTempReplyTo = comment.mUserName;
-					mEtxComment.setHint("回复 " + comment.mUserName);
+					mTempReplyTo = comment.getUserName();
+					mEtxComment.setHint("回复 " + comment.getUserName());
 					mLayoutComment.setVisibility(View.VISIBLE);
 				}
 				else
@@ -372,10 +394,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 				String content = mEtxComment.getEditableText().toString();
 				if(null!=content && content.length()>0)
 				{
-					ActivityComment comment = new ActivityComment();
-					comment.mContent = content;
-					comment.mActivityID = mData.mID;
-					comment.mReplyTo = mTempReplyTo;
+					ActivityComment comment = new ActivityComment(UserManager.getInstance().getCurrentUser().mName, content, mData.mID, mTempReplyTo);
 					mMediator.postComment(comment);
 				}
 				mTempReplyTo = null;

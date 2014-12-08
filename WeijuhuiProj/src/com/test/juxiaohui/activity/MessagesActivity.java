@@ -45,7 +45,7 @@ public class MessagesActivity extends Activity {
 			@Override
 			public void onServiceConnected(ComponentName name, IBinder service) {
 				mMessages = ((LocalService)service).getService().getMessages();
-				mAdapter.setMessages(mMessages);
+				mAdapter.addMessages(mMessages);
 				mAdapter.notifyDataSetChanged();
 			}
 		};
