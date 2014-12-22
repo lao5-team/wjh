@@ -48,5 +48,10 @@ public interface ISwapper<K,V> {
 	 */
 	void clear();
 	
+	/**
+	 * @param name
+	 */
+	void setName(String name);
+	
 
 }

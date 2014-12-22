@@ -45,14 +45,14 @@ public class BitmapCache implements ICache<String, Bitmap> {
 		mSwapper = swapper;
 	}
 
-	@Override
-	public void setRemoteLoader(IRemoteLoader<String, Bitmap> loader) {
-		mLoader = loader;
-		
-	}
+//	@Override
+//	public void setRemoteLoader(IRemoteLoader<String, Bitmap> loader) {
+//		mLoader = loader;
+//		
+//	}
 
 	@Override
-	public Bitmap get(String key) {
+	public Bitmap  get(String key) {
 		if(null == key)
 		{
 			throw new IllegalArgumentException("key is null!");
@@ -73,12 +73,12 @@ public class BitmapCache implements ICache<String, Bitmap> {
 			}			
 		}
 
-		if(null!=mLoader) 
-		{
-			Bitmap bmp = mLoader.loadData(key);
-			mMap.put(key, bmp);
-			return bmp;
-		}
+//		if(null!=mLoader) 
+//		{
+//			Bitmap bmp = mLoader.loadData(key);
+//			mMap.put(key, bmp);
+//			return bmp;
+//		}
 		
 		return null;
 	}
@@ -125,6 +125,12 @@ public class BitmapCache implements ICache<String, Bitmap> {
 		{
 			return false;
 		}
+	}
+
+	@Override
+	public void remove(String key, Bitmap value) {
+		mMap.remove(key);
+		
 	}
 
 }

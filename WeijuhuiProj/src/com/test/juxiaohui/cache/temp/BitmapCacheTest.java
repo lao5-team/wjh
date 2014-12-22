@@ -72,6 +72,11 @@ public class BitmapCacheTest extends TestCase {
 		
 	}
 	
+	public void testSync()
+	{
+		
+	}
+	
 	public void testRemoteLoader()
 	{
 		

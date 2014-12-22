@@ -30,7 +30,8 @@ public class BitmapFileSwapper implements ISwapper<String, Bitmap> {
 		}
 	};
 	
-	
+	Object mItemLock = new Object();
+	Object mListLock = new Object();	
 	/**
 	 * 
 	 * @param path 图片文件的cache路径，可以为null，调用者需要
@@ -76,93 +77,106 @@ public class BitmapFileSwapper implements ISwapper<String, Bitmap> {
 
 	@Override
 	public void put(String key, Bitmap value) {
-		if(key == null)
-		{
-			throw new IllegalArgumentException("key is null");
+		synchronized (mItemLock) {
+			if(key == null)
+			{
+				throw new IllegalArgumentException("key is null");
+			}
+			
+			if(value == null)
+			{
+				throw new IllegalArgumentException("bitmap is null");
+			}
+			
+			if(value.isRecycled())
+			{
+				throw new IllegalArgumentException("bitmap is recycled!");
+			}
+			
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(mPath + File.separatorChar + key + ".jpg");
+				value.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
 		}
 		
-		if(value == null)
-		{
-			throw new IllegalArgumentException("bitmap is null");
-		}
-		
-		if(value.isRecycled())
-		{
-			throw new IllegalArgumentException("bitmap is recycled!");
-		}
-		
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(mPath + File.separatorChar + key + ".jpg");
-			value.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
 	@Override
 	public Bitmap get(String key) {
-		// TODO Auto-generated method stub
-		if(null == key)
-		{
-			throw new IllegalArgumentException("key is null!");
+		synchronized (mItemLock) {
+			if(null == key)
+			{
+				throw new IllegalArgumentException("key is null!");
+			}
+			Bitmap bmp = BitmapFactory.decodeFile(mPath + File.separatorChar + key + ".jpg");
+			return bmp;
 		}
-		Bitmap bmp = BitmapFactory.decodeFile(mPath + File.separatorChar + key + ".jpg");
-		return bmp;
 	}
 
 	@Override
 	public List<Bitmap> getList(List<String> keyList) {
-		// TODO Auto-generated method stub
-		if(null == keyList)
-		{
-			throw new IllegalArgumentException("keyList is null!");
-		}
-		ArrayList<Bitmap> listBmp= new ArrayList<Bitmap>();
-		for(String str:keyList)
-		{
-			Bitmap bmp = get(str);
-			if(null!=bmp)
+		synchronized (mListLock) {
+			if(null == keyList)
 			{
-				listBmp.add(bmp);
+				throw new IllegalArgumentException("keyList is null!");
 			}
+			ArrayList<Bitmap> listBmp= new ArrayList<Bitmap>();
+			for(String str:keyList)
+			{
+				Bitmap bmp = get(str);
+				if(null!=bmp)
+				{
+					listBmp.add(bmp); 
+				}
+			}
+			return listBmp;
 		}
-		return listBmp;
 	}
 
 	@Override
 	public void putList(List<String> keyList, List<Bitmap> valueList) {
-		// TODO Auto-generated method stub
-		if(keyList!=null&&valueList!=null)
-		{
-			if(keyList.size() == valueList.size())
+		synchronized (mListLock) {
+			if(keyList!=null&&valueList!=null)
 			{
-				for(int i=0; i<keyList.size(); i++)
+				if(keyList.size() == valueList.size())
 				{
-					put(keyList.get(i), valueList.get(i));
+					for(int i=0; i<keyList.size(); i++)
+					{
+						put(keyList.get(i), valueList.get(i));
+					}
 				}
 			}
+			throw new IllegalArgumentException("PutList Error arguments");
 		}
-		throw new IllegalArgumentException("PutList Error arguments");
 	}
 
 	@Override
 	public int getSize() {
 		// TODO Auto-generated method stub
-		File dir = new File(mPath);
-		return dir.list(mFilter).length;
+		synchronized (mListLock) {
+			synchronized (mItemLock) {
+			File dir = new File(mPath);
+			return dir.list(mFilter).length;
+			}
+		}
 	}
 
 	@Override
 	public void clear() {
-		File dir = new File(mPath);
-		String[] list = dir.list(mFilter);
-		for(String str:list)
-		{
-			File file = new File(mPath + File.separatorChar + str);
-			file.delete();
+		synchronized (mListLock) {
+			File dir = new File(mPath);
+			String[] list = dir.list(mFilter);
+			for (String str : list) {
+				synchronized (mItemLock) {
+					File file = new File(mPath + File.separatorChar + str);
+					file.delete();
+				}
+			}
 		}
 	}
 
