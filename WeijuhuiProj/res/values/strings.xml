@@ -101,5 +101,16 @@
     <string name="finish_activity">已经完成的活动</string>    
     <string name="none_intro_content">未填写简介</string>    
     <string name="post_comment_message">“%1$s”评论了您的活动:%2$s</string>     
-    <string name="reply_comment_message">“%1$s”回复了您的评论:%2$s</string>      
+    <string name="reply_comment_message">“%1$s”回复了您的评论:%2$s</string>
+    
+    <string name="xiaohui_footer_text">正在加载...</string>
+    <string name="xiaohui_footer_text_loafail">加载失败</string>
+    <string name="fanhui">返回</string>
+    <string name="fabu">发布活动</string>
+    <string name="zhuti">主题</string>
+    <string name="duixiang">约会对象</string>
+    <string name="nv">女</string>
+    <string name="nan">男</string>
+    <string name="buxian">不限</string>
+    <string name="daiguimi">对方可携带一名闺蜜</string>
 </resources>
