@@ -5,7 +5,7 @@ import java.util.List;
 public interface IListCache<K,V> {
 	/**
 	 * 获取某个key之前，count个key的值
-	 * @param key 如果key为null，则返回最后count个key
+	 * @param key 如果key为null，则返回数据库倒数count个key
 	 * @param count 
 	 * @return key的列表
 	 */
@@ -16,7 +16,7 @@ public interface IListCache<K,V> {
 	
 	/**
 	 * 获取某个key之后，count个key的值
-	 * @param key 如果key为null，则返回最开始count个key
+	 * @param key 如果key为null，则返回数据库正数count个key
 	 * @param count
 	 * @return key的列表
 	 */

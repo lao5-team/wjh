@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.test.juxiaohui.DemoApplication;
+import com.test.juxiaohui.cache.temp.JSONCache;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.data.MyUser;
@@ -25,7 +27,7 @@ public class ActivityManager {
 	private static ActivityManager mInstance = null;
 	private ArrayList<ActivityData> mActivityList = null;
 	private ArrayList<DataChangedListener> mListeners;
-	
+	private JSONCache mCache;
 	public static interface DataChangedListener
 	{
 		public void onDataChanged();
@@ -47,12 +49,12 @@ public class ActivityManager {
 		loadFromFile();
 	}
 	
-	public void addActivity(ActivityData activity)
-	{
-		mActivityList.add(activity);
-		notifyDataChanged();
-		saveToFile();
-	}
+//	public void addActivity(ActivityData activity)
+//	{
+//		mActivityList.add(activity);
+//		notifyDataChanged();
+//		saveToFile();
+//	}
 	
 	public void removeActivity(ActivityData activity)
 	{
@@ -60,18 +62,18 @@ public class ActivityManager {
 		notifyDataChanged();
 	}
 	
-	public void updateActivity(ActivityData activity)
-	{
-		for(int i=0; i<mActivityList.size(); i++)
-		{
-			if(mActivityList.get(i).mID.equals(activity.mID))
-			{
-				mActivityList.set(i, activity);
-			}
-		}
-		notifyDataChanged();
-		saveToFile();
-	}
+//	public void updateActivity(ActivityData activity)
+//	{
+//		for(int i=0; i<mActivityList.size(); i++)
+//		{
+//			if(mActivityList.get(i).mID.equals(activity.mID))
+//			{
+//				mActivityList.set(i, activity);
+//			}
+//		}
+//		notifyDataChanged();
+//		saveToFile();
+//	}
 	
 	public int getActivitySize()
 	{
@@ -99,7 +101,6 @@ public class ActivityManager {
 		}
 	}
 	
-	
 	/**
 	 * 返回最近的活动
 	 * @return 
@@ -107,6 +108,40 @@ public class ActivityManager {
 	public ArrayList<ActivityData> getRecentActivity()
 	{
 		return MyServerManager.getInstance().getAllActivity();
+	}
+	
+	/**
+	 * @param id
+	 * @param count
+	 * @return
+	 */
+	public ArrayList<ActivityData> getItemsBeforeId(String id, int count)
+	{
+		ArrayList<ActivityData> result = new ArrayList<ActivityData>();
+		List<String> keyList = mCache.getKeysBeforeItem(id, count);
+		List<JSONObject> valueList = mCache.getItems(keyList);
+		for(JSONObject obj:valueList)
+		{
+			result.add(ActivityData.fromJSON(obj));
+		}
+		return result;
+	}
+	
+	/**
+	 * @param id
+	 * @param count
+	 * @return
+	 */
+	public List<ActivityData> getItemsAfterId(String id, int count)
+	{
+		ArrayList<ActivityData> result = new ArrayList<ActivityData>();
+		List<String> keyList = mCache.getKeysAfterItem(id, count);
+		List<JSONObject> valueList = mCache.getItems(keyList);
+		for(JSONObject obj:valueList)
+		{
+			result.add(ActivityData.fromJSON(obj));
+		}
+		return result;
 	}
 	
 	/**

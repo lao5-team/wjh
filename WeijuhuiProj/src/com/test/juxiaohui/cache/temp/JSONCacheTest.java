@@ -6,12 +6,14 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.test.AndroidTestCase;
+
 import com.test.juxiaohui.DemoApplication;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-public class JSONCacheTest extends TestCase {
+public class JSONCacheTest extends AndroidTestCase {
 
 	JSONCache mCache;
 	protected void setUp() throws Exception {
@@ -45,8 +47,14 @@ public class JSONCacheTest extends TestCase {
 		newkeyList = newCache.getKeysBeforeItem(null, 10);
 		Assert.assertEquals(newkeyList.size(), 10);
 		
-		newkeyList = newCache.getKeysBeforeItem("5", 10);
-		Assert.assertEquals(newkeyList.size(), 4);		
+		newkeyList = newCache.getKeysBeforeItem("4", 10);
+		Assert.assertEquals(4 ,newkeyList.size());		
+		
+		newkeyList = newCache.getKeysAfterItem(null, 10);
+		Assert.assertEquals(newkeyList.size(), 10);
+		
+		newkeyList = newCache.getKeysAfterItem("4", 10);
+		Assert.assertEquals(5 ,newkeyList.size());	
 		
 		newCache.remove("5");
 		newkeyList = newCache.getKeysAfterItem(null, 10);

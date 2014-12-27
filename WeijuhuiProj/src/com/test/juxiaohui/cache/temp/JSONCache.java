@@ -31,7 +31,11 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 		+ "id" + " TEXT PRIMARY KEY);";
 		ArrayList<String> keyList = new ArrayList<String>();
 		ArrayList<JSONObject> valueList = new ArrayList<JSONObject>();
-		loadAll(keyList, valueList);
+		if(null!=this.getWritableDatabase())
+		{
+			loadAll(keyList, valueList);
+		}
+		
 	}
 
 //	@Override
@@ -198,7 +202,7 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 		Cursor cursor = db.query(mName, new String[]{"id, value"}, null, null, null, null, null);		
 		while(cursor.moveToNext())
 		{
-			String key = cursor.getString(cursor.getColumnIndex("key"));
+			String key = cursor.getString(cursor.getColumnIndex("id"));
 			String value = cursor.getString(cursor.getColumnIndex("value"));
 			try {
 				JSONObject item = new JSONObject(value);
@@ -216,20 +220,40 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 	@Override
 	public List<String> getKeysBeforeItem(String key, int count) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor cursor = db.query(mName, new String[]{"value"}, "id<?", new String[]{key}, null, null, null);
-		String value = null;
 		List<String> keyList = new ArrayList<String>();
-		while(cursor.moveToNext() && count >0)
+		if(null != key)
 		{
-			value = cursor.getString(cursor.getColumnIndex("id"));
-			count--;
-			if(null != value)
+			Cursor cursor = db.query(mName, new String[]{"id"}, "id<?", new String[]{key}, null, null, "id DESC");
+			String value = null;
+			
+			while(cursor.moveToNext() && count >0)
 			{
-				keyList.add(value);
+				value = cursor.getString(cursor.getColumnIndex("id"));
+				count--;
+				if(null != value)
+				{
+					keyList.add(value);
+				}
+			}
+
+			cursor.close();			
+		}
+		else
+		{
+			Cursor cursor = db.query(mName, null, null, null, null, null, "id DESC");
+			String value = null;
+			
+			while(cursor.moveToNext() && count >0)
+			{
+				value = cursor.getString(cursor.getColumnIndex("id"));
+				count--;
+				if(null != value)
+				{
+					keyList.add(value);
+				}
 			}
 		}
 
-		cursor.close();
 		db.close();
 		return keyList;
 	}
@@ -237,20 +261,39 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 	@Override
 	public List<String> getKeysAfterItem(String key, int count) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor cursor = db.query(mName, new String[]{"value"}, "id>?", new String[]{key}, null, null, null);
-		String value = null;
 		List<String> keyList = new ArrayList<String>();
-		while(cursor.moveToNext() && count >0)
-		{
-			value = cursor.getString(cursor.getColumnIndex("id"));
-			count--;
-			if(null != value)
+		if(null != key)
+		{		
+			Cursor cursor = db.query(mName, new String[]{"id"}, "id>?", new String[]{key}, null, null, "id ASC");
+			String value = null;
+			
+			while(cursor.moveToNext() && count >0)
 			{
-				keyList.add(value);
+				value = cursor.getString(cursor.getColumnIndex("id"));
+				count--;
+				if(null != value)
+				{
+					keyList.add(value);
+				}
 			}
+			cursor.close();
 		}
-
-		cursor.close();
+		else
+		{
+			Cursor cursor = db.query(mName, null, null, null, null, null, "id ASC");
+			String value = null;
+			
+			while(cursor.moveToNext() && count >0)
+			{
+				value = cursor.getString(cursor.getColumnIndex("id"));
+				count--;
+				if(null != value)
+				{
+					keyList.add(value);
+				}
+			}
+			cursor.close();			
+		}
 		db.close();
 		return keyList;
 	}
