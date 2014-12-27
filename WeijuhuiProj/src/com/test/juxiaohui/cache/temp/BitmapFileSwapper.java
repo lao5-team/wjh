@@ -180,4 +180,5 @@ public class BitmapFileSwapper implements ISwapper<String, Bitmap> {
 		}
 	}
 
+
 }

@@ -13,8 +13,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class JSONCache extends SQLiteOpenHelper implements ICache<String, JSONObject> {
-
+public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JSONObject> {
+	public final static String dataPattern = "yyyy年MM月dd日hh时";
 	private static final int TRANSACTION_LIMIT = 10;
 	String mName;
 	HashMap<String, JSONObject> mMap = new HashMap<String, JSONObject>();
@@ -29,112 +29,45 @@ public class JSONCache extends SQLiteOpenHelper implements ICache<String, JSONOb
 		+ mName + " ("
 		+ "value" +" TEXT, "
 		+ "id" + " TEXT PRIMARY KEY);";
-		
-		
+		ArrayList<String> keyList = new ArrayList<String>();
+		ArrayList<JSONObject> valueList = new ArrayList<JSONObject>();
+		loadAll(keyList, valueList);
 	}
 
-	@Override
-	public JSONObject get(String key) {
-		if(null == key)
-		{
-			throw new IllegalArgumentException("key is null!");
-		}		
-		JSONObject value = null;
-		if(mMap.containsKey(key))
-		{
-			value= mMap.get(key);
-		}
-		else
-		{
-			value = getByDB(key);
-			if(value != null)
-			{
-				mMap.put(key, value);
-			}
-		}
-		return value;
-	}
+//	@Override
+//	public JSONObject get(String key) {
+//		if(null == key)
+//		{
+//			throw new IllegalArgumentException("key is null!");
+//		}		
+//		JSONObject value = null;
+//		if(mMap.containsKey(key))
+//		{
+//			value= mMap.get(key);
+//		}
+//		else
+//		{
+//			value = getByDB(key);
+//			if(value != null)
+//			{
+//				mMap.put(key, value);
+//			}
+//		}
+//		return value;
+//	}
 
-	@Override
-	public void put(String key, JSONObject value) {
-		if(null == key)
-		{
-			throw new IllegalArgumentException("key is null!");
-		}	
-		
-		if(null == value)
-		{
-			throw new IllegalArgumentException("value is null!");
-		}	
-		
-		mMap.put(key, value);
-		putByDB(key, value);
-		
-	}
 
-	@Override
-	public List<JSONObject> getList(List<String> keyList) {
-		if(null == keyList)
-		{
-			throw new IllegalArgumentException("keyList is null!");
-		}	
-		
-		ArrayList<JSONObject> result = new ArrayList<JSONObject>();
-		ArrayList<String> keyDBList = new ArrayList<String>();
-		for(String key:keyList)
-		{
-			if(mMap.containsKey(key))
-			{
-				JSONObject value = mMap.get(key);
-				result.add(value);
-			}
-			else
-			{
-				keyDBList.add(key);
-			}
-		}
-		result.addAll(getListByDB(keyDBList));
-		return result;
-	}
 
-	@Override
-	public void putList(List<String> keyList, List<JSONObject> valueList) {
-		if(null == keyList)
-		{
-			throw new IllegalArgumentException("keyList is null!");
-		}	
-		
-		if(null == valueList)
-		{
-			throw new IllegalArgumentException("valueList is null!");
-		}	
-		
-		if(keyList.size() != valueList.size())
-		{
-			throw new IllegalArgumentException("valueList is null!");
-		}
-		
-		for(int i=0; i<keyList.size(); i++)
-		{
-			mMap.put(keyList.get(i), valueList.get(i));
-		}	
-		
-		putListByDB(keyList, valueList);
-	}
-
-	@Override
-	public void setSwaper(ISwapper<String, JSONObject> swapper) {
-		if(null == swapper)
-		{
-			throw new IllegalArgumentException("swapper is null!");
-			
-		}	
-		swapper.setName(mName);
-	}
 	
 	@Override
-	public void remove(String key, JSONObject value) {
-		
+	public void remove(String key) {
+		if(null == key)
+		{
+			throw new IllegalArgumentException("key is null");
+		}
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(mName, "id=?", new String[]{key});
+		db.close();
 	}
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -149,6 +82,7 @@ public class JSONCache extends SQLiteOpenHelper implements ICache<String, JSONOb
 	private void putByDB(String key, JSONObject value)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
+		
 		ContentValues values = new ContentValues();
 		values.put("id", key);
 		values.put("value", value.toString());
@@ -167,7 +101,6 @@ public class JSONCache extends SQLiteOpenHelper implements ICache<String, JSONOb
 		while(cursor.moveToNext())
 		{
 			value = cursor.getString(cursor.getColumnIndex("id"));
-
 		}
 		if(null != value)
 		{
@@ -183,6 +116,11 @@ public class JSONCache extends SQLiteOpenHelper implements ICache<String, JSONOb
 		return result;
 	}
 	
+	
+	/** 向数据库写一个数组
+	 * @param keyList
+	 * @param valueList
+	 */
 	private void putListByDB(List<String> keyList, List<JSONObject> valueList)
 	{
 		if(keyList.size()<TRANSACTION_LIMIT)
@@ -211,6 +149,11 @@ public class JSONCache extends SQLiteOpenHelper implements ICache<String, JSONOb
 		}
 	}
 	
+	
+	/**从数据库中读取一个数据
+	 * @param keyList
+	 * @return
+	 */
 	private List<JSONObject> getListByDB(List<String> keyList) {
 		if(null == keyList)
 		{
@@ -221,7 +164,7 @@ public class JSONCache extends SQLiteOpenHelper implements ICache<String, JSONOb
 		ArrayList<JSONObject> result = new ArrayList<JSONObject>();
 		while(cursor.moveToNext())
 		{
-			String value = cursor.getString(cursor.getColumnIndex("id"));
+			String value = cursor.getString(cursor.getColumnIndex("value"));
 			try {
 				JSONObject item = new JSONObject(value);
 				result.add(item);
@@ -233,6 +176,157 @@ public class JSONCache extends SQLiteOpenHelper implements ICache<String, JSONOb
 		db.close();
 		cursor.close();
 		return result;
+	}
+
+	/**
+	 * 从数据库载入所有数据
+	 * @param keyList
+	 * @param valueList
+	 */
+	private void loadAll(ArrayList<String> keyList, ArrayList<JSONObject> valueList)
+	{		
+		if(null == keyList)
+		{
+			throw new IllegalArgumentException("keyList is null!");
+		}
+		if(null == valueList)
+		{
+	 		throw new IllegalArgumentException("valueList is null!");
+		}
+		
+		SQLiteDatabase db = this.getWritableDatabase();	
+		Cursor cursor = db.query(mName, new String[]{"id, value"}, null, null, null, null, null);		
+		while(cursor.moveToNext())
+		{
+			String key = cursor.getString(cursor.getColumnIndex("key"));
+			String value = cursor.getString(cursor.getColumnIndex("value"));
+			try {
+				JSONObject item = new JSONObject(value);
+				keyList.add(key);
+				valueList.add(item);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+		}
+		db.close();
+		cursor.close();
+	}
+
+	@Override
+	public List<String> getKeysBeforeItem(String key, int count) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.query(mName, new String[]{"value"}, "id<?", new String[]{key}, null, null, null);
+		String value = null;
+		List<String> keyList = new ArrayList<String>();
+		while(cursor.moveToNext() && count >0)
+		{
+			value = cursor.getString(cursor.getColumnIndex("id"));
+			count--;
+			if(null != value)
+			{
+				keyList.add(value);
+			}
+		}
+
+		cursor.close();
+		db.close();
+		return keyList;
+	}
+
+	@Override
+	public List<String> getKeysAfterItem(String key, int count) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.query(mName, new String[]{"value"}, "id>?", new String[]{key}, null, null, null);
+		String value = null;
+		List<String> keyList = new ArrayList<String>();
+		while(cursor.moveToNext() && count >0)
+		{
+			value = cursor.getString(cursor.getColumnIndex("id"));
+			count--;
+			if(null != value)
+			{
+				keyList.add(value);
+			}
+		}
+
+		cursor.close();
+		db.close();
+		return keyList;
+	}
+
+	@Override
+	public List<JSONObject> getItems(List<String> keyList) {
+		if(null == keyList)
+		{
+			throw new IllegalArgumentException("keyList is null!");
+		}	
+		
+		ArrayList<JSONObject> result = new ArrayList<JSONObject>();
+		ArrayList<String> keyDBList = new ArrayList<String>();
+		for(String key:keyList)
+		{
+			if(mMap.containsKey(key))
+			{
+				JSONObject value = mMap.get(key);
+				result.add(value);
+			}
+			/*
+			 *当数据量超过一定程度时，可能会出现内存数据少于数据库数据的情况 
+			 * */
+			else 
+			{
+				keyDBList.add(key);
+			}
+		}
+		List<JSONObject> listValue = getListByDB(keyDBList);
+		for(int i=0; i<keyDBList.size(); i++)
+		{
+			mMap.put(keyDBList.get(i), listValue.get(i));
+		}
+		
+		result.addAll(listValue);
+		return result;
+	}
+
+	@Override
+	public void putItems(List<String> keyList, List<JSONObject> valueList) {
+		if(null == keyList)
+		{
+			throw new IllegalArgumentException("keyList is null!");
+		}	
+		
+		if(null == valueList)
+		{
+			throw new IllegalArgumentException("valueList is null!");
+		}	
+		
+		if(keyList.size() != valueList.size())
+		{
+			throw new IllegalArgumentException("valueList is null!");
+		}
+		
+		for(int i=0; i<keyList.size(); i++)
+		{
+			mMap.put(keyList.get(i), valueList.get(i));
+		}	
+		putListByDB(keyList, valueList);
+	}
+	
+	private void put(String key, JSONObject value) {
+		if(null == key)
+		{
+			throw new IllegalArgumentException("key is null!");
+		}	
+		
+		if(null == value)
+		{
+			throw new IllegalArgumentException("value is null!");
+		}	
+		
+		mMap.put(key, value);
+		putByDB(key, value);
+		
 	}
 	
 	

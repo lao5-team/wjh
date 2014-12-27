@@ -11,14 +11,14 @@ import java.util.List;
  * @param <K>
  * @param <V>
  */
-public interface ICache<K, V> {
+public interface IMapCache<K, V> {
 	void setSwaper(ISwapper<K, V> swapper);
 	//void setRemoteLoader(IRemoteLoader<K, V> loader);
 	V get(K key);
 	void put(K key, V value);
 	List<V> getList(List<K> keyList);
 	void putList(List<K> keyList, List<V> valueList);
-	void remove(K key, V value);
+	void remove(K key);
 	
 
 }

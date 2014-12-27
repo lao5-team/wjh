@@ -7,7 +7,7 @@ import java.util.Map;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-public class BitmapCache implements ICache<String, Bitmap> {
+public class BitmapCache implements IMapCache<String, Bitmap> {
 	int DEFAULT_SIZE = 5;
 	int mSize = DEFAULT_SIZE;
 	ISwapper<String, Bitmap> mSwapper;
@@ -128,7 +128,7 @@ public class BitmapCache implements ICache<String, Bitmap> {
 	}
 
 	@Override
-	public void remove(String key, Bitmap value) {
+	public void remove(String key) {
 		mMap.remove(key);
 		
 	}

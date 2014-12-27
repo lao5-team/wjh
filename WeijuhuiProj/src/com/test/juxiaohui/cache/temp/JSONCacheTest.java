@@ -3,6 +3,7 @@ package com.test.juxiaohui.cache.temp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.test.juxiaohui.DemoApplication;
@@ -13,40 +14,45 @@ import junit.framework.TestCase;
 public class JSONCacheTest extends TestCase {
 
 	JSONCache mCache;
-	JSONDBSwapper mSwapper;
 	protected void setUp() throws Exception {
 		super.setUp();
-		mCache = new JSONCache();
-		mSwapper = new JSONDBSwapper(DemoApplication.getInstance(), "test");
-		mCache.setSwaper(mSwapper);
-	}
-	
-	//即使数据从内存中被清除掉，也能获取。
-	public void testGet()
-	{
-		
+		mCache = new JSONCache(DemoApplication.getInstance(), "test");
 		ArrayList<String> keyList = new ArrayList<String>();
 		List<JSONObject> valueList = new ArrayList<JSONObject>();
 		for(int i=0; i<10 ;i++)
 		{
 			keyList.add(""+i);
-			JSONObject testObj = new JSONObject();
-			valueList.add(testObj);
+			JSONObject testObj;
+			try {
+				testObj = new JSONObject(String.format("{\"value\": %d}", i));
+				valueList.add(testObj);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
-		mCache.putList(keyList, valueList);
-		
-		
-		JSONCache newCache = new JSONCache();
-		JSONDBSwapper newSwapper = new JSONDBSwapper(DemoApplication.getInstance(), "test");
-		newCache.setSwaper(newSwapper);
-		valueList = newCache.getList(keyList);
-		Assert.assertTrue(valueList.size() == 10);
+		mCache.putItems(keyList, valueList);
 	}
 	
-	public void testRemove()
+	//即使数据从内存中被清除掉，也能获取。
+	public void test()
 	{
+		JSONCache newCache = new JSONCache(DemoApplication.getInstance(), "test");
+		List<String> newkeyList = newCache.getKeysAfterItem(null, 10);
+		Assert.assertEquals(newkeyList.size(), 10);
 		
+		newkeyList = newCache.getKeysBeforeItem(null, 10);
+		Assert.assertEquals(newkeyList.size(), 10);
+		
+		newkeyList = newCache.getKeysBeforeItem("5", 10);
+		Assert.assertEquals(newkeyList.size(), 4);		
+		
+		newCache.remove("5");
+		newkeyList = newCache.getKeysAfterItem(null, 10);
+		Assert.assertEquals(newkeyList.size(), 9);
 	}
+	
 	
 
 }
