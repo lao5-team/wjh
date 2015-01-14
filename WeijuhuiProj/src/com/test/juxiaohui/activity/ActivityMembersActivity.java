@@ -147,16 +147,16 @@ public class ActivityMembersActivity extends FragmentActivity {
 			mFriends = new ArrayList<MyUser>( );
 		}
 		getContactList();
-		if(getIntent().getIntExtra("state", 0) == ActivityData.BEGIN)
-		{
+//		if(getIntent().getIntExtra("state", 0) == ActivityData.BEGIN)
+//		{
 			mAdapter = new ActivityMemberSelectAdapter(this, R.layout.row_contact, mContactList, mFriends, sidebar);
 			listView.setAdapter(mAdapter);
-		}
-		else if(getIntent().getIntExtra("state", 0) == ActivityData.BEGIN)
-		{
-			mStateAdapter = new ActivityMemberStateAdapter(this, R.layout.row_contact, mFriends);
-			listView.setAdapter(mStateAdapter);
-		}
+//		}
+//		else if(getIntent().getIntExtra("state", 0) == ActivityData.BEGIN)
+//		{
+//			mStateAdapter = new ActivityMemberStateAdapter(this, R.layout.row_contact, mFriends);
+//			listView.setAdapter(mStateAdapter);
+//		}
 	}
 	
 	public void initUI()

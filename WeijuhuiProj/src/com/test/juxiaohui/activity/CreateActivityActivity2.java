@@ -113,10 +113,11 @@ public class CreateActivityActivity2 extends Activity {
 	
 	public static final int USE_CREATE = 4;
 	public static final int USE_EDIT = 5;
+	boolean mIsTimeSet = false;
 	
 	private IActivityCreateMediator mMediator = new IActivityCreateMediator() {
 		private ActivityBuilder mActivityBuilder = new ActivityBuilder();
-	    boolean mIsTimeSet = false;
+	    
 		
 		@Override
 		public void setTitle(String title) {
@@ -173,32 +174,16 @@ public class CreateActivityActivity2 extends Activity {
 		
 		@Override
 		public void onOKClicked() {
-			final ProgressDialog pd = new ProgressDialog(CreateActivityActivity2.this);
-			pd.setMessage("正在创建活动...");
-			pd.show();
-			Thread thread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					if(DemoApplication.isDebug)
-					{
-						UserManager.getInstance().getCurrentUser().startActivity(mActivityData);
-						runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								if (!CreateActivityActivity2.this.isFinishing())
-									pd.dismiss();
-								addActivityToCalendar(mActivityData);
-								Toast.makeText(getApplicationContext(), "创建活动成功", 0).show();
-								CreateActivityActivity2.this.finish();		
-							}
-						});
-									
-					}
-					else
-					{
-						mMediator.setCreator(UserManager.getInstance().getCurrentUser());
-						if(null != (mActivityData = mMediator.createActivityData()))
+			if(checkDataComplete())
+			{
+				final ProgressDialog pd = new ProgressDialog(CreateActivityActivity2.this);
+				pd.setMessage("正在创建活动...");
+				pd.show();
+				Thread thread = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						
+						if(DemoApplication.isDebug)
 						{
 							UserManager.getInstance().getCurrentUser().startActivity(mActivityData);
 							runOnUiThread(new Runnable() {
@@ -212,13 +197,32 @@ public class CreateActivityActivity2 extends Activity {
 									CreateActivityActivity2.this.finish();		
 								}
 							});
-						}				
+										
+						}
+						else
+						{
+							mMediator.setCreator(UserManager.getInstance().getCurrentUser());
+							if(null != (mActivityData = mMediator.createActivityData()))
+							{
+								UserManager.getInstance().getCurrentUser().startActivity(mActivityData);
+								runOnUiThread(new Runnable() {
+									
+									@Override
+									public void run() {
+										if (!CreateActivityActivity2.this.isFinishing())
+											pd.dismiss();
+										addActivityToCalendar(mActivityData);
+										Toast.makeText(getApplicationContext(), "创建活动成功", 0).show();
+										CreateActivityActivity2.this.finish();		
+									}
+								});
+							}				
+						}
+						
 					}
-					
-				}
-			});
-			thread.start();
-
+				});
+				thread.start();
+			}
 		}
 		
 		@Override
@@ -228,35 +232,6 @@ public class CreateActivityActivity2 extends Activity {
 
 		@Override
 		public ActivityData createActivityData() {
-			String title;
-			if(mEtxTitle.getEditableText().toString().length() != 0)
-			{
-				title = mEtxTitle.getEditableText().toString();
-				setTitle(title);
-			}
-			else
-			{
-				Toast.makeText(CreateActivityActivity2.this, "请填写聚会标题", Toast.LENGTH_SHORT).show();
-				return null;
-			}
-			
-			String content;
-			if(mEtxContent.getEditableText().toString().length() != 0)
-			{
-				content = mEtxContent.getEditableText().toString();
-				setContent(content);
-			}
-			else
-			{
-				Toast.makeText(CreateActivityActivity2.this, "请填写聚内容", Toast.LENGTH_SHORT).show();
-				return null;
-			}
-			
-			if(!mIsTimeSet)
-			{
-				Toast.makeText(CreateActivityActivity2.this, "请选择聚会时间", Toast.LENGTH_SHORT).show();
-				return null;			
-			}
 			return mActivityBuilder.create();
 		}
 
@@ -351,12 +326,14 @@ public class CreateActivityActivity2 extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(CreateActivityActivity2.this, ActivityMembersActivity.class);
-				if(mActivityData.mStatus == ActivityData.BEGIN)
+//				if(mActivityData.mStatus == ActivityData.BEGIN)
+//				{
+//					intent.putExtra("state", ActivityData.BEGIN);
+//				}
+				if(null!=mActivityData && null!=mActivityData.mUsers)
 				{
-					intent.putExtra("state", ActivityData.BEGIN);
+					intent.putExtra("members", mActivityData.mUsers);
 				}
-				
-				intent.putExtra("members", mActivityData.mUsers);
 				startActivityForResult(intent, INTENT_MEMBERS);				
 			}
 		});
@@ -478,6 +455,40 @@ public class CreateActivityActivity2 extends Activity {
 			}
 		}
 		
+	}
+	
+	private boolean checkDataComplete()
+	{
+		String title;
+		if(mEtxTitle.getEditableText().toString().length() != 0)
+		{
+			title = mEtxTitle.getEditableText().toString();
+			mMediator.setTitle(title);
+		}
+		else
+		{
+			Toast.makeText(CreateActivityActivity2.this, "请填写聚会标题", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		
+		String content;
+		if(mEtxContent.getEditableText().toString().length() != 0)
+		{
+			content = mEtxContent.getEditableText().toString();
+			mMediator.setContent(content);
+		}
+		else
+		{
+			Toast.makeText(CreateActivityActivity2.this, "请填写聚内容", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		
+		if(!mIsTimeSet)
+		{
+			Toast.makeText(CreateActivityActivity2.this, "请选择聚会时间", Toast.LENGTH_SHORT).show();
+			return false;			
+		}
+		return true;
 	}
 
 }

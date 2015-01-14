@@ -46,7 +46,7 @@ public class MyServerManager {
 	}
 	
 	private static MyServerManager mInstance = null;
-	String IP_ADDRESS = "http://117.78.3.87:80";
+	String IP_ADDRESS = "http://103.31.201.252";//"http://117.78.3.87:80";
 	final String IP_ADDRESS_UPLOAD = "http://117.78.3.87:81/upload";
 	public final String EXCEPTION_NOT_LOGIN = "You have not login!";
 	String mToken;
