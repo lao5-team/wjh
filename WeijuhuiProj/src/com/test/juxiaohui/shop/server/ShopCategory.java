@@ -10,13 +10,14 @@ public class ShopCategory {
 	
 	protected String mID = null;
 	protected String mName = null;
+	protected String mParentID = null;
 	protected ArrayList<ShopCategory> mSubCategoryList = new ArrayList<ShopCategory>();
 	protected ArrayList<Goods> mGoodsList = new ArrayList<Goods>();
 	void setID(String id)
 	{
 		if(id == null)
 		{
-			throw new IllegalArgumentException("id < 0!");
+			throw new IllegalArgumentException("id is null");
 		}
 		mID = id;
 	}
@@ -38,6 +39,21 @@ public class ShopCategory {
 	public String getName()
 	{
 		return mName;
+	}
+	
+	void setParentID(String id)
+	{
+		if(id == null)
+		{
+			throw new IllegalArgumentException("id is null");
+		}
+		
+		mParentID = id;
+	}
+	
+	String getParentID()
+	{
+		return mParentID;
 	}
 	
 	void setSubCategoryList(ArrayList<ShopCategory> list)
@@ -74,6 +90,10 @@ public class ShopCategory {
 			JSONObject result = new JSONObject();
 			result.put("name", category.mName);
 			result.put("id", category.mID);
+			if(category.mParentID == null)
+			{
+				result.put("parent_id", category.mParentID);
+			}
 			return result;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -92,6 +112,10 @@ public class ShopCategory {
 			ShopCategory category = new ShopCategory();
 			category.mID = object.getString("id");
 			category.mName = object.getString("name");
+			if(object.has("parent_id"))
+			{
+				category.mParentID = object.getString("parent_id");
+			}
 			return category;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
