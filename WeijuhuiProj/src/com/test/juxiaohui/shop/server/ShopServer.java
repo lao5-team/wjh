@@ -2,10 +2,13 @@ package com.test.juxiaohui.shop.server;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.test.juxiaohui.shop.data.Goods;
+import com.test.juxiaohui.shop.data.ShopCategory;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
 
 import android.util.Log;

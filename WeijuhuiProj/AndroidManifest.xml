@@ -92,7 +92,10 @@
             android:theme="@style/horizontal_slide"></activity>
         <activity android:name="com.test.juxiaohui.activity.ActivityPayment"></activity>
         <activity android:name=".activity.MessagesActivity" android:theme="@style/horizontal_slide"></activity>
-        <activity android:name=".activity.ActivityListActivity"></activity>
+        <activity android:name=".activity.ActivityListActivity" ></activity>
+        <activity android:name=".shop.app.ShopActivity"  android:theme="@style/horizontal_slide"></activity>
+        <activity android:name=".shop.app.GoodsListActivity"  android:theme="@style/horizontal_slide"></activity>
+        <activity android:name=".shop.app.GoodsActivity"  android:theme="@style/horizontal_slide"></activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

@@ -15,6 +15,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.test.juxiaohui.shop.data.ShopCategory;
+
 import android.test.AndroidTestCase;
 import android.util.Log;
 

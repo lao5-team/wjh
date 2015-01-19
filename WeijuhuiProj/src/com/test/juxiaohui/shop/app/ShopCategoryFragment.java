@@ -1,10 +1,12 @@
-package com.test.juxiaohui.activity;
+package com.test.juxiaohui.shop.app;
 
 import java.util.List;
 
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.mediator.IShopMediator;
-import com.test.juxiaohui.shop.server.ShopCategory;
+import com.test.juxiaohui.shop.data.ShopCategory;
+import com.test.juxiaohui.shop.mediator.IShopMediator;
+import com.test.juxiaohui.widget.CommonAdapter;
+import com.test.juxiaohui.widget.IAdapterItem;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,35 +21,28 @@ import android.widget.LinearLayout;
 
 public class ShopCategoryFragment extends ListFragment {
 	
-	private BaseAdapter mAdapter = new BaseAdapter() {
-		
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-		
-		@Override
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-	};
-	List<ShopCategory> mCategoryList;
-	IShopMediator mShopMediator;
+	List<ShopCategory> mCategoryList = null;
+	IShopMediator mShopMediator = null;
+	CommonAdapter<ShopCategory> mAdapter = null;
 	
+	public ShopCategoryFragment(List<ShopCategory> dataList, IAdapterItem<ShopCategory> item, IShopMediator mediator)
+	{
+    	if(null == dataList)
+    	{
+    		throw new IllegalArgumentException("list is null !");
+    	}
+    	if(null == item)
+    	{
+    		throw new IllegalArgumentException("item is null !");
+    	}
+    	if(null == mediator)
+    	{
+    		throw new IllegalArgumentException("mediator is null !");
+    	}
+		mCategoryList = dataList;
+		mAdapter = new CommonAdapter<>(dataList, item);
+		mShopMediator = mediator;
+	}
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -66,13 +61,14 @@ public class ShopCategoryFragment extends ListFragment {
     	return layout;
     }
     
-    public void setData(List<ShopCategory> list)
+    public void setData(List<ShopCategory> dataList)
     {
-    	if(null == list)
+    	if(null == dataList)
     	{
-    		throw new IllegalArgumentException("list is null !");
+    		throw new IllegalArgumentException("dataList is null !");
     	}
-    	mCategoryList = list;
+    	mCategoryList = dataList;
     }
+    
 
 }

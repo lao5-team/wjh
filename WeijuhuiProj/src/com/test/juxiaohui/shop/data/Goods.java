@@ -1,4 +1,4 @@
-package com.test.juxiaohui.shop.server;
+package com.test.juxiaohui.shop.data;
 
 import org.json.JSONException;
 import org.json.JSONObject;
