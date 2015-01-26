@@ -9,16 +9,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="TextView" />
+        android:layout_marginTop="10dip"
+        android:text="TextView"
+        android:textSize="@dimen/normal_font_size" />
 
     <TextView
         android:id="@+id/textView_prize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
         android:layout_alignLeft="@+id/textView_name"
         android:layout_below="@+id/textView_name"
-        android:text="TextView" />
+        android:layout_marginTop="10dip"
+        android:text="TextView"
+        android:textSize="@dimen/normal_font_size" />
 
     <ImageView
         android:id="@+id/imageView_goods"

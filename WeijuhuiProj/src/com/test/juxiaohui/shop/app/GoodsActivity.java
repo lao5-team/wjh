@@ -7,10 +7,6 @@ import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.mediator.IGoodsMediator;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;
-
-
-
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

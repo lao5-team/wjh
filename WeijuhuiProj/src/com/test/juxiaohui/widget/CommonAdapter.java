@@ -2,6 +2,8 @@ package com.test.juxiaohui.widget;
 
 import java.util.List;
 
+import com.test.juxiaohui.shop.data.ShopCategory;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -12,12 +14,7 @@ public class CommonAdapter<T> extends BaseAdapter {
 	IAdapterItem<T> mItem = null;
 	
 	public CommonAdapter(List<T> dataList, IAdapterItem<T> item)
-	{
-		if(null == dataList)
-		{
-			throw new IllegalArgumentException("dataList is null");
-		}
-		
+	{		
 		if(null == item)
 		{
 			throw new IllegalArgumentException("item is null");
@@ -27,10 +24,25 @@ public class CommonAdapter<T> extends BaseAdapter {
 		mItem = item;
 	}
 
+	
+    public void setData(List<T> dataList)
+    {
+    	if(null == dataList)
+    	{
+    		throw new IllegalArgumentException("dataList is null !");
+    	}
+    	mDataList = dataList;
+    }
+    
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return mDataList.size();
+		if(null != mDataList)
+		{
+			return mDataList.size();
+		}
+		return 0;
+		
 	}
 
 	@Override

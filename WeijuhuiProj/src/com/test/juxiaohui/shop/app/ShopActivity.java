@@ -47,10 +47,11 @@ public class ShopActivity extends FragmentActivity implements IShopMediator{
 //			// ft.add(R.id.layout_middle, mFragCategory, "category");
 //			// mFragCategory.getListView().invalidate();
 //		} else {
-		mSubCategoryFragment.setData(mListSubCategory);
+		
+		setSubCategoryList(ShopDataManager.getInstance().getSubCategoryList(id));
 		if(null == fm.findFragmentByTag(SUB_CAT))
 		{
-			ft.add(R.id.layout_middle, mSubCategoryFragment, SUB_CAT);
+			ft.add(R.id.layout_sub, mSubCategoryFragment, SUB_CAT);
 			ft.commit();
 		}
 			
@@ -101,9 +102,10 @@ public class ShopActivity extends FragmentActivity implements IShopMediator{
 		@Override
 		public View getView(ShopCategory data, View convertView) {
 			// TODO Auto-generated method stub
-			TextView tv = new TextView(ShopActivity.this);
-			tv.setText(data.getName());
-			return tv;
+			View view = getLayoutInflater().inflate(R.layout.item_category, null);
+			TextView tv = (TextView)view.findViewById(R.id.textView_name);
+			tv.setText(data.getName());	
+			return view;
 		}
 		
 	}
@@ -116,26 +118,21 @@ public class ShopActivity extends FragmentActivity implements IShopMediator{
 	private ShopSubCategoryFragment mSubCategoryFragment = null;
 	private List<ShopCategory> mListCategory = null;
 	private List<ShopCategory> mListSubCategory = null;
-	private List<Goods> mListGoods = null;
-	private IShopMediator mShopMediator = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		initData();
 		initUI();
-		
-
 	}
 	
 	private void initUI()
 	{
-		##setContentView(R.layout.activity_newactivity);
-		mCategoryFragment = new ShopCategoryFragment(mListCategory, new CategoryItem(), mShopMediator);
-		mSubCategoryFragment = new ShopSubCategoryFragment(mListSubCategory, new CategoryItem(), mShopMediator);
+		setContentView(R.layout.activity_shop);
+		mCategoryFragment = new ShopCategoryFragment(mListCategory, new CategoryItem(), this);
+		mSubCategoryFragment = new ShopSubCategoryFragment(mListSubCategory, new CategoryItem(), this);
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
-		ft.add(R.id.layout_middle, mCategoryFragment, "location");
+		ft.add(R.id.layout_main, mCategoryFragment, MAIN_CAT);
 		ft.commit();		
 	}
 	

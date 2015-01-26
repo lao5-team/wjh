@@ -4,10 +4,10 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-        <instrumentation
+    <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="com.test.juxiaohui" />
-    
+
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="19" />
@@ -41,11 +41,13 @@
             android:name="com.test.juxiaohui.activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
 
         <service android:name="com.test.juxiaohui.service.ContactChangeService" />
@@ -88,14 +90,34 @@
             android:name="com.test.juxiaohui.activity.DateActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
-        <activity android:name="com.test.juxiaohui.activity.PhotoSelectActivity"
-            android:theme="@style/horizontal_slide"></activity>
-        <activity android:name="com.test.juxiaohui.activity.ActivityPayment"></activity>
-        <activity android:name=".activity.MessagesActivity" android:theme="@style/horizontal_slide"></activity>
-        <activity android:name=".activity.ActivityListActivity" ></activity>
-        <activity android:name=".shop.app.ShopActivity"  android:theme="@style/horizontal_slide"></activity>
-        <activity android:name=".shop.app.GoodsListActivity"  android:theme="@style/horizontal_slide"></activity>
-        <activity android:name=".shop.app.GoodsActivity"  android:theme="@style/horizontal_slide"></activity>
+        <activity
+            android:name="com.test.juxiaohui.activity.PhotoSelectActivity"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity android:name="com.test.juxiaohui.activity.ActivityPayment" >
+        </activity>
+        <activity
+            android:name=".activity.MessagesActivity"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity android:name=".activity.ActivityListActivity" >
+        </activity>
+        <activity
+            android:name=".shop.app.ShopActivity"
+            android:theme="@style/horizontal_slide" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".shop.app.GoodsListActivity"
+            android:theme="@style/horizontal_slide" >
+        </activity>
+        <activity
+            android:name=".shop.app.GoodsActivity"
+            android:theme="@style/horizontal_slide" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -110,8 +132,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_CALENDAR"/> 
-	<uses-permission android:name="android.permission.WRITE_CALENDAR"/>
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"

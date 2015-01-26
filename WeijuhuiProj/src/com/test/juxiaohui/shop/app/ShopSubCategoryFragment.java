@@ -26,12 +26,7 @@ public class ShopSubCategoryFragment extends ListFragment {
 	CommonAdapter<ShopCategory> mAdapter = null;
 	
 	public ShopSubCategoryFragment(List<ShopCategory> dataList, IAdapterItem<ShopCategory> item, IShopMediator mediator)
-	{
-    	if(null == dataList)
-    	{
-    		throw new IllegalArgumentException("list is null !");
-    	}
-    	
+	{    	
     	if(null == item)
     	{
     		throw new IllegalArgumentException("item is null !");
@@ -49,17 +44,38 @@ public class ShopSubCategoryFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
             Bundle savedInstanceState) {
     	LinearLayout layout = (LinearLayout)inflater.inflate(R.layout.fragment_category, container, false);
+//    	this.setListAdapter(mAdapter);
+//    	this.getListView().setOnItemClickListener(new OnItemClickListener() {
+//
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View view,
+//					int position, long id) {
+//				String cate_id = mCategoryList.get(position).getID();
+//				mShopMediator.onClickCategoryItem(cate_id);
+//			}
+//		});
+    	return layout;
+    }
+    
+    
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
     	this.setListAdapter(mAdapter);
+    }
+    
+    @Override
+    public void onResume()
+    {
+    	super.onResume();
     	this.getListView().setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				String cate_id = mCategoryList.get(position).getID();
-				mShopMediator.onClickCategoryItem(cate_id);
+				mShopMediator.onClickSubCategoryItem(cate_id);
 			}
 		});
-    	return layout;
     }
     
     public void setData(List<ShopCategory> dataList)
@@ -69,6 +85,8 @@ public class ShopSubCategoryFragment extends ListFragment {
     		throw new IllegalArgumentException("dataList is null !");
     	}
     	mCategoryList = dataList;
+    	mAdapter.setData(mCategoryList);
+    	mAdapter.notifyDataSetChanged();
     }
     
 

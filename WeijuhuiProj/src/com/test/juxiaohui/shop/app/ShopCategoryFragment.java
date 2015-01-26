@@ -48,7 +48,19 @@ public class ShopCategoryFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
             Bundle savedInstanceState) {
     	LinearLayout layout = (LinearLayout)inflater.inflate(R.layout.fragment_category, container, false);
+    	return layout;
+    }
+    
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
     	this.setListAdapter(mAdapter);
+
+    }
+    
+    @Override
+    public void onResume()
+    {
+    	super.onResume();
     	this.getListView().setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -58,7 +70,6 @@ public class ShopCategoryFragment extends ListFragment {
 				mShopMediator.onClickCategoryItem(cate_id);
 			}
 		});
-    	return layout;
     }
     
     public void setData(List<ShopCategory> dataList)

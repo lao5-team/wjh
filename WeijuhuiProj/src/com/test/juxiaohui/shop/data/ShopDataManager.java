@@ -1,6 +1,9 @@
 package com.test.juxiaohui.shop.data;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.test.juxiaohui.shop.server.ShopServer;
 
 public class ShopDataManager {
 	
@@ -26,7 +29,7 @@ public class ShopDataManager {
 	 */
 	public List<ShopCategory> getMainCategoryList()
 	{
-		return null;
+		return ShopServer.getInstance().getCategoryList();
 	}
 	
 	/**通过一级分类id获取所有商品
@@ -35,7 +38,7 @@ public class ShopDataManager {
 	 */
 	public List<ShopCategory> getSubCategoryList(String id)
 	{
-		return null;
+		return ShopServer.getInstance().getSubCategoryList(id);
 	}
 	
 	/**
@@ -43,9 +46,34 @@ public class ShopDataManager {
 	 * @param id 二级分类id
 	 * @return
 	 */
-	public List<Goods> getGoodsList(String id)
+	public List<Goods> getGoodsList(String id, int startIndex, int endIndex)
 	{
-		return null;
+		return ShopServer.getInstance().getGoodsListinCategory(id, startIndex, endIndex);
+	}
+	
+	
+	/** 获取某一个商品信息
+	 * @param id
+	 * @return
+	 */
+	public List<Goods> getGoodsList(List<String> IDs)
+	{
+		return ShopServer.getInstance().getGoodsListbyIDs(IDs);
+	}
+	
+	public Goods getGoods(String ID)
+	{
+		List<String> mIDs = new ArrayList<String>();
+		mIDs.add(ID);
+		List<Goods> goodsList = ShopServer.getInstance().getGoodsListbyIDs(mIDs);
+		if(goodsList.size()>0)
+		{
+			return goodsList.get(0);
+		}
+		else
+		{
+			return Goods.NULL;
+		}
 	}
 	
 	

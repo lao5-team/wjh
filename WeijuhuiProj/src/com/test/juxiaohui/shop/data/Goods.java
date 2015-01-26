@@ -12,6 +12,21 @@ public class Goods {
 	protected String mDescription = null;
 	protected double mPrize = 0.0f;
 	protected String mImageURL = null;
+	public static Goods NULL = new Goods()
+	{
+		@Override
+		public String getID()
+		{
+			return mID;
+		}
+		
+		@Override
+		public String getName()
+		{
+			return "";
+		}
+		
+	};
 	void setID(String id)
 	{
 		if(id == null)
@@ -113,20 +128,29 @@ public class Goods {
 	
 	public static JSONObject toJSON(Goods goods)
 	{
-		try {
-			JSONObject result = new JSONObject();
-			result.put("id", goods.mID);
-			result.put("name", goods.mName);
-			result.put("prize", goods.mPrize);
-			result.put("cid", goods.mCategoryID);
-			result.put("cid2", goods.mSubCategoryID);
-			result.put("photo", goods.mImageURL);
-			return result;
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(goods!=NULL)
+		{
+			try {
+				JSONObject result = new JSONObject();
+				result.put("id", goods.mID);
+				result.put("name", goods.mName);
+				result.put("price", goods.mPrize);
+				result.put("cid", goods.mCategoryID);
+				result.put("cid2", goods.mSubCategoryID);
+				result.put("photo", goods.mImageURL);
+				result.put("description", goods.mDescription);
+				return result;
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+		else
+		{
 			return null;
 		}
+		
 	}
 	
 	public static Goods fromJSON(JSONObject object)
@@ -139,15 +163,16 @@ public class Goods {
 			Goods goods = new Goods();
 			goods.mID = object.getString("id");
 			goods.mName = object.getString("name");
-			goods.mPrize = object.getDouble("prize");
+			goods.mPrize = object.getDouble("price");
 			goods.mCategoryID = object.getString("cid");
 			goods.mSubCategoryID = object.getString("cid2");
 			goods.mImageURL = object.getString("photo");
+			goods.mDescription = object.getString("description");
 			return goods;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			return Goods.NULL;
 		}
 		
 	}
