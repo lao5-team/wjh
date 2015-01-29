@@ -22,11 +22,11 @@ public class OrderManager {
 		return IDs;
 	}
 	
-	public Order getOrder(String ID)
+	public Order getOrder(String id)
 	{
 		for(Order order:mOrderList)
 		{
-			if(ID.equals(order.mID))
+			if(id.equals(order.mID))
 			{
 				return order;
 			}

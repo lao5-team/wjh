@@ -86,6 +86,22 @@ public class Chart {
 		mItems.add(item);
 	}
 	
+	public void setItem(ChartItem item)
+	{
+		if(null == item)
+		{
+			throw new IllegalArgumentException("item is null");
+		}
+		for(ChartItem chartItem:mItems)
+		{
+			if(chartItem.mID.endsWith(item.mID))
+			{
+				chartItem.mCount += item.mCount;
+				return;
+			}
+		}		
+	}
+	
 //	public void setItems(List<ChartItem> itemList)
 //	{
 //		if(null == itemList)
