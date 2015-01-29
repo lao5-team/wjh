@@ -58,7 +58,6 @@ import android.widget.Toast;
  * 4 发起聚会，向好友发送邀请单
  */
 public class ActivityDetailActivity extends FragmentActivity {
-
 	/** 
 	 * 用来对intent数据进行规范式处理
 	 * 

@@ -17,6 +17,7 @@ import android.util.Log;
 
 public class ShopServer {
 	final String SERVER_ADDRESS = "http://www.li960.com/shop/api.php?s=Product";
+	final String SERVER_ADDRESS_ORDER = "http://www.li960.com/shop/api.php?s=Order";
 	public static ShopServer mInstance  = null;
 	public static ShopServer getInstance()
 	{
@@ -86,6 +87,8 @@ public class ShopServer {
 		{
 			throw new IllegalArgumentException("invalid startIndex or endIndex");
 		}
+
+		http://localhost/shop/api.php?s=Order/add&products={json}&other=a&username=aaa&mobile=1111&address=a
 		String url = String.format("%s/getCate2Data&start=%d&end=%d&id=%s", SERVER_ADDRESS, startIndex, endIndex, id);
 		SyncHTTPCaller<List<Goods>> caller = new SyncHTTPCaller<List<Goods>>(
 				url) {
@@ -121,7 +124,29 @@ public class ShopServer {
 	
 	public String submitOrder(Order order)
 	{
-		#
+		String url = String.format("%s/add&products={json}&other=a&username=aaa&mobile=1111&address=a", SERVER_ADDRESS_ORDER, startIndex, endIndex, id);
+		SyncHTTPCaller<List<Goods>> caller = new SyncHTTPCaller<List<Goods>>(
+				url) {
+
+			@Override
+			public List<Goods> postExcute(String result) {
+				List<Goods> resultObj = null;
+				try {
+					JSONObject json = new JSONObject(result);
+					JSONArray array = json.getJSONArray("data");
+					resultObj = new ArrayList<Goods>();
+					for (int i = 0; i < array.length(); i++) {
+						JSONObject object = array.getJSONObject(i);
+						Goods goods = Goods.fromJSON(object);
+						resultObj.add(goods);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return resultObj;
+			}
+		};
+		return caller.execute();
 		
 	}
 	

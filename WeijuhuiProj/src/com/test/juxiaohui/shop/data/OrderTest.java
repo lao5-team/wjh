@@ -15,14 +15,11 @@ public class OrderTest extends AndroidTestCase {
 	
 	public void test()
 	{
-		List<String> goodsIds = new ArrayList<String>();
-		
-		//添加包含非法id的数组
-		goodsIds.add(object);
-		goodsIds.add("-1");
+		//有效id 7，6
+		//添加包含非法id的商品
 		try
 		{
-			Chart.getInstance().addGoodsList(goodsIds);
+			Chart.getInstance().addGoods("-1", 1);
 			fail("invalid id, should throw exception");
 		}
 		catch(IllegalArgumentException e)
@@ -31,24 +28,43 @@ public class OrderTest extends AndroidTestCase {
 			Assert.assertEquals(0,  Chart.getInstance().mItems.size());
 			
 		}
-		
-		//将两个可用的商品id添加到购物车里去
-		goodsIds.clear();
-		goodsIds.add("")
-		goodsIds.add(object);
-		Chart.getInstance().addGoodsList(goodsIds);
-		List<String> ids = Chart.getInstance().getGoodsIDs();
-		Assert.assertEquals(goodsIds.size(), ids.size());
-		for(int i=0; i<ids.size(); i++)
+
+		//添加包含非法个数的商品
+		String validId = "";
+		try
 		{
-			Assert.assertEquals(ids.get(i), goodsIds.get(i));
+			Chart.getInstance().addGoods(validId, 0);
+			fail("invalid id, should throw exception");
+		}
+		catch(IllegalArgumentException e)
+		{
+			e.printStackTrace();
+			Assert.assertEquals(0,  Chart.getInstance().mItems.size());
+
 		}
 		
-		Assert.assertEquals(1, Chart.getInstance().getGoodsCount(id));
-		Assert.assertEquals(1, Chart.getInstance().getGoodsCount(id));
-		
-		
-		
+		//将可用的商品id添加到购物车里去
+		Chart.getInstance().addGoods(validId, 2);
+		List<String> ids = Chart.getInstance().getGoodsIDs();
+		Assert.assertEquals(1, ids.size());
+		Assert.assertEquals(ids.get(0), validId);
+		Chart.ChartItem item = Chart.getInstance().getItem(validId);
+		Assert.assertEquals(2, item.getCount());
+		Assert.assertEquals(false, item.isSelected());
+
+		//选择该商品
+		Chart.getInstance().setItemSelected(validId, true);
+		item = Chart.getInstance().getItem(validId);
+		Assert.assertEquals(true, item.isSelected());
+
+		//取消该商品
+		Chart.getInstance().setItemSelected(validId, false);
+		item = Chart.getInstance().getItem(validId);
+		Assert.assertEquals(false, item.isSelected());
+
+		//移除该商品
+		Chart.getInstance().removeItem(validId);
+		Assert.assertTrue(Chart.getInstance().getItem(validId)== Chart.ChartItem.NULL);
 	}
 
 }

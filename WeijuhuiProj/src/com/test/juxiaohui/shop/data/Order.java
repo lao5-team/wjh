@@ -6,11 +6,19 @@ import java.util.List;
 import com.test.juxiaohui.shop.data.Chart.ChartItem;
 
 public class Order {
+
+
 	protected String mId;
+
 	protected List<ChartItem> mItems;
-	protected String mConsigneeName = null;
-	protected String mConsigneePhoneNum = null;
-	protected String mConsigneeAddress = null;
+
+	protected String mConsigneeName = "";
+
+	protected String mConsigneePhoneNum = "";
+
+	protected String mConsigneeAddress = "";
+
+	protected String mOtherMessage = "";
 	
 	public static Order NULL = new Order()
 	{
@@ -47,9 +55,29 @@ public class Order {
 		float result = 0.0f;
 		for(ChartItem item:mItems)
 		{
-			Goods goods = ShopDataManager.getInstance().getGoods(item.mID);
-			result += item.mCount * goods.getPrize(); 
+			Goods goods = ShopDataManager.getInstance().getGoods(item.getID());
+			result += item.getCount() * goods.getPrize();
 		}
 		return result;
+	}
+
+	public String getmConsigneeName() {
+		return mConsigneeName;
+	}
+
+	public String getmOtherMessage() {
+		return mOtherMessage;
+	}
+
+	public String getmConsigneeAddress() {
+		return mConsigneeAddress;
+	}
+
+	public String getmId() {
+		return mId;
+	}
+
+	public void setmId(String mId) {
+		this.mId = mId;
 	}
 }

@@ -52,7 +52,7 @@ public class ActivityData implements Serializable {
 	private ActivityData()
 	{
 		mUsers = new ArrayList<MyUser>();
-		mInvitingUsers = new ArrayList<>();
+		mInvitingUsers = new ArrayList<MyUser>();
 		mBeginDate = null;
 		mTitle = null;
 		mContent = null;

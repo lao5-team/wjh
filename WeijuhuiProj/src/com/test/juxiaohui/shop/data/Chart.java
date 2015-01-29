@@ -9,6 +9,8 @@ public class Chart {
 		private String mID = null;
 		private int mCount;
 		private boolean mIsSelected = false;
+
+		public static ChartItem NULL = new ChartItem("", 0);
 		
 		public ChartItem(String id, int count)
 		{
@@ -37,7 +39,7 @@ public class Chart {
 			return mCount;
 		}
 		
-		public void setCount(int mCount) {
+		private void setCount(int mCount) {
 			if(mCount < 0)
 			{
 				throw new IllegalArgumentException("invalid count");
@@ -49,7 +51,7 @@ public class Chart {
 			return mIsSelected;
 		}
 		
-		public void setSelected(boolean mIsSelected) {
+		private void setSelected(boolean mIsSelected) {
 			this.mIsSelected = mIsSelected;
 		}
 
@@ -69,37 +71,93 @@ public class Chart {
 		return mInstance;
 	}
 	
-	public void addItem(ChartItem item)
+	public void addGoods(String id, int count) throws IllegalArgumentException
 	{
-		if(null == item)
+		if(null == id||count<=0)
 		{
-			throw new IllegalArgumentException("item is null");
+			throw new IllegalArgumentException("invalid id or count");
+		}
+		Goods goods = ShopDataManager.getInstance().getGoods(id);
+		if(Goods.NULL == goods)
+		{
+			throw new IllegalArgumentException("invalid id");
 		}
 		for(ChartItem chartItem:mItems)
 		{
-			if(chartItem.mID.endsWith(item.mID))
+			if(chartItem.mID.endsWith(id))
 			{
-				chartItem.mCount += item.mCount;
+				chartItem.mCount += count;
 				return;
 			}
 		}
+
+		ChartItem item = new ChartItem(id, count);
 		mItems.add(item);
 	}
-	
-	public void setItem(ChartItem item)
+
+	public void setItemSelected(String id, boolean selected)
 	{
-		if(null == item)
+		Goods goods = ShopDataManager.getInstance().getGoods(id);
+		for(ChartItem chartItem:mItems)
 		{
-			throw new IllegalArgumentException("item is null");
+			if(chartItem.mID.endsWith(id))
+			{
+				chartItem.setSelected(selected);
+				return;
+			}
+		}
+		throw new IllegalArgumentException("invalid id");
+
+	}
+
+	public void setItemCount(String id, int count)
+	{
+		if(null == id||count<=0)
+		{
+			throw new IllegalArgumentException("invalid id or count");
 		}
 		for(ChartItem chartItem:mItems)
 		{
-			if(chartItem.mID.endsWith(item.mID))
+			if(chartItem.mID.endsWith(id))
 			{
-				chartItem.mCount += item.mCount;
+				chartItem.mCount = count;
 				return;
 			}
-		}		
+		}
+		throw new IllegalArgumentException("invalid id");
+	}
+
+	public void removeItem(String id)
+	{
+		if(null == id)
+		{
+			throw new IllegalArgumentException("invalid id");
+		}
+		for(ChartItem chartItem:mItems)
+		{
+			if(chartItem.mID.endsWith(id))
+			{
+				mItems.remove(chartItem);
+				return;
+			}
+		}
+		throw new IllegalArgumentException("invalid id");
+	}
+
+	public ChartItem getItem(String id)
+	{
+		if(null == id)
+		{
+			throw new IllegalArgumentException("invalid id");
+		}
+		for(ChartItem chartItem:mItems)
+		{
+			if(chartItem.mID.endsWith(id))
+			{
+				return chartItem;
+			}
+		}
+		return ChartItem.NULL;
 	}
 	
 //	public void setItems(List<ChartItem> itemList)
@@ -141,15 +199,15 @@ public class Chart {
 	
 
 	
-//	public List<String> getGoodsIDs()
-//	{
-//		List<String> listIDs = new ArrayList<String>();
-//		for(ChartItem item:mItems)
-//		{
-//			listIDs.add(item.mID);
-//		}
-//		return listIDs;
-//	}
+	public List<String> getGoodsIDs()
+	{
+		List<String> listIDs = new ArrayList<String>();
+		for(ChartItem item:mItems)
+		{
+			listIDs.add(item.mID);
+		}
+		return listIDs;
+	}
 //	
 //	public int getGoodsCount(String id) throws IllegalArgumentException
 //	{

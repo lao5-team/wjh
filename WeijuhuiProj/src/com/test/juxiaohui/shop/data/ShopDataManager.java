@@ -53,7 +53,7 @@ public class ShopDataManager {
 	
 	
 	/** 获取某一个商品信息
-	 * @param id
+	 * @param IDs
 	 * @return
 	 */
 	public List<Goods> getGoodsList(List<String> IDs)
@@ -61,10 +61,14 @@ public class ShopDataManager {
 		return ShopServer.getInstance().getGoodsListbyIDs(IDs);
 	}
 	
-	public Goods getGoods(String ID)
+	public Goods getGoods(String id)
 	{
+		if(null == id)
+		{
+			return Goods.NULL;
+		}
 		List<String> mIDs = new ArrayList<String>();
-		mIDs.add(ID);
+		mIDs.add(id);
 		List<Goods> goodsList = ShopServer.getInstance().getGoodsListbyIDs(mIDs);
 		if(goodsList.size()>0)
 		{

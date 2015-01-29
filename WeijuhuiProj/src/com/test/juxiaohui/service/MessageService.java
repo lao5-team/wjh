@@ -26,7 +26,7 @@ import android.os.IBinder;
  */
 public class MessageService extends Service {
 
-	ArrayList<MyMessage> mMessages = new ArrayList<>();
+	ArrayList<MyMessage> mMessages = new ArrayList<MyMessage>();
 	public class LocalService extends Binder
 	{
 		public MessageService getService()

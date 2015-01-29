@@ -40,7 +40,7 @@ public class ShopCategoryFragment extends ListFragment {
     		throw new IllegalArgumentException("mediator is null !");
     	}
 		mCategoryList = dataList;
-		mAdapter = new CommonAdapter<>(dataList, item);
+		mAdapter = new CommonAdapter<ShopCategory>(dataList, item);
 		mShopMediator = mediator;
 	}
 	
