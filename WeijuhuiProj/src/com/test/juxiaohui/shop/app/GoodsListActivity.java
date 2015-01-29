@@ -119,7 +119,7 @@ public class GoodsListActivity extends Activity {
 	{
 		Intent intent = getIntent();
 		ShopActivity.IntentWrapper wrapper = new ShopActivity.IntentWrapper(intent);
-		mDataList = ShopDataManager.getInstance().getGoodsList(wrapper.getSubCateID());
+		mDataList = ShopDataManager.getInstance().getGoodsListinCategory(wrapper.getSubCateID(), 0, 10);
 	}
 
 }

@@ -111,7 +111,7 @@ public class ShopServer {
 		return caller.execute();
 	}
 	
-	public List<Goods> getGoodsListbyIDs(List<String> listID)
+	public List<Goods> getGoodsListbyIDs(List<String> list_id)
 	{
 		//#
 		List<Goods> result = new ArrayList<Goods>();
@@ -119,7 +119,19 @@ public class ShopServer {
 		return result;
 	}
 	
-	public void submitOrder(Order order)
+	public String submitOrder(Order order)
+	{
+		#
+		
+	}
+	
+	public List<String> getUsersOrderIDList(String id)
+	{
+		#
+		return null;
+	}
+	
+	public Order getOrderbyID(String id)
 	{
 		#
 	}

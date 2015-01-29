@@ -6,7 +6,7 @@ import java.util.List;
 import com.test.juxiaohui.shop.data.Chart.ChartItem;
 
 public class Order {
-	protected String mID;
+	protected String mId;
 	protected List<ChartItem> mItems;
 	protected String mConsigneeName = null;
 	protected String mConsigneePhoneNum = null;

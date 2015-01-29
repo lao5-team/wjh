@@ -3,6 +3,8 @@ package com.test.juxiaohui.shop.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.test.juxiaohui.shop.server.ShopServer;
+
 public class OrderManager {
 	List<Order> mOrderList;
 	
@@ -34,12 +36,24 @@ public class OrderManager {
 	
 	public String submit(Order order) throws IllegalArgumentException
 	{
-		#
+		if(null==order||!checkOrder(order))
+		{
+			throw new IllegalArgumentException("invalid order");
+		}
+					
+		String orderId = ShopServer.getInstance().submitOrder(order);
+		return orderId;
 	}
 	
-	public List<String> getOrderIDList(String userID) throws IllegalArgumentException
+	public List<String> getUsersOrderIDList(String userID)
 	{
-		#
+		return ShopServer.getInstance().getUsersOrderIDList(userID);
+		
+	}
+	
+	private boolean checkOrder(Order order)
+	{
+		return true;
 	}
 
 }

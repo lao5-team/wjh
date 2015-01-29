@@ -46,7 +46,7 @@ public class ShopDataManager {
 	 * @param id 二级分类id
 	 * @return
 	 */
-	public List<Goods> getGoodsList(String id, int startIndex, int endIndex)
+	public List<Goods> getGoodsListinCategory(String id, int startIndex, int endIndex)
 	{
 		return ShopServer.getInstance().getGoodsListinCategory(id, startIndex, endIndex);
 	}
@@ -75,6 +75,8 @@ public class ShopDataManager {
 			return Goods.NULL;
 		}
 	}
+	
+	
 	
 	
 	
