@@ -38,16 +38,7 @@ public class ChartActivity extends Activity implements IChartMediator{
 	private TextView mTvPrice;
 	private Button mBtnPay;
 	
-	private static class ViewHolder
-	{
-		CheckBox cbSelect;
-		ImageView ivGoods;
-		TextView tvName;
-		TextView tvPrice;
-		ImageButton btnDecrease;
-		ImageButton btnIncrease;
-		TextView tvCount;
-	};
+
 
 		
 		@Override
@@ -67,62 +58,8 @@ public class ChartActivity extends Activity implements IChartMediator{
 		
 		@Override
 		public void showItems() {
-			ChartActivity.this.mAdapter = new CommonAdapter<>(mChart.getItems(), new IAdapterItem<ChartItem>() {
-
-				@Override
-				public View getView(ChartItem data, View convertView) {
-					// TODO Auto-generated method stub
-					if(null == convertView)
-					{
-						View itemView = getLayoutInflater().inflate(R.layout.item_chart, null);
-						ViewHolder holder = new ViewHolder();
-						holder.cbSelect = (CheckBox)itemView.findViewById(R.id.checkBox_select);
-						holder.ivGoods = (ImageView)itemView.findViewById(R.id.imageView_goods);
-						holder.tvName = (TextView)itemView.findViewById(R.id.textView_goods_name);
-						holder.tvPrice = (TextView)itemView.findViewById(R.id.textView_price);
-						holder.btnDecrease = (ImageButton)itemView.findViewById(R.id.imageButton_sub);
-						holder.btnIncrease = (ImageButton)itemView.findViewById(R.id.imageButton_add);
-						holder.tvCount = (TextView)itemView.findViewById(R.id.textView_count);
-						itemView.setTag(holder);
-						convertView = itemView;
-					}
-					final ChartItem fData = data;
-					final Goods fGoods = ShopDataManager.getInstance().getGoods(data.getID());
-					ViewHolder holder = (ViewHolder)convertView.getTag();
-					holder.cbSelect.setSelected(data.isSelected());
-					holder.cbSelect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-						@Override
-						public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-							selectItem(fData.getID(), isChecked);
-						}
-					});
-					Picasso.with(ChartActivity.this).load(fGoods.getImageURL()).into(holder.ivGoods);
-					holder.tvName.setText(fGoods.getName());
-					holder.tvPrice.setText(fGoods.getPrize() + " 元");
-					holder.btnDecrease.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							changeItemCount(fData.getID(), fData.getCount() - 1);
-						}
-					});
-					
-					holder.tvCount.setText(fData.getCount());
-					
-					holder.btnIncrease.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							changeItemCount(fData.getID(), fData.getCount() + 1);
-						}
-					});
-					
-					
-					return convertView;
-				}
-			});
+			ChartActivity.this.mAdapter = new CommonAdapter<>(mChart.getItems(), new Chart.AdapterItem(this));
 			mListView.setAdapter(mAdapter);
-			
 		}
 		
 		@Override
@@ -202,7 +139,7 @@ public class ChartActivity extends Activity implements IChartMediator{
 			
 			@Override
 			public void onClick(View v) {
-				payChart();
+				buyChart();
 			}
 		});
 		showItems();

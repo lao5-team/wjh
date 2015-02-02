@@ -35,7 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:text="标题" />
+            android:text="标题"
+            android:textSize="@dimen/normal_font_size" />
 
         <TextView
             android:id="@+id/textView_price"
@@ -43,7 +44,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textView_goods_name"
-            android:text="价格" />
+            android:text="价格"
+            android:textSize="@dimen/normal_font_size" />
 
         <ImageButton
             android:id="@+id/imageButton_sub"

@@ -3,6 +3,23 @@ package com.test.juxiaohui.shop.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+
+import com.squareup.picasso.Picasso;
+import com.test.juxiaohui.R;
+import com.test.juxiaohui.shop.app.ChartActivity;
+import com.test.juxiaohui.shop.app.ViewHolder;
+import com.test.juxiaohui.shop.mediator.IChartMediator;
+import com.test.juxiaohui.widget.IAdapterItem;
+
 public class Chart {
 	public static class ChartItem
 	{
@@ -311,6 +328,104 @@ public class Chart {
 	private Chart()
 	{
 		
+	}
+	
+	private static class ViewHolder
+	{
+		CheckBox cbSelect;
+		ImageView ivGoods;
+		TextView tvName;
+		TextView tvPrice;
+		ImageButton btnDecrease;
+		ImageButton btnIncrease;
+		TextView tvCount;
+	};
+	
+	public static class AdapterItem implements IAdapterItem<ChartItem>
+	{
+		IChartMediator mMediator = null;
+		/**
+		 * 只有当mediator不为空是，才可以改变物品数量
+		 * @param mediator
+		 */
+		public AdapterItem(IChartMediator mediator)
+		{
+			mMediator = mediator;
+		}
+		@Override
+		public View getView(ChartItem data, View convertView) {
+			if(null == convertView)
+			{
+				View itemView = ((Activity)mMediator).getLayoutInflater().inflate(R.layout.item_chart, null);
+				ViewHolder holder = new ViewHolder();
+				holder.cbSelect = (CheckBox)itemView.findViewById(R.id.checkBox_select);
+				holder.ivGoods = (ImageView)itemView.findViewById(R.id.imageView_goods);
+				holder.tvName = (TextView)itemView.findViewById(R.id.textView_goods_name);
+				holder.tvPrice = (TextView)itemView.findViewById(R.id.textView_price);
+				holder.btnDecrease = (ImageButton)itemView.findViewById(R.id.imageButton_sub);
+				holder.btnIncrease = (ImageButton)itemView.findViewById(R.id.imageButton_add);
+				holder.tvCount = (TextView)itemView.findViewById(R.id.textView_count);
+				itemView.setTag(holder);
+				convertView = itemView;
+			}
+			final ChartItem fData = data;
+			final Goods fGoods = ShopDataManager.getInstance().getGoods(data.getID());
+			ViewHolder holder = (ViewHolder)convertView.getTag();
+			if(null != mMediator)
+			{
+				holder.cbSelect.setSelected(data.isSelected());
+				holder.cbSelect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						mMediator.selectItem(fData.getID(), isChecked);
+					}
+				});				
+			}
+			else
+			{
+				holder.cbSelect.setVisibility(View.GONE);
+			}
+
+			Picasso.with((Activity)mMediator).load(fGoods.getImageURL()).into(holder.ivGoods);
+			holder.tvName.setText(fGoods.getName());
+			holder.tvPrice.setText(fGoods.getPrize() + " 元");
+			
+			if(null != mMediator)
+			{
+				holder.btnDecrease.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						mMediator.changeItemCount(fData.getID(), fData.getCount() - 1);
+					}
+				});				
+			}
+			else
+			{
+				holder.btnDecrease.setVisibility(View.GONE);
+			}
+
+			
+			holder.tvCount.setText(fData.getCount());
+			
+			if(null != mMediator)
+			{
+				holder.btnIncrease.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						mMediator.changeItemCount(fData.getID(), fData.getCount() + 1);
+					}
+				});				
+			}
+			else
+			{
+				holder.btnIncrease.setVisibility(View.GONE);
+			}
+
+			return convertView;
+		}
+		 
 	}
 	
 	
