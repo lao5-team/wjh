@@ -1,0 +1,40 @@
+package com.test.juxiaohui.shop.mediator;
+
+import com.test.juxiaohui.shop.data.Order;
+
+public interface IOrderMediator {
+	public void setOrder(Order order);
+	/**
+	 * 显示商品详细信息
+	 */
+	public void openGoods();
+	/**
+	 * 显示收货人信息
+	 */
+	public void showConsignee();
+	/**
+	 * 显示商品
+	 */
+	public void showGoods();
+	/**
+	 * 显示支付金额
+	 */
+	public void showPayment();
+	/**
+	 * 提交订单
+	 */
+	public void submitOrder();
+	/**
+	 * 支付订单
+	 */
+	public void payOrder();
+	/**
+	 * 取消订单
+	 */
+	public void cancelOrder();
+	/**
+	 * 确认收货
+	 */
+	public void confirmOrder();
+
+}

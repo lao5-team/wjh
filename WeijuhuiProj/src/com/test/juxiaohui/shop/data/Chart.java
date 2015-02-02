@@ -97,7 +97,6 @@ public class Chart {
 
 	public void setItemSelected(String id, boolean selected)
 	{
-		Goods goods = ShopDataManager.getInstance().getGoods(id);
 		for(ChartItem chartItem:mItems)
 		{
 			if(chartItem.mID.endsWith(id))
@@ -263,29 +262,50 @@ public class Chart {
 //		throw new IllegalArgumentException("invalid id!");
 //	}
 	
+	public List<ChartItem> getItems()
+	{
+		return new ArrayList<ChartItem>(mItems);
+	}
+	
 	/**创建一个初步订单
 	 * @return
 	 */
-	public Order createOrder()
+//	public Order createOrder()
+//	{
+//		List<ChartItem> selectedChartItems = new ArrayList<ChartItem>();
+//		for(ChartItem item:mItems)
+//		{
+//			if(true == item.mIsSelected)
+//			{
+//				selectedChartItems.add(item);
+//			}
+//		}
+//		Order order;
+//		if(selectedChartItems.size()>0)
+//		{
+//			order = new Order(selectedChartItems);
+//		}
+//		else
+//		{
+//			order = Order.NULL;
+//		}
+//		return order;
+//	}
+	
+	public float getTotalPrice()
 	{
-		List<ChartItem> selectedChartItems = new ArrayList<ChartItem>();
-		for(ChartItem item:mItems)
+		float total = 0;
+		List<ChartItem> listItem = mItems;
+		for(ChartItem item:listItem)
 		{
-			if(true == item.mIsSelected)
+			if(item.isSelected())
 			{
-				selectedChartItems.add(item);
+				final Goods fGoods = ShopDataManager.getInstance().getGoods(item.getID());
+				total += item.getCount() * fGoods.getPrize();
 			}
+
 		}
-		Order order;
-		if(selectedChartItems.size()>0)
-		{
-			order = new Order(selectedChartItems);
-		}
-		else
-		{
-			order = Order.NULL;
-		}
-		return order;
+		return total;
 	}
 	
 	private Chart()

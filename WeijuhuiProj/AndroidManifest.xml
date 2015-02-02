@@ -118,6 +118,10 @@
             android:name=".shop.app.GoodsActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
+        <activity android:name=".shop.app.ChartActivity"></activity>
+        <activity android:name=".shop.app.OrderListActivity"></activity>
+        <activity android:name=".shop.app.OrderActivity"></activity>
+        <activity android:name=".shop.app.PayActivity"></activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

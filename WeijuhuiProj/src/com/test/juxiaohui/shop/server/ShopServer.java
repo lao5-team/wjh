@@ -1,24 +1,36 @@
 package com.test.juxiaohui.shop.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Assert;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.test.juxiaohui.shop.data.Chart.ChartItem;
 import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.data.Order;
 import com.test.juxiaohui.shop.data.ShopCategory;
-import com.test.juxiaohui.shop.data.ShopDataManager;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
 
 import android.util.Log;
 
 public class ShopServer {
-	final String SERVER_ADDRESS = "http://www.li960.com/shop/api.php?s=Product";
+	final String SERVER_ADDRESS_ROOT = "http://www.li960.com/shop/api.php?s=";
+	final String SERVER_ADDRESS_PRODUCT = "http://www.li960.com/shop/api.php?s=Product";
 	final String SERVER_ADDRESS_ORDER = "http://www.li960.com/shop/api.php?s=Order";
 	public static ShopServer mInstance  = null;
+	String mSession = "";
+	
+	
 	public static ShopServer getInstance()
 	{
 		if(null == mInstance)
@@ -27,10 +39,59 @@ public class ShopServer {
 		}
 		return mInstance;
 	}
+	//测试用户名 yh, yhtest
+	public void register(String username, String password)
+	{
+		String url = String.format("%sUser/reg&name=%s&password=%s", SERVER_ADDRESS_ROOT, username, password);
+		HttpPost post = new HttpPost(url);
+		try {
+			HttpResponse httpResponse = new DefaultHttpClient().execute(post);
+			Assert.assertTrue(httpResponse.getStatusLine().getStatusCode() == 200);
+			String str = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+			try {
+				JSONObject obj = new JSONObject(str);
+				Log.v("test", obj.toString());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+	
+	public void login(String username, String password)
+	{
+		String url = String.format("%sUser/login&name=%s&password=%s", SERVER_ADDRESS_ROOT, username, password);
+		HttpPost post = new HttpPost(url);
+		try {
+			HttpResponse httpResponse = new DefaultHttpClient().execute(post);
+			Assert.assertTrue(httpResponse.getStatusLine().getStatusCode() == 200);
+			String str = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+			try {
+				JSONObject obj = new JSONObject(str);
+				Log.v("test", obj.toString());
+				mSession = obj.getString("authid");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public List<ShopCategory> getCategoryList()
 	{
-		String url = String.format("%s/cate", SERVER_ADDRESS);
+		String url = String.format("%s/cate", SERVER_ADDRESS_PRODUCT);
 		SyncHTTPCaller<List<ShopCategory>> caller = new SyncHTTPCaller<List<ShopCategory>>(
 				url) {
 
@@ -57,7 +118,7 @@ public class ShopServer {
 	public List<ShopCategory> getSubCategoryList(String id)
 	{
 		
-		String url = String.format("%s/cate2&id=%s", SERVER_ADDRESS, id);
+		String url = String.format("%s/cate2&id=%s", SERVER_ADDRESS_PRODUCT, id);
 		SyncHTTPCaller<List<ShopCategory>> caller = new SyncHTTPCaller<List<ShopCategory>>(
 				url) {
 
@@ -88,8 +149,8 @@ public class ShopServer {
 			throw new IllegalArgumentException("invalid startIndex or endIndex");
 		}
 
-		http://localhost/shop/api.php?s=Order/add&products={json}&other=a&username=aaa&mobile=1111&address=a
-		String url = String.format("%s/getCate2Data&start=%d&end=%d&id=%s", SERVER_ADDRESS, startIndex, endIndex, id);
+		
+		String url = String.format("%s/getCate2Data&start=%d&end=%d&id=%s", SERVER_ADDRESS_PRODUCT, startIndex, endIndex, id);
 		SyncHTTPCaller<List<Goods>> caller = new SyncHTTPCaller<List<Goods>>(
 				url) {
 
@@ -122,24 +183,26 @@ public class ShopServer {
 		return result;
 	}
 	
-	public String submitOrder(Order order)
+	public String submitOrder(Order order) throws JSONException
 	{
-		String url = String.format("%s/add&products={json}&other=a&username=aaa&mobile=1111&address=a", SERVER_ADDRESS_ORDER, startIndex, endIndex, id);
-		SyncHTTPCaller<List<Goods>> caller = new SyncHTTPCaller<List<Goods>>(
-				url) {
+		JSONObject goodsJson = new JSONObject();
+		List<ChartItem> items = order.getmItems();
+		for(ChartItem item:items)
+		{
+			goodsJson.put(item.getID(), item.getCount());
+		}
+		String url = String.format("%s/add&products=%s&other=%s&username=%s&mobile=%s&address=%s", SERVER_ADDRESS_ORDER,
+				goodsJson.toString(), order.getOtherMessage(), order.getmConsigneeName(), order.getConsigneePhoneNumber(), order.getmConsigneeAddress());
+		
+		SyncHTTPCaller<String> caller = new SyncHTTPCaller<String>(
+				url, "PHPSESSID=" + mSession) {
 
 			@Override
-			public List<Goods> postExcute(String result) {
-				List<Goods> resultObj = null;
+			public String postExcute(String result) {
+				String resultObj = null;
 				try {
 					JSONObject json = new JSONObject(result);
-					JSONArray array = json.getJSONArray("data");
-					resultObj = new ArrayList<Goods>();
-					for (int i = 0; i < array.length(); i++) {
-						JSONObject object = array.getJSONObject(i);
-						Goods goods = Goods.fromJSON(object);
-						resultObj.add(goods);
-					}
+					resultObj = json.getString("data");
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -150,16 +213,36 @@ public class ShopServer {
 		
 	}
 	
-	public List<String> getUsersOrderIDList(String id)
+	public List<Order> getUsersOrderIDList(String id)
 	{
-		#
-		return null;
+		String url = String.format("%s/getUserOrder", SERVER_ADDRESS_ORDER);
+		SyncHTTPCaller<List<Order>> caller = new SyncHTTPCaller<List<Order>>(
+				url) {
+
+			@Override
+			public List<Order> postExcute(String result) {
+				List<Order> resultObj = null;
+				try {
+					JSONObject json = new JSONObject(result);
+					JSONArray array = json.getJSONArray("data");
+					resultObj = new ArrayList<Order>();
+					for (int i = 0; i < array.length(); i++) {
+						JSONObject object = array.getJSONObject(i);
+						Order order = Order.fromJSON(object);
+						resultObj.add(order);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return resultObj;
+			}
+		};
+		return caller.execute();
 	}
 	
-	public Order getOrderbyID(String id)
+	private ShopServer()
 	{
-		#
+		
 	}
-	
 
 }

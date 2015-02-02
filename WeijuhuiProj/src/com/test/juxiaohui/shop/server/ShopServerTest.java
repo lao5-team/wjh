@@ -26,58 +26,13 @@ public class ShopServerTest extends AndroidTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		mServer = new ShopServer();
+		mServer = ShopServer.getInstance();
 	}
 	
 	public void testUserApi()
 	{
-		//Register 
-		//http://www.li960.com/shop/api.php?s=User/reg&name=xxxxxx&password=xxxxx
-		String userName = "yh";
-		String password = "yhtest";
-		String url = String.format("%sUser/reg&name=%s&password=%s", IP_ADDRESS,userName,password);
-		HttpPost post = new HttpPost(url);
-		try {
-			HttpResponse httpResponse = new DefaultHttpClient().execute(post);
-			Assert.assertTrue(httpResponse.getStatusLine().getStatusCode() == 200);
-			String str = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-			try {
-				JSONObject obj = new JSONObject(str);
-				Log.v("test", obj.toString());
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Login
-		//http://www.li960.com/shop/api.php?s=User/login&name=xxxxxx&password=xxxxx
-		url = String.format("%sUser/login&name=%s&password=%s", IP_ADDRESS,userName,password);
-		post = new HttpPost(url);
-		try {
-			HttpResponse httpResponse = new DefaultHttpClient().execute(post);
-			Assert.assertTrue(httpResponse.getStatusLine().getStatusCode() == 200);
-			String str = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-			try {
-				JSONObject obj = new JSONObject(str);
-				Log.v("test", obj.toString());
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//mServer.register("yh", "yhtest");
+		mServer.login("yh", "yhtest");
 	}
 	
 	public void testShopApi()

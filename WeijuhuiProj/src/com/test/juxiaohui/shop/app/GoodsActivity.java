@@ -1,12 +1,15 @@
 package com.test.juxiaohui.shop.app;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.shop.app.GoodsListActivity.IntentWrapper;
 import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.mediator.IGoodsMediator;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +30,35 @@ public class GoodsActivity extends Activity implements IGoodsMediator{
 	ImageView mIvPic = null;
 	TextView mTvPrize = null;
 	TextView mTvDesc = null;
+	
+	public static class IntentWrapper
+	{
+		Intent mIntent = null;
+		public IntentWrapper(Intent intent)
+		{
+			mIntent = intent;
+		}
+		
+		public void setGoods(Goods goods)
+		{
+			JSONObject json = Goods.toJSON(goods);
+			mIntent.putExtra("goods", json.toString());
+		}
+		
+		public Goods getGoods()
+		{
+			try {
+				JSONObject json = new JSONObject(mIntent.getStringExtra("goods"));
+				Goods goods = Goods.fromJSON(json);
+				return goods;
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+			
+		}
+	}
 	
 	public void onCreate(Bundle savedInstanceState)
 	{

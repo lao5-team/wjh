@@ -3,6 +3,8 @@ package com.test.juxiaohui.shop.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.test.juxiaohui.shop.transaction.CreateOrderTransaction;
+
 import junit.framework.Assert;
 import android.test.AndroidTestCase;
 
@@ -30,7 +32,7 @@ public class OrderTest extends AndroidTestCase {
 		}
 
 		//添加包含非法个数的商品
-		String validId = "";
+		String validId = "7";
 		try
 		{
 			Chart.getInstance().addGoods(validId, 0);
@@ -65,6 +67,12 @@ public class OrderTest extends AndroidTestCase {
 		//移除该商品
 		Chart.getInstance().removeItem(validId);
 		Assert.assertTrue(Chart.getInstance().getItem(validId)== Chart.ChartItem.NULL);
+		
+		//生成订单
+		Chart.getInstance().addGoods("7", 1);
+		Chart.getInstance().addGoods("6", 1);
+		Order order = CreateOrderTransaction.createOrderFromChart(Chart.getInstance());
+		Assert.assertEquals(16, order.calcTotal());
 	}
 
 }

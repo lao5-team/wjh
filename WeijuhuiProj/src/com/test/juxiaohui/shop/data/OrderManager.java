@@ -7,45 +7,56 @@ import com.test.juxiaohui.shop.server.ShopServer;
 
 public class OrderManager {
 	List<Order> mOrderList;
-	
+	private static OrderManager mInstance = null;
 	private OrderManager()
 	{
 		mOrderList = new ArrayList<Order>();
 	}
-	public List<String> getOrders()
+	
+	public static OrderManager getInstance()
 	{
-		List<String> IDs= new ArrayList<String>();
-		for(Order order:mOrderList)
+		if(null==mInstance)
 		{
-			IDs.add(order.mID);
+			mInstance = new OrderManager();
 		}
-		return IDs;
+		return mInstance;
 	}
 	
-	public Order getOrder(String id)
-	{
-		for(Order order:mOrderList)
-		{
-			if(id.equals(order.mID))
-			{
-				return order;
-			}
-		}
-		return Order.NULL;
-	}
 	
-	public String submit(Order order) throws IllegalArgumentException
-	{
-		if(null==order||!checkOrder(order))
-		{
-			throw new IllegalArgumentException("invalid order");
-		}
-					
-		String orderId = ShopServer.getInstance().submitOrder(order);
-		return orderId;
-	}
+//	public List<String> getOrders()
+//	{
+//		List<String> IDs= new ArrayList<String>();
+//		for(Order order:mOrderList)
+//		{
+//			IDs.add(order.mId);
+//		}
+//		return IDs;
+//	}
+//	
+//	public Order getOrder(String id)
+//	{
+//		for(Order order:mOrderList)
+//		{
+//			if(id.equals(order.mId))
+//			{
+//				return order;
+//			}
+//		}
+//		return Order.NULL;
+//	}
 	
-	public List<String> getUsersOrderIDList(String userID)
+//	public String submit(Order order) throws IllegalArgumentException
+//	{
+//		if(null==order||!checkOrder(order))
+//		{
+//			throw new IllegalArgumentException("invalid order");
+//		}
+//					
+//		String orderId = ShopServer.getInstance().submitOrder(order);
+//		return orderId;
+//	}
+	
+	public List<Order> getUsersOrderList(String userID)
 	{
 		return ShopServer.getInstance().getUsersOrderIDList(userID);
 		

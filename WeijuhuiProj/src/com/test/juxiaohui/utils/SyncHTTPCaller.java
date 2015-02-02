@@ -14,9 +14,16 @@ import org.apache.http.util.EntityUtils;
 public abstract class SyncHTTPCaller<T> {
 	
 	String mURL;
+	String mCookie = "";
 	public SyncHTTPCaller(String URL)
 	{
 		mURL = URL;
+	}
+	
+	public SyncHTTPCaller(String URL, String cookie)
+	{
+		mURL = URL;
+		mCookie = cookie;
 	}
 	
 	public T execute()
@@ -26,6 +33,7 @@ public abstract class SyncHTTPCaller<T> {
 			public T call() throws Exception {
 				T result = null;
 				HttpPost post = new HttpPost(mURL);
+				post.addHeader("Cookie", mCookie);
 				HttpResponse httpResponse;
 					try {
 						httpResponse = new DefaultHttpClient().execute(post);

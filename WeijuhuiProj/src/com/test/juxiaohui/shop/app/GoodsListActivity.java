@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.shop.app.GoodsActivity.IntentWrapper;
 import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.data.ShopDataManager;
 import com.test.juxiaohui.widget.CommonAdapter;
@@ -57,34 +58,7 @@ public class GoodsListActivity extends Activity {
 		}		
 	}
 	
-	public static class IntentWrapper
-	{
-		Intent mIntent = null;
-		public IntentWrapper(Intent intent)
-		{
-			mIntent = intent;
-		}
-		
-		public void setGoods(Goods goods)
-		{
-			JSONObject json = Goods.toJSON(goods);
-			mIntent.putExtra("goods", json.toString());
-		}
-		
-		public Goods getGoods()
-		{
-			try {
-				JSONObject json = new JSONObject(mIntent.getStringExtra("goods"));
-				Goods goods = Goods.fromJSON(json);
-				return goods;
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-			
-		}
-	}
+
 	
 	private CommonAdapter<Goods> mAdapter;
 	private List<Goods> mDataList = null;
