@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,6 +12,7 @@ import com.test.juxiaohui.shop.data.Chart.ChartItem;
 
 public class Order {
 
+	public static int STATE_INIT = -1;
 	public static int STATE_SENDING = 0;
 	public static int STATE_RECEIVED = 1;
 	public static int STATE_REFUSE = 2;
@@ -36,7 +38,7 @@ public class Order {
 	public static Order NULL = new Order()
 	{
 		@Override
-		public float calcTotal()
+		public float calcTotalPrice()
 		{
 			return 0.0f;
 		}
@@ -62,8 +64,12 @@ public class Order {
 		mConsigneePhoneNum = phoneNum;
 		mConsigneeAddress = address;
 	}
-	
-	public float calcTotal()
+
+	/**
+	 * 计算订单总金额
+	 * @return
+	 */
+	public float calcTotalPrice()
 	{
 		float result = 0.0f;
 		for(ChartItem item:mItems)
@@ -140,7 +146,7 @@ public class Order {
 			order.mId = object.getString("oid");
 			JSONObject products = object.getJSONObject("products");
 			Iterator<String> iter = products.keys();
-			ArrayList<ChartItem> items = new ArrayList<>();
+			ArrayList<ChartItem> items = new ArrayList<ChartItem>();
 			while(iter.hasNext())
 			{
 				String key = iter.next();
@@ -159,5 +165,30 @@ public class Order {
 			order = Order.NULL;
 		}
 		return order;
+	}
+
+	public static JSONObject toJSON(Order order)
+	{
+		JSONObject obj = new JSONObject();
+		try {
+			obj.put("oid", order.mId);
+			obj.put("address", order.mConsigneeAddress);
+			obj.put("username", order.mConsigneeName);
+			obj.put("mobile", order.mConsigneePhoneNum);
+			obj.put("status", order.mState);
+			obj.put("pay", order.mPayState);
+			JSONObject products = new JSONObject();
+			for(ChartItem item:order.mItems)
+			{
+				products.put(item.getID(), item.getCount());
+			}
+			obj.put("products", products);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+			obj = null;
+		}
+
+		return obj;
 	}
 }

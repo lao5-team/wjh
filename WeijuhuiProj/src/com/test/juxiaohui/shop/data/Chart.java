@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
@@ -16,7 +17,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.shop.app.ChartActivity;
-import com.test.juxiaohui.shop.app.ViewHolder;
+import com.test.juxiaohui.shop.app.GoodsActivity;
 import com.test.juxiaohui.shop.mediator.IChartMediator;
 import com.test.juxiaohui.widget.IAdapterItem;
 
@@ -27,7 +28,7 @@ public class Chart {
 		private int mCount;
 		private boolean mIsSelected = false;
 
-		public static ChartItem NULL = new ChartItem("", 0);
+		public static ChartItem NULL = new ChartItem(null, 0);
 		
 		public ChartItem(String id, int count)
 		{
@@ -37,15 +38,16 @@ public class Chart {
 		
 		private void setID(String id)
 		{
-			Goods goods = ShopDataManager.getInstance().getGoods(id);
-			if(goods!= Goods.NULL)
+
+			if(null!=id && id.length()>0)
 			{
-				mID = id;
+				Goods goods = ShopDataManager.getInstance().getGoods(id);
+				if(goods!= Goods.NULL)
+				{
+					mID = id;
+				}
 			}
-			else
-			{
-				throw new IllegalArgumentException("invalid id!");
-			}
+
 		}
 		
 		public String getID() {
@@ -128,19 +130,28 @@ public class Chart {
 
 	public void setItemCount(String id, int count)
 	{
-		if(null == id||count<=0)
+		if(null == id||count<0)
 		{
 			throw new IllegalArgumentException("invalid id or count");
 		}
-		for(ChartItem chartItem:mItems)
+		if(count == 0)
 		{
-			if(chartItem.mID.endsWith(id))
-			{
-				chartItem.mCount = count;
-				return;
-			}
+			removeItem(id);
 		}
-		throw new IllegalArgumentException("invalid id");
+		else
+		{
+			for(ChartItem chartItem:mItems)
+			{
+				if(chartItem.mID.endsWith(id))
+				{
+					chartItem.mCount = count;
+					return;
+				}
+			}
+			throw new IllegalArgumentException("invalid id");
+		}
+
+
 	}
 
 	public void removeItem(String id)
@@ -344,19 +355,22 @@ public class Chart {
 	public static class AdapterItem implements IAdapterItem<ChartItem>
 	{
 		IChartMediator mMediator = null;
+		Activity mActivity = null;
 		/**
 		 * 只有当mediator不为空是，才可以改变物品数量
 		 * @param mediator
 		 */
-		public AdapterItem(IChartMediator mediator)
+		public AdapterItem(Activity activity, IChartMediator mediator)
 		{
+			mActivity = activity;
 			mMediator = mediator;
+
 		}
 		@Override
 		public View getView(ChartItem data, View convertView) {
 			if(null == convertView)
 			{
-				View itemView = ((Activity)mMediator).getLayoutInflater().inflate(R.layout.item_chart, null);
+				View itemView = mActivity.getLayoutInflater().inflate(R.layout.item_chart, null);
 				ViewHolder holder = new ViewHolder();
 				holder.cbSelect = (CheckBox)itemView.findViewById(R.id.checkBox_select);
 				holder.ivGoods = (ImageView)itemView.findViewById(R.id.imageView_goods);
@@ -386,7 +400,19 @@ public class Chart {
 				holder.cbSelect.setVisibility(View.GONE);
 			}
 
-			Picasso.with((Activity)mMediator).load(fGoods.getImageURL()).into(holder.ivGoods);
+			Picasso.with(mActivity).load(fGoods.getImageURL()).into(holder.ivGoods);
+			holder.ivGoods.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent();
+					intent.setClass(mActivity, GoodsActivity.class);
+					GoodsActivity.IntentWrapper wrapper = new GoodsActivity.IntentWrapper(intent);
+					Goods goods = ShopDataManager.getInstance().getGoods(fData.getID());
+					wrapper.setGoods(goods);
+					mActivity.startActivity(intent);
+
+				}
+			});
 			holder.tvName.setText(fGoods.getName());
 			holder.tvPrice.setText(fGoods.getPrize() + " 元");
 			

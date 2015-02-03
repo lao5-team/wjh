@@ -75,6 +75,7 @@ public class ShopServer {
 			try {
 				JSONObject obj = new JSONObject(str);
 				Log.v("test", obj.toString());
+				obj = obj.getJSONObject("data");
 				mSession = obj.getString("authid");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -174,6 +175,28 @@ public class ShopServer {
 		};
 		return caller.execute();
 	}
+	public Goods getGoodsByID(String id)
+	{
+		String url = String.format("%s/getListById&id=%s",SERVER_ADDRESS_PRODUCT, id);
+		SyncHTTPCaller<Goods> caller = new SyncHTTPCaller<Goods>(
+				url, "PHPSESSID=" + mSession) {
+
+			@Override
+			public Goods postExcute(String result) {
+				Goods goods = Goods.NULL;
+				try {
+					JSONObject json = new JSONObject(result);
+					json  = json.getJSONObject("data");
+					goods = Goods.fromJSON(json);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return goods;
+			}
+		};
+		return caller.execute();
+
+	}
 	
 	public List<Goods> getGoodsListbyIDs(List<String> list_id)
 	{
@@ -186,7 +209,7 @@ public class ShopServer {
 	public String submitOrder(Order order) throws JSONException
 	{
 		JSONObject goodsJson = new JSONObject();
-		List<ChartItem> items = order.getmItems();
+		List<ChartItem> items = order.getItems();
 		for(ChartItem item:items)
 		{
 			goodsJson.put(item.getID(), item.getCount());
@@ -213,11 +236,11 @@ public class ShopServer {
 		
 	}
 	
-	public List<Order> getUsersOrderIDList(String id)
+	public List<Order> getUsersOrderList(String id)
 	{
 		String url = String.format("%s/getUserOrder", SERVER_ADDRESS_ORDER);
 		SyncHTTPCaller<List<Order>> caller = new SyncHTTPCaller<List<Order>>(
-				url) {
+				url, "PHPSESSID=" + mSession) {
 
 			@Override
 			public List<Order> postExcute(String result) {

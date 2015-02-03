@@ -1,10 +1,11 @@
 package com.test.juxiaohui.shop.data;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.test.juxiaohui.shop.server.ShopServer;
 import com.test.juxiaohui.shop.transaction.CreateOrderTransaction;
 
+import com.test.juxiaohui.shop.transaction.SubmitOrderTransaction;
 import junit.framework.Assert;
 import android.test.AndroidTestCase;
 
@@ -19,6 +20,8 @@ public class OrderTest extends AndroidTestCase {
 	{
 		//有效id 7，6
 		//添加包含非法id的商品
+		ShopServer.getInstance().login("yh", "yhtest");
+
 		try
 		{
 			Chart.getInstance().addGoods("-1", 1);
@@ -72,7 +75,21 @@ public class OrderTest extends AndroidTestCase {
 		Chart.getInstance().addGoods("7", 1);
 		Chart.getInstance().addGoods("6", 1);
 		Order order = CreateOrderTransaction.createOrderFromChart(Chart.getInstance());
-		Assert.assertEquals(16, order.calcTotal());
+		Assert.assertTrue(Math.abs(16.0-order.calcTotalPrice())<0.00001);
+
+		//提及订单
+		SubmitOrderTransaction transaction = new SubmitOrderTransaction(order);
+		transaction.execute();
+		List<Order> listOrder = OrderManager.getInstance().getUsersOrderList("yh");
+		boolean found = false;
+		for(Order orderIter:listOrder)
+		{
+			if(orderIter.getmId().equals(order.getmId()))
+			{
+				found = true;
+			}
+		}
+		Assert.assertTrue(found);
 	}
 
 }

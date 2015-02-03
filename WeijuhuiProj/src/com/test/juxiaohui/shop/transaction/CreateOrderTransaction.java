@@ -18,7 +18,7 @@ public class CreateOrderTransaction {
 	
 	public static Order createOrderFromOrder(Order order)
 	{
-		Order new_order = new Order(order.getmItems());
+		Order new_order = new Order(order.getItems());
 		return new_order;
 	}
 

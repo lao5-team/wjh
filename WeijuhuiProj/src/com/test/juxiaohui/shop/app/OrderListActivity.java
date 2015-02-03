@@ -6,10 +6,8 @@ import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.shop.data.Chart;
-import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.data.Order;
 import com.test.juxiaohui.shop.data.OrderManager;
-import com.test.juxiaohui.shop.data.ShopDataManager;
 import com.test.juxiaohui.shop.data.Chart.ChartItem;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;
@@ -19,13 +17,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class OrderListActivity extends Activity {
 	
@@ -68,15 +61,15 @@ public class OrderListActivity extends Activity {
 				ViewHolder holder = (ViewHolder) convertView.getTag();
 				holder.tvStatus.setText(getStateString(fOrder));
 				holder.tvId.setText("订单号 " + fOrder.getmId());
-				holder.tvPay.setText("支付金额 " + fOrder.calcTotal() + " 元");
+				holder.tvPay.setText("支付金额 " + fOrder.calcTotalPrice() + " 元");
 				holder.btnRebuy.setOnClickListener(new OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
-						#
+						//#
 					}
 				});
-				holder.lvGoods.setAdapter(new CommonAdapter<ChartItem>(fOrder.getItems(), new Chart.AdapterItem(null)));
+				holder.lvGoods.setAdapter(new CommonAdapter<ChartItem>(fOrder.getItems(), new Chart.AdapterItem(OrderListActivity.this, null)));
 				return convertView;
 			}
 		});

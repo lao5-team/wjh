@@ -37,4 +37,6 @@ public interface IOrderMediator {
 	 */
 	public void confirmOrder();
 
+	public void setOrderState();
+
 }

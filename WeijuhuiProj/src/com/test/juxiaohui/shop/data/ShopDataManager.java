@@ -69,15 +69,16 @@ public class ShopDataManager {
 		}
 		List<String> mIDs = new ArrayList<String>();
 		mIDs.add(id);
-		List<Goods> goodsList = ShopServer.getInstance().getGoodsListbyIDs(mIDs);
-		if(goodsList.size()>0)
-		{
-			return goodsList.get(0);
-		}
-		else
-		{
-			return Goods.NULL;
-		}
+		return ShopServer.getInstance().getGoodsByID(id);    //getGoodsListbyIDs(mIDs);
+//		List<Goods> goodsList
+//		if(goodsList.size()>0)
+//		{
+//			return goodsList.get(0);
+//		}
+//		else
+//		{
+//			return Goods.NULL;
+//		}
 	}
 	
 	

@@ -44,7 +44,7 @@ public class ShopSubCategoryFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
             Bundle savedInstanceState) {
     	LinearLayout layout = (LinearLayout)inflater.inflate(R.layout.fragment_category, container, false);
-//    	this.setListAdapter(mAdapter);
+//    	this.setListAdapter(mChartItemAdapter);
 //    	this.getListView().setOnItemClickListener(new OnItemClickListener() {
 //
 //			@Override

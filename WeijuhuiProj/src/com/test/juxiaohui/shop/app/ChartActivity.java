@@ -7,9 +7,11 @@ import com.test.juxiaohui.R;
 import com.test.juxiaohui.shop.app.GoodsActivity.IntentWrapper;
 import com.test.juxiaohui.shop.data.Chart;
 import com.test.juxiaohui.shop.data.Goods;
+import com.test.juxiaohui.shop.data.Order;
 import com.test.juxiaohui.shop.data.ShopDataManager;
 import com.test.juxiaohui.shop.data.Chart.ChartItem;
 import com.test.juxiaohui.shop.mediator.IChartMediator;
+import com.test.juxiaohui.shop.transaction.CreateOrderTransaction;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;
 
@@ -58,7 +60,7 @@ public class ChartActivity extends Activity implements IChartMediator{
 		
 		@Override
 		public void showItems() {
-			ChartActivity.this.mAdapter = new CommonAdapter<>(mChart.getItems(), new Chart.AdapterItem(this));
+			ChartActivity.this.mAdapter = new CommonAdapter<ChartItem>(mChart.getItems(), new Chart.AdapterItem(this, this));
 			mListView.setAdapter(mAdapter);
 		}
 		
@@ -95,8 +97,9 @@ public class ChartActivity extends Activity implements IChartMediator{
 		@Override
 		public void buyChart() {
 			// TODO Auto-generated method stub
-			#
-			
+			//#
+			Order order = CreateOrderTransaction.createOrderFromChart(Chart.getInstance());
+			OrderActivity.startActivity(this, order);
 		}
 		
 		@Override

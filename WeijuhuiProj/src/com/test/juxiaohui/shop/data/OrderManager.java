@@ -58,7 +58,7 @@ public class OrderManager {
 	
 	public List<Order> getUsersOrderList(String userID)
 	{
-		return ShopServer.getInstance().getUsersOrderIDList(userID);
+		return ShopServer.getInstance().getUsersOrderList(userID);
 		
 	}
 	
