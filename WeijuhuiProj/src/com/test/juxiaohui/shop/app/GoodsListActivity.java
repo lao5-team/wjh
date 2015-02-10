@@ -2,9 +2,6 @@ package com.test.juxiaohui.shop.app;
 
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.shop.app.GoodsActivity.IntentWrapper;
@@ -52,7 +49,7 @@ public class GoodsListActivity extends Activity {
 			}
 			ViewHolder holder = (ViewHolder)convertView.getTag();
 			holder.mTvName.setText(data.getName());
-			holder.mTvPrize.setText(data.getPrize() + "元");
+			holder.mTvPrize.setText(data.getPrice() + "元");
 			Picasso.with(GoodsListActivity.this).load(data.getImageURL()).into(holder.mIvPic);
 			return convertView;
 		}		

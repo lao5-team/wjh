@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,7 +18,7 @@ public class Order {
 	
 	public static int PAYSTATE_UNDONE = 0;
 	public static int PAYSTATE_DONE = 1;
-	protected String mId;
+	protected String mId = "";
 
 	protected List<ChartItem> mItems;
 
@@ -75,7 +74,7 @@ public class Order {
 		for(ChartItem item:mItems)
 		{
 			Goods goods = ShopDataManager.getInstance().getGoods(item.getID());
-			result += item.getCount() * goods.getPrize();
+			result += item.getCount() * goods.getPrice();
 		}
 		return result;
 	}

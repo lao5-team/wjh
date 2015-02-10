@@ -107,7 +107,7 @@ public class Goods {
 		mPrize = prize;
 	}
 	
-	public double getPrize()
+	public double getPrice()
 	{
 		return mPrize;
 	}

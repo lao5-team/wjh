@@ -84,6 +84,9 @@ public class OrderActivity extends Activity implements IOrderMediator{
 		setOrder(wrapper.getOrder());
 		setContentView(R.layout.activity_order_detail);
 		showConsignee();
+		showGoods();
+		showPayment();
+		setOrderState();
 	}
 
 	@Override
@@ -108,7 +111,7 @@ public class OrderActivity extends Activity implements IOrderMediator{
 			});
 
 		}
-		mChartItemAdapter = new CommonAdapter<Chart.ChartItem>(mOrder.getItems(), new Chart.AdapterItem(null, null));
+		mChartItemAdapter = new CommonAdapter<Chart.ChartItem>(mOrder.getItems(), new Chart.AdapterItem(this, null));
 	}
 
 	@Override
@@ -140,7 +143,7 @@ public class OrderActivity extends Activity implements IOrderMediator{
 	@Override
 	public void showPayment() {
 		mTvPaySum = (TextView)findViewById(R.id.textView_paysum);
-		mTvPaySum.setText("实付款 " + mOrder.calcTotalPrice());
+		mTvPaySum.setText("付款额 " + mOrder.calcTotalPrice());
 		
 	}
 

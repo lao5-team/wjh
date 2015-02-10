@@ -15,11 +15,14 @@ import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.squareup.picasso.Picasso;
+import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.shop.app.ChartActivity;
+import com.test.juxiaohui.cache.temp.JSONCache;
 import com.test.juxiaohui.shop.app.GoodsActivity;
 import com.test.juxiaohui.shop.mediator.IChartMediator;
 import com.test.juxiaohui.widget.IAdapterItem;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Chart {
 	public static class ChartItem
@@ -34,6 +37,11 @@ public class Chart {
 		{
 			setID(id);
 			setCount(count);
+		}
+
+		private ChartItem()
+		{
+
 		}
 		
 		private void setID(String id)
@@ -74,13 +82,59 @@ public class Chart {
 			this.mIsSelected = mIsSelected;
 		}
 
+		public static JSONObject toJSON(ChartItem item)
+		{
+			if(item != ChartItem.NULL)
+			{
+				JSONObject obj = new JSONObject();
+				try {
+					obj.put("id", item.mID);
+					obj.put("count", item.mCount);
+					obj.put("isSelected", item.mIsSelected);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return obj;
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		/**
+		 * 异常情况下返回ChartItem.NULL
+		 * @param json
+		 * @return
+		 */
+		public static ChartItem fromJSON(JSONObject json)
+		{
+			if(json!=null)
+			{
+				ChartItem item = new ChartItem();
+				try {
+					item.mID = json.getString("id");
+					item.mCount = json.getInt("count");
+					item.mIsSelected = json.getBoolean("isSelected");
+					return item;
+				} catch (JSONException e) {
+					e.printStackTrace();
+					return ChartItem.NULL;
+				}
+			}
+			else
+			{
+				return ChartItem.NULL;
+			}
+		}
+
 		
 		
 		
 	}
 	private static Chart mInstance = null;
-	List<ChartItem> mItems = new ArrayList<ChartItem>();
-		
+	JSONCache mChartCache = new JSONCache(DemoApplication.applicationContext, "Chart");
+
 	public static Chart getInstance()
 	{
 		if(null == mInstance)
@@ -101,7 +155,7 @@ public class Chart {
 		{
 			throw new IllegalArgumentException("invalid id");
 		}
-		for(ChartItem chartItem:mItems)
+/*		for(ChartItem chartItem:mItems)
 		{
 			if(chartItem.mID.endsWith(id))
 			{
@@ -111,20 +165,40 @@ public class Chart {
 		}
 
 		ChartItem item = new ChartItem(id, count);
-		mItems.add(item);
+		mItems.add(item);*/
+		JSONObject obj = mChartCache.getItem(id);
+		ChartItem item;
+		if(null!=obj)
+		{
+			item = ChartItem.fromJSON(obj);
+			if(item!=ChartItem.NULL)
+			{
+				item.mCount += count;
+			}
+			else
+			{
+				item = new ChartItem(id, count);
+			}
+		}
+		else
+		{
+			item = new ChartItem(id, count);
+		}
+		mChartCache.putItem(id, ChartItem.toJSON(item));
 	}
 
 	public void setItemSelected(String id, boolean selected)
 	{
-		for(ChartItem chartItem:mItems)
+		ChartItem item = ChartItem.fromJSON(mChartCache.getItem(id));
+		if(item!=ChartItem.NULL)
 		{
-			if(chartItem.mID.endsWith(id))
-			{
-				chartItem.setSelected(selected);
-				return;
-			}
+			item.mIsSelected = selected;
+			mChartCache.putItem(id, ChartItem.toJSON(item));
 		}
-		throw new IllegalArgumentException("invalid id");
+		else
+		{
+			throw new IllegalArgumentException("invalid id");
+		}
 
 	}
 
@@ -134,21 +208,25 @@ public class Chart {
 		{
 			throw new IllegalArgumentException("invalid id or count");
 		}
-		if(count == 0)
-		{
-			removeItem(id);
-		}
 		else
 		{
-			for(ChartItem chartItem:mItems)
+			ChartItem item = ChartItem.fromJSON(mChartCache.getItem(id));
+			if(item!=ChartItem.NULL)
 			{
-				if(chartItem.mID.endsWith(id))
+				if(count>0)
 				{
-					chartItem.mCount = count;
-					return;
+					item.mCount = count;
+					mChartCache.putItem(id, ChartItem.toJSON(item));
+				}
+				else
+				{
+					removeItem(id);
 				}
 			}
-			throw new IllegalArgumentException("invalid id");
+			else
+			{
+				throw new IllegalArgumentException("invalid id");
+			}
 		}
 
 
@@ -160,15 +238,7 @@ public class Chart {
 		{
 			throw new IllegalArgumentException("invalid id");
 		}
-		for(ChartItem chartItem:mItems)
-		{
-			if(chartItem.mID.endsWith(id))
-			{
-				mItems.remove(chartItem);
-				return;
-			}
-		}
-		throw new IllegalArgumentException("invalid id");
+		mChartCache.remove(id);
 	}
 
 	public ChartItem getItem(String id)
@@ -177,163 +247,44 @@ public class Chart {
 		{
 			throw new IllegalArgumentException("invalid id");
 		}
-		for(ChartItem chartItem:mItems)
+/*		for(ChartItem chartItem:mItems)
 		{
 			if(chartItem.mID.endsWith(id))
 			{
 				return chartItem;
 			}
 		}
-		return ChartItem.NULL;
-	}
-	
-//	public void setItems(List<ChartItem> itemList)
-//	{
-//		if(null == itemList)
-//		{
-//			throw new IllegalArgumentException("itemList is null");
-//		}
-//		else
-//		{
-//			
-//		}
-//	}
-	
-	/**将一组商品添加到购物车里去，如果数组中包含无效id，则添加全部失败
-	 * @param IDs
-	 * @throws IllegalArgumentException
-	 */
-//	public void addGoodsList(List<String> IDs) throws IllegalArgumentException
-//	{
-//		List<Goods> goodsList = ShopDataManager.getInstance().getGoodsList(IDs);
-//		for(Goods goods:goodsList)
-//		{
-//			if(goods!=Goods.NULL )
-//			{
-//				ChartItem item = new ChartItem();
-//				item.mID = goods.mID;
-//				item.mCount = 1;
-//				item.mIsSelected = false;
-//				mItems.add(item);
-//			}
-//			else
-//			{
-//				mItems.clear();
-//				throw new IllegalArgumentException("goods id " + goods.mID + " not exsits!");
-//			}
-//		}
-//	}
-	
+		return ChartItem.NULL;*/
+		ChartItem item = ChartItem.fromJSON(mChartCache.getItem(id));
+		return item;
 
-	
-	public List<String> getGoodsIDs()
-	{
-		List<String> listIDs = new ArrayList<String>();
-		for(ChartItem item:mItems)
-		{
-			listIDs.add(item.mID);
-		}
-		return listIDs;
 	}
-//	
-//	public int getGoodsCount(String id) throws IllegalArgumentException
-//	{
-//		for(ChartItem item:mItems)
-//		{
-//			if(id.endsWith(item.mID))
-//			{
-//				return item.mCount;
-//			}
-//		}
-//		
-//		throw new IllegalArgumentException("invalid id");
-//	}
-//	
-//	public void setGoodsCount(String id, int count) throws IllegalArgumentException
-//	{
-//		if(count<0)
-//		{
-//			throw new IllegalArgumentException("invalid count!");
-//		}
-//		
-//		for(ChartItem item:mItems)
-//		{
-//			if(id.endsWith(item.mID))
-//			{
-//				item.mCount = count;
-//			}
-//		}
-//		throw new IllegalArgumentException("invalid id!");
-//	}
-//	
-//	public void selectGoods(String id) throws IllegalArgumentException
-//	{
-//		for(ChartItem item:mItems)
-//		{
-//			if(id.endsWith(item.mID))
-//			{
-//				item.mIsSelected = true;
-//			}
-//		}
-//		throw new IllegalArgumentException("invalid id!");
-//	}
-//	
-//	public void unselectGoods(String id) throws IllegalArgumentException
-//	{
-//		for(ChartItem item:mItems)
-//		{
-//			if(id.endsWith(item.mID))
-//			{
-//				item.mIsSelected = false;
-//			}
-//		}
-//		throw new IllegalArgumentException("invalid id!");
-//	}
-	
-	public List<ChartItem> getItems()
-	{
-		return new ArrayList<ChartItem>(mItems);
-	}
-	
-	/**创建一个初步订单
-	 * @return
-	 */
-//	public Order createOrder()
-//	{
-//		List<ChartItem> selectedChartItems = new ArrayList<ChartItem>();
-//		for(ChartItem item:mItems)
-//		{
-//			if(true == item.mIsSelected)
-//			{
-//				selectedChartItems.add(item);
-//			}
-//		}
-//		Order order;
-//		if(selectedChartItems.size()>0)
-//		{
-//			order = new Order(selectedChartItems);
-//		}
-//		else
-//		{
-//			order = Order.NULL;
-//		}
-//		return order;
-//	}
+
 	
 	public float getTotalPrice()
 	{
 		float total = 0;
-		List<ChartItem> listItem = mItems;
+		List<ChartItem> listItem = getItems();
 		for(ChartItem item:listItem)
 		{
 			if(item.isSelected())
 			{
 				final Goods fGoods = ShopDataManager.getInstance().getGoods(item.getID());
-				total += item.getCount() * fGoods.getPrize();
+				total += item.getCount() * fGoods.getPrice();
 			}
 
 		}
 		return total;
+	}
+
+	public List<ChartItem> getItems(){
+		List<ChartItem> results = new ArrayList<ChartItem>();
+		for(JSONObject object:mChartCache.getAllItems())
+		{
+			ChartItem item = ChartItem.fromJSON(object);
+			results.add(item);
+		}
+		return results;
 	}
 	
 	private Chart()
@@ -376,8 +327,8 @@ public class Chart {
 				holder.ivGoods = (ImageView)itemView.findViewById(R.id.imageView_goods);
 				holder.tvName = (TextView)itemView.findViewById(R.id.textView_goods_name);
 				holder.tvPrice = (TextView)itemView.findViewById(R.id.textView_price);
-				holder.btnDecrease = (ImageButton)itemView.findViewById(R.id.imageButton_sub);
-				holder.btnIncrease = (ImageButton)itemView.findViewById(R.id.imageButton_add);
+				holder.btnDecrease = (ImageButton)itemView.findViewById(R.id.imageButton_dec);
+				holder.btnIncrease = (ImageButton)itemView.findViewById(R.id.imageButton_inc);
 				holder.tvCount = (TextView)itemView.findViewById(R.id.textView_count);
 				itemView.setTag(holder);
 				convertView = itemView;
@@ -387,7 +338,7 @@ public class Chart {
 			ViewHolder holder = (ViewHolder)convertView.getTag();
 			if(null != mMediator)
 			{
-				holder.cbSelect.setSelected(data.isSelected());
+				holder.cbSelect.setChecked(data.isSelected());
 				holder.cbSelect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -414,7 +365,7 @@ public class Chart {
 				}
 			});
 			holder.tvName.setText(fGoods.getName());
-			holder.tvPrice.setText(fGoods.getPrize() + " 元");
+			holder.tvPrice.setText(fGoods.getPrice() + " 元");
 			
 			if(null != mMediator)
 			{
@@ -432,7 +383,7 @@ public class Chart {
 			}
 
 			
-			holder.tvCount.setText(fData.getCount());
+			holder.tvCount.setText(fData.getCount() + "件");
 			
 			if(null != mMediator)
 			{
@@ -453,6 +404,8 @@ public class Chart {
 		}
 		 
 	}
+
+
 	
 	
 

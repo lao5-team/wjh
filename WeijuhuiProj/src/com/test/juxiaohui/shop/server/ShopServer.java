@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.JsonWriter;
 import junit.framework.Assert;
 
 import org.apache.http.HttpResponse;
@@ -209,16 +210,30 @@ public class ShopServer {
 	public String submitOrder(Order order) throws JSONException
 	{
 		JSONObject goodsJson = new JSONObject();
+
 		List<ChartItem> items = order.getItems();
 		for(ChartItem item:items)
 		{
 			goodsJson.put(item.getID(), item.getCount());
 		}
-		String url = String.format("%s/add&products=%s&other=%s&username=%s&mobile=%s&address=%s", SERVER_ADDRESS_ORDER,
-				goodsJson.toString(), order.getOtherMessage(), order.getmConsigneeName(), order.getConsigneePhoneNumber(), order.getmConsigneeAddress());
+
+/*		String tempJSON = JSONObject.quote(goodsJson.toString());
+		tempJSON = JSONObject.quote(tempJSON);
+		try
+		{
+			tempJSON = tempJSON.substring(1, tempJSON.length()-1);
+		}
+		catch (IndexOutOfBoundsException e)
+		{
+			e.printStackTrace();
+		}*/
+
+/*		String url = String.format("%s/add&products=%s&other=%s&username=%s&mobile=%s&address=%s&authid=%s", SERVER_ADDRESS_ORDER,
+				 "yhtest",order.getOtherMessage(), order.getmConsigneeName(), order.getConsigneePhoneNumber(), order.getmConsigneeAddress(), mSession);*/
+		String url = String.format("%s/add&authid=%s", SERVER_ADDRESS_ORDER, mSession);
 		
 		SyncHTTPCaller<String> caller = new SyncHTTPCaller<String>(
-				url, "PHPSESSID=" + mSession) {
+				url, "PHPSESSID=" + mSession, goodsJson.toString()) {
 
 			@Override
 			public String postExcute(String result) {
@@ -238,7 +253,7 @@ public class ShopServer {
 	
 	public List<Order> getUsersOrderList(String id)
 	{
-		String url = String.format("%s/getUserOrder", SERVER_ADDRESS_ORDER);
+		String url = String.format("%s/getUserOrder&authid=%s", SERVER_ADDRESS_ORDER, mSession);
 		SyncHTTPCaller<List<Order>> caller = new SyncHTTPCaller<List<Order>>(
 				url, "PHPSESSID=" + mSession) {
 

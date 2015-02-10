@@ -3,12 +3,16 @@ package com.test.juxiaohui.shop.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.test.juxiaohui.DemoApplication;
+import com.test.juxiaohui.cache.temp.JSONCache;
 import com.test.juxiaohui.shop.server.ShopServer;
+import org.json.JSONObject;
 
 public class ShopDataManager {
 	
 	private static ShopDataManager mInstance = null;
-	
+
+	JSONCache mGoodsCache = null;
 	public static ShopDataManager getInstance()
 	{
 		if(null == mInstance)
@@ -20,7 +24,7 @@ public class ShopDataManager {
 	
 	private ShopDataManager()
 	{
-		
+		mGoodsCache = new JSONCache(DemoApplication.applicationContext, "goods");
 	}
 	
 	/**
@@ -48,6 +52,7 @@ public class ShopDataManager {
 	 */
 	public List<Goods> getGoodsListinCategory(String id, int startIndex, int endIndex)
 	{
+
 		return ShopServer.getInstance().getGoodsListinCategory(id, startIndex, endIndex);
 	}
 	
@@ -67,18 +72,21 @@ public class ShopDataManager {
 		{
 			return Goods.NULL;
 		}
-		List<String> mIDs = new ArrayList<String>();
-		mIDs.add(id);
-		return ShopServer.getInstance().getGoodsByID(id);    //getGoodsListbyIDs(mIDs);
-//		List<Goods> goodsList
-//		if(goodsList.size()>0)
-//		{
-//			return goodsList.get(0);
-//		}
-//		else
-//		{
-//			return Goods.NULL;
-//		}
+
+		JSONObject obj = mGoodsCache.getItem(id);
+		if(null!=obj)
+		{
+			return Goods.fromJSON(obj);
+		}
+		else
+		{
+			Goods goods = ShopServer.getInstance().getGoodsByID(id);
+			if(goods!=Goods.NULL)
+			{
+				mGoodsCache.putItem(id, Goods.toJSON(goods));
+			}
+			return goods;
+		}
 	}
 	
 	

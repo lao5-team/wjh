@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JSONObject> {
-	public final static String dataPattern = "yyyy年MM月dd日hh时";
+	//public final static String dataPattern = "yyyy年MM月dd日hh时";
 	private static final int TRANSACTION_LIMIT = 10;
 	String mName;
 	HashMap<String, JSONObject> mMap = new HashMap<String, JSONObject>();
@@ -72,11 +72,14 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(mName, "id=?", new String[]{key});
 		db.close();
+		mMap.remove(key);
 	}
+
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(mCreateTableString);
 	}
+
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
@@ -164,7 +167,8 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 			throw new IllegalArgumentException("keyList is null!");
 		}
 		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor cursor = db.query(mName, new String[]{"value"}, "id=?", (String[]) keyList.toArray(), null, null, null);
+		String []keys = new String[keyList.size()];
+		Cursor cursor = db.query(mName, new String[]{"value"}, "id=?", keyList.toArray(keys), null, null, null);
 		ArrayList<JSONObject> result = new ArrayList<JSONObject>();
 		while(cursor.moveToNext())
 		{
@@ -215,6 +219,28 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 		}
 		db.close();
 		cursor.close();
+	}
+
+	public List<JSONObject> getAllItems()
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		List<JSONObject> valueList = new ArrayList<JSONObject>();
+		Cursor cursor = db.query(mName, null, null, null, null, null, "id ASC");
+		String value = null;
+
+		while(cursor.moveToNext())
+		{
+			value = cursor.getString(cursor.getColumnIndex("value"));
+			if(null != value)
+			{
+				try {
+					valueList.add(new JSONObject(value));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return valueList;
 	}
 
 	@Override
@@ -315,7 +341,7 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 				result.add(value);
 			}
 			/*
-			 *当数据量超过一定程度时，可能会出现内存数据少于数据库数据的情况 
+			 *当请求的数据量超过一定程度时，可能会出现内存数据少于数据库数据的情况
 			 * */
 			else 
 			{
@@ -323,11 +349,17 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 			}
 		}
 		List<JSONObject> listValue = getListByDB(keyDBList);
-		for(int i=0; i<keyDBList.size(); i++)
+		try
 		{
-			mMap.put(keyDBList.get(i), listValue.get(i));
+			for(int i=0; i<keyDBList.size(); i++)
+			{
+				mMap.put(keyDBList.get(i), listValue.get(i));
+			}
 		}
-		
+		catch(IndexOutOfBoundsException e)
+		{
+			e.printStackTrace();
+		}
 		result.addAll(listValue);
 		return result;
 	}
@@ -354,6 +386,37 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 			mMap.put(keyList.get(i), valueList.get(i));
 		}	
 		putListByDB(keyList, valueList);
+	}
+
+	/**
+	 * 通过id获取一个item
+	 * @param id
+	 * @return 正常情况返回一个JSONObject否则返回null
+	 */
+	public JSONObject getItem(String id)
+	{
+		List<String> listIds = new ArrayList<String>();
+		listIds.add(id);
+		List<JSONObject> listObject = getItems(listIds);
+		try
+		{
+			return listObject.get(0);
+		}
+		catch(IndexOutOfBoundsException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void putItem(String id, JSONObject object)
+	{
+		List<String> listIds = new ArrayList<String>();
+		listIds.add(id);
+
+		List<JSONObject> listJSON = new ArrayList<JSONObject>();
+		listJSON.add(object);
+		putItems(listIds, listJSON);
 	}
 	
 	private void put(String key, JSONObject value) {

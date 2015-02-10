@@ -48,7 +48,7 @@
             android:textSize="@dimen/normal_font_size" />
 
         <ImageButton
-            android:id="@+id/imageButton_sub"
+            android:id="@+id/imageButton_dec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -60,11 +60,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/imageButton_sub"
+            android:layout_toRightOf="@+id/imageButton_dec"
             android:text="TextView" />
 
         <ImageButton
-            android:id="@+id/ImageButton_add"
+            android:id="@+id/imageButton_inc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

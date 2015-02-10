@@ -1,5 +1,6 @@
 package com.test.juxiaohui.shop.app;
 
+import com.test.juxiaohui.shop.transaction.AddChartTransaction;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,8 +8,6 @@ import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.mediator.IGoodsMediator;
-import com.test.juxiaohui.widget.CommonAdapter;
-import com.test.juxiaohui.widget.IAdapterItem;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -88,14 +87,19 @@ public class GoodsActivity extends Activity implements IGoodsMediator{
 
 	@Override
 	public void addToCart() {
-		runOnUiThread(new Runnable() {
+/*		runOnUiThread(new Runnable() {
 			
 			@Override
 			public void run() {
 				Toast.makeText(GoodsActivity.this, "没做加入购物车的功能", Toast.LENGTH_SHORT).show();
 			}
-		});
+		});*/
 		Log.v(TAG, String.format("addToCart %s", mGoods.getID()));
+		AddChartTransaction transaction = new AddChartTransaction(mGoods.getID(), 1);
+		transaction.execute();
+		Intent intent = new Intent(this, ChartActivity.class);
+		startActivity(intent);
+
 	}
 	
 	private void initUI()
@@ -104,7 +108,7 @@ public class GoodsActivity extends Activity implements IGoodsMediator{
 		mTvName = (TextView)findViewById(R.id.textView_name);
 		mTvName.setText(mGoods.getName());
 		mTvPrize = (TextView)findViewById(R.id.textView_prize);
-		mTvPrize.setText(mGoods.getPrize() + " 元");
+		mTvPrize.setText(mGoods.getPrice() + " 元");
 		mTvDesc = (TextView)findViewById(R.id.textView_desc);
 		mTvDesc.setText(mGoods.getDesc());
 		mIvPic = (ImageView)findViewById(R.id.imageView_goods);
