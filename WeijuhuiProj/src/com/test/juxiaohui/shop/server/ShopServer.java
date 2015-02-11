@@ -199,13 +199,6 @@ public class ShopServer {
 
 	}
 	
-	public List<Goods> getGoodsListbyIDs(List<String> list_id)
-	{
-		//#
-		List<Goods> result = new ArrayList<Goods>();
-		//TO DO
-		return result;
-	}
 	
 	public String submitOrder(Order order) throws JSONException
 	{
@@ -255,7 +248,7 @@ public class ShopServer {
 	{
 		String url = String.format("%s/getUserOrder&authid=%s", SERVER_ADDRESS_ORDER, mSession);
 		SyncHTTPCaller<List<Order>> caller = new SyncHTTPCaller<List<Order>>(
-				url, "PHPSESSID=" + mSession) {
+				url) {
 
 			@Override
 			public List<Order> postExcute(String result) {
@@ -276,6 +269,113 @@ public class ShopServer {
 			}
 		};
 		return caller.execute();
+	}
+	
+	public Boolean cancelUsersOrder(String id)
+	{
+		String url = String.format("%s/cancelOrder&oid=%s&authid=%s", SERVER_ADDRESS_ORDER, id, mSession);
+		SyncHTTPCaller<Boolean> caller = new SyncHTTPCaller<Boolean>(
+				url) {
+
+			@Override
+			public Boolean postExcute(String result) {
+				Boolean resultObj = Boolean.FALSE;
+				try {
+					JSONObject json = new JSONObject(result);
+					if(json.getString("status").equals("ok"))
+					{
+						resultObj = Boolean.TRUE;
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return resultObj;
+			}
+		};
+		return caller.execute();
+	}
+	
+	public List<Order> getOrderListByIds(List<String> ids)
+	{
+		String temp = "";
+		try
+		{
+			temp = ids.get(0);
+			for(int i=1; i<ids.size(); i++)
+			{
+				temp += ","+ids.get(i);
+			}
+		}
+		catch(IndexOutOfBoundsException e)
+		{
+			e.printStackTrace();
+		}
+		
+		String url = String.format("%s/getOrderInformation&oid=%s&authid=%s", SERVER_ADDRESS_ORDER, temp, mSession);
+		SyncHTTPCaller<List<Order>> caller = new SyncHTTPCaller<List<Order>>(
+				url) {
+
+			@Override
+			public List<Order> postExcute(String result) {
+				List<Order> resultObj = null;
+				try {
+					JSONObject json = new JSONObject(result);
+					JSONArray array = json.getJSONArray("data");
+					resultObj = new ArrayList<Order>();
+					for (int i = 0; i < array.length(); i++) {
+						JSONObject object = array.getJSONObject(i);
+						Order order = Order.fromJSON(object);
+						resultObj.add(order);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return resultObj;
+			}
+		};
+		return caller.execute();
+	}
+	
+	public List<Goods> getGoodsListbyIds(List<String> ids)
+	{
+		String temp = "";
+		try
+		{
+			temp = ids.get(0);
+			for(int i=1; i<ids.size(); i++)
+			{
+				temp += ","+ids.get(i);
+			}
+		}
+		catch(IndexOutOfBoundsException e)
+		{
+			e.printStackTrace();
+		}	
+		
+		String url = String.format("%s/getProductsArray&id=%s&authid=%s", SERVER_ADDRESS_ORDER, temp, mSession);
+		SyncHTTPCaller<List<Goods>> caller = new SyncHTTPCaller<List<Goods>>(
+				url) {
+
+			@Override
+			public List<Goods> postExcute(String result) {
+				List<Goods> resultObj = null;
+				try {
+					JSONObject json = new JSONObject(result);
+					JSONArray array = json.getJSONArray("data");
+					resultObj = new ArrayList<Goods>();
+					for (int i = 0; i < array.length(); i++) {
+						JSONObject object = array.getJSONObject(i);
+						Goods goods = Goods.fromJSON(object);
+						resultObj.add(goods);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return resultObj;
+			}
+		};
+		return caller.execute();
+		
 	}
 	
 	private ShopServer()

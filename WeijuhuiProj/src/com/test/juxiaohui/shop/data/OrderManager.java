@@ -62,6 +62,11 @@ public class OrderManager {
 		
 	}
 	
+	public List<Order> getOrderListByIds(List<String> ids)
+	{
+		return ShopServer.getInstance().getOrderListByIds(ids);
+	}
+	
 	private boolean checkOrder(Order order)
 	{
 		return true;

@@ -77,14 +77,14 @@ public class OrderListActivity extends Activity {
 	
 	String getStateString(Order order)
 	{
-		if(order.getPayState() == Order.PAYSTATE_UNDONE)
-		{
-			return "待支付";
-		}
-		else if(order.getPayState() == Order.PAYSTATE_DONE)
-		{
-			return "支付完成";
-		}
+//		if(order.getPayState() == Order.PAYSTATE_UNDONE)
+//		{
+//			return "待支付";
+//		}
+//		else if(order.getPayState() == Order.PAYSTATE_DONE)
+//		{
+//			return "支付完成";
+//		}
 		
 		if(order.getState() == order.STATE_REFUSE)
 		{

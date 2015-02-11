@@ -32,7 +32,6 @@ public class Order {
 	
 	protected int mState = 0;
 	
-	protected int mPayState = 0;
 	
 	public static Order NULL = new Order()
 	{
@@ -111,16 +110,6 @@ public class Order {
 		this.mState = mState;
 	}
 	
-	public int getPayState()
-	{
-		return mPayState;
-	}
-	
-	public void setPayState(int payState)
-	{
-		 this.mPayState = payState;
-	}
-	
 	public String getConsigneePhoneNumber()
 	{
 		return mConsigneePhoneNum;
@@ -143,7 +132,8 @@ public class Order {
 		Order order = new Order();
 		try {
 			order.mId = object.getString("oid");
-			JSONObject products = object.getJSONObject("products");
+			String temp = object.getString("products");
+			JSONObject products = new JSONObject(temp);
 			Iterator<String> iter = products.keys();
 			ArrayList<ChartItem> items = new ArrayList<ChartItem>();
 			while(iter.hasNext())
@@ -157,7 +147,6 @@ public class Order {
 			order.mConsigneeName = object.getString("username");
 			order.mConsigneePhoneNum = object.getString("mobile");
 			order.mState = object.getInt("status");
-			order.mPayState = object.getInt("pay");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -175,7 +164,6 @@ public class Order {
 			obj.put("username", order.mConsigneeName);
 			obj.put("mobile", order.mConsigneePhoneNum);
 			obj.put("status", order.mState);
-			obj.put("pay", order.mPayState);
 			JSONObject products = new JSONObject();
 			for(ChartItem item:order.mItems)
 			{

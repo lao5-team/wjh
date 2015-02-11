@@ -1,11 +1,13 @@
 package com.test.juxiaohui.shop.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.test.juxiaohui.shop.server.ShopServer;
+import com.test.juxiaohui.shop.transaction.CancelOrderTransaction;
 import com.test.juxiaohui.shop.transaction.CreateOrderTransaction;
-
 import com.test.juxiaohui.shop.transaction.SubmitOrderTransaction;
+
 import junit.framework.Assert;
 import android.test.AndroidTestCase;
 
@@ -77,17 +79,55 @@ public class OrderTest extends AndroidTestCase {
 
 		//提交订单
 		SubmitOrderTransaction transaction = new SubmitOrderTransaction(order);
-		transaction.execute();
+		String new_id = transaction.execute();
 		List<Order> listOrder = OrderManager.getInstance().getUsersOrderList("yh");
 		boolean found = false;
 		for(Order orderIter:listOrder)
 		{
-			if(orderIter.getmId().equals(order.getmId()))
+			if(orderIter.getmId().equals(new_id))
 			{
 				found = true;
+				break;
 			}
 		}
 		Assert.assertTrue(found);
+		
+		//取消订单
+		CancelOrderTransaction coTrans = new CancelOrderTransaction(new_id);
+		Assert.assertEquals(Boolean.TRUE, coTrans.execute());
+		
+		listOrder = OrderManager.getInstance().getUsersOrderList("yh");
+		found = false;
+		for(Order orderIter:listOrder)
+		{
+			if(orderIter.getmId().equals(new_id))
+			{
+				Assert.assertEquals(5, orderIter.mState);
+				break;
+			}
+		}
+		
+		
+		
+		//取消一个无效订单
+		coTrans = new CancelOrderTransaction("-1");
+		Assert.assertEquals(Boolean.FALSE, coTrans.execute());
+		
+		//查询一组订单
+//		List<String> ids = new ArrayList<String>();
+//		ids.add("oid14235836748517483");
+//		ids.add("oid14235830248016656");
+//		listOrder = OrderManager.getInstance().getOrderListByIds(ids);
+//		Assert.assertEquals(2, listOrder.size());
+	}
+	
+	public void testGoods()
+	{
+		List<String> ids = new ArrayList<String>();
+		ids.add("6");
+		ids.add("7");
+		List<Goods> goods = ShopServer.getInstance().getGoodsListbyIds(ids);
+		Assert.assertEquals(2, goods.size());
 	}
 
 	@Override

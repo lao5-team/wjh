@@ -63,7 +63,7 @@ public class ShopDataManager {
 	 */
 	public List<Goods> getGoodsList(List<String> IDs)
 	{
-		return ShopServer.getInstance().getGoodsListbyIDs(IDs);
+		return ShopServer.getInstance().getGoodsListbyIds(IDs);
 	}
 	
 	public Goods getGoods(String id)
