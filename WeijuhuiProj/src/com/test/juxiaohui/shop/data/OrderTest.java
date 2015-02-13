@@ -107,6 +107,10 @@ public class OrderTest extends AndroidTestCase {
 			}
 		}
 		
+		//支付订单
+		Assert.assertTrue(ShopServer.getInstance().payOrder(listOrder.get(listOrder.size()-1).getmId()));
+		
+		Assert.assertFalse(ShopServer.getInstance().payOrder("-1"));
 		
 		
 		//取消一个无效订单

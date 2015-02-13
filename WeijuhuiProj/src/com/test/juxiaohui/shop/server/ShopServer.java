@@ -28,6 +28,7 @@ public class ShopServer {
 	final String SERVER_ADDRESS_ROOT = "http://www.li960.com/shop/api.php?s=";
 	final String SERVER_ADDRESS_PRODUCT = "http://www.li960.com/shop/api.php?s=Product";
 	final String SERVER_ADDRESS_ORDER = "http://www.li960.com/shop/api.php?s=Order";
+	final String SERVER_ADDRESS_PAY = "http://www.li960.com/shop/api.php?s=Pay";
 	public static ShopServer mInstance  = null;
 	String mSession = "";
 	
@@ -352,7 +353,7 @@ public class ShopServer {
 			e.printStackTrace();
 		}	
 		
-		String url = String.format("%s/getProductsArray&id=%s&authid=%s", SERVER_ADDRESS_ORDER, temp, mSession);
+		String url = String.format("%s/getProductsArray&id=%s&authid=%s", SERVER_ADDRESS_PRODUCT, temp, mSession);
 		SyncHTTPCaller<List<Goods>> caller = new SyncHTTPCaller<List<Goods>>(
 				url) {
 
@@ -376,6 +377,30 @@ public class ShopServer {
 		};
 		return caller.execute();
 		
+	}
+	
+	public boolean payOrder(String id)
+	{
+		String url = String.format("%s/index&oid=%s&authid=%s", SERVER_ADDRESS_PAY, id, mSession);
+		SyncHTTPCaller<Boolean> caller = new SyncHTTPCaller<Boolean>(
+				url) {
+
+			@Override
+			public Boolean postExcute(String result) {
+				Boolean resultObj = Boolean.FALSE;
+				try {
+					JSONObject json = new JSONObject(result);
+					if(json.getString("status").equals("ok"))
+					{
+						resultObj = Boolean.TRUE;
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return resultObj;
+			}
+		};
+		return caller.execute();
 	}
 	
 	private ShopServer()
