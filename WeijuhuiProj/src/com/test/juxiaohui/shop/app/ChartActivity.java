@@ -73,6 +73,7 @@ public class ChartActivity extends Activity implements IChartMediator{
 		@Override
 		public void selectItem(String id, boolean selected) {
 			ChartActivity.this.mChart.setItemSelected(id, selected);
+			mAdapter.setData(mChart.getItems());
 			showTotalPrice();
 		}
 		
@@ -83,7 +84,7 @@ public class ChartActivity extends Activity implements IChartMediator{
 			{
 				ChartActivity.this.mChart.setItemSelected(item.getID(), selected);	
 			}
-			ChartActivity.this.mAdapter.notifyDataSetChanged();
+			mAdapter.setData(mChart.getItems());
 			showTotalPrice();
 		}
 		
@@ -91,6 +92,7 @@ public class ChartActivity extends Activity implements IChartMediator{
 		public void removeItem(String id) {
 			// TODO Auto-generated method stub
 			ChartActivity.this.mChart.removeItem(id);
+			mAdapter.setData(mChart.getItems());
 			showTotalPrice();
 		}
 		
@@ -115,7 +117,7 @@ public class ChartActivity extends Activity implements IChartMediator{
 		@Override
 		public void changeItemCount(String id, int count) {
 			mChart.setItemCount(id, count);
-			mAdapter.notifyDataSetChanged();
+			mAdapter.setData(mChart.getItems());
 			showTotalPrice();
 		}
 

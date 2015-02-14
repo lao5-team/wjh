@@ -29,6 +29,15 @@ public class GoodsActivity extends Activity implements IGoodsMediator{
 	ImageView mIvPic = null;
 	TextView mTvPrize = null;
 	TextView mTvDesc = null;
+
+	public static void startActivity(Activity activity, Goods goods)
+	{
+		Intent intent = new Intent();
+		intent.setClass(activity, GoodsActivity.class);
+		IntentWrapper wrapper = new IntentWrapper(intent);
+		wrapper.setGoods(goods);
+		activity.startActivity(intent);
+	}
 	
 	public static class IntentWrapper
 	{
@@ -138,8 +147,16 @@ public class GoodsActivity extends Activity implements IGoodsMediator{
 	{
 		Intent intent = getIntent();
 		IntentWrapper intentWrapper = new IntentWrapper(intent);
-		Goods goods = intentWrapper.getGoods(); 
-		setGoods(goods);
+		Goods goods = intentWrapper.getGoods();
+		if(goods!=Goods.NULL)
+		{
+			setGoods(goods);
+		}
+		else
+		{
+			Toast.makeText(this, "商品不存在", Toast.LENGTH_SHORT).show();
+			finish();
+		}
 	}
 	
 }

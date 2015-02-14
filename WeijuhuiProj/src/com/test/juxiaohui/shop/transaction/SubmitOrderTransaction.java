@@ -14,7 +14,7 @@ public class SubmitOrderTransaction {
 	}
 	
 	/**执行提交，返回得到的id
-	 * @return
+	 * @return 如果提交成功，则返回订单id，否则返回"fail"
 	 */
 	public String execute()
 	{

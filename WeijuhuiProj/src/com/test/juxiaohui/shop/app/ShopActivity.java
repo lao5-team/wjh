@@ -8,6 +8,7 @@ import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.data.ShopCategory;
 import com.test.juxiaohui.shop.data.ShopDataManager;
 import com.test.juxiaohui.shop.mediator.IShopMediator;
+import com.test.juxiaohui.shop.server.ShopServer;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;
 
@@ -138,6 +139,7 @@ public class ShopActivity extends FragmentActivity implements IShopMediator{
 	
 	private void initData()
 	{
+
 		mListCategory = ShopDataManager.getInstance().getMainCategoryList();
 		
 	}

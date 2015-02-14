@@ -12,12 +12,12 @@ import com.test.juxiaohui.shop.data.Chart.ChartItem;
 public class Order {
 
 	public static int STATE_INIT = -1;
-	public static int STATE_SENDING = 0;
-	public static int STATE_RECEIVED = 1;
-	public static int STATE_REFUSE = 2;
-	
-	public static int PAYSTATE_UNDONE = 0;
-	public static int PAYSTATE_DONE = 1;
+	public static int STATE_UNPAY = 0;
+	public static int STATE_PAYED = 1;
+	public static int STATE_UNSEND = 2;
+	public static int STATE_SENDING = 3;
+	public static int STATE_RECEIVED = 4;
+	public static int STATE_REFUSE = 5;
 	protected String mId = "";
 
 	protected List<ChartItem> mItems;
@@ -30,7 +30,7 @@ public class Order {
 
 	protected String mOtherMessage = "";
 	
-	protected int mState = 0;
+	protected int mState = -1;
 	
 	
 	public static Order NULL = new Order()

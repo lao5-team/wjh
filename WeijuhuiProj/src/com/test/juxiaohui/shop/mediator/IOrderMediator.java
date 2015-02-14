@@ -1,5 +1,6 @@
 package com.test.juxiaohui.shop.mediator;
 
+import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.data.Order;
 
 public interface IOrderMediator {
@@ -7,7 +8,7 @@ public interface IOrderMediator {
 	/**
 	 * 显示商品详细信息
 	 */
-	public void openGoods();
+	public void openGoods(Goods goods);
 	/**
 	 * 显示收货人信息
 	 */

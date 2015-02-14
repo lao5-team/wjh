@@ -8,17 +8,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.shop.data.Chart;
+import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.data.Order;
+import com.test.juxiaohui.shop.data.OrderManager;
 import com.test.juxiaohui.shop.mediator.IOrderMediator;
 
 import android.app.Activity;
 import android.os.Bundle;
 import com.test.juxiaohui.shop.transaction.CreateOrderTransaction;
+import com.test.juxiaohui.shop.transaction.PayOrderTransaction;
+import com.test.juxiaohui.shop.transaction.SubmitOrderTransaction;
 import com.test.juxiaohui.widget.CommonAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OrderActivity extends Activity implements IOrderMediator{
+
+	public static final int REQUEST_PAY = 1;
 
 	public static void startActivity(Activity activity, Order order)
 	{
@@ -115,9 +124,8 @@ public class OrderActivity extends Activity implements IOrderMediator{
 	}
 
 	@Override
-	public void openGoods() {
-		// TODO Auto-generated method stub
-		
+	public void openGoods(Goods goods) {
+		GoodsActivity.startActivity(this, goods);
 	}
 
 	@Override
@@ -149,25 +157,69 @@ public class OrderActivity extends Activity implements IOrderMediator{
 
 	@Override
 	public void submitOrder() {
-		// TODO Auto-generated method stub
-		
+		SubmitOrderTransaction transaction = new SubmitOrderTransaction(mOrder);
+		final String new_id = transaction.execute();
+		if(!new_id.endsWith("fail"))
+		{
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(OrderActivity.this, "提交成功", Toast.LENGTH_SHORT).show();
+					List<String> ids = new ArrayList<String>();
+					ids.add(new_id);
+					try
+					{
+						Order order = OrderManager.getInstance().getOrderListByIds(ids).get(0);
+						setOrder(order);
+						setOrderState();
+					}
+					catch(IndexOutOfBoundsException exception)
+					{
+						Toast.makeText(OrderActivity.this, "获取订单号异常", Toast.LENGTH_SHORT).show();
+						exception.printStackTrace();
+					}
+
+				}
+			});
+		}
+		else
+		{
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(OrderActivity.this, "提交失败", Toast.LENGTH_SHORT).show();
+				}
+			});
+		}
 	}
 
 	@Override
 	public void payOrder() {
-		// TODO Auto-generated method stub
+		Intent intent = new Intent();
+		intent.setClass(this, PayActivity.class);
+		intent.putExtra("price", mOrder.calcTotalPrice());
+		startActivityForResult(intent, REQUEST_PAY);
 		
 	}
 
 	@Override
 	public void cancelOrder() {
-		// TODO Auto-generated method stub
-		
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(OrderActivity.this, "功能缺失", Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 
 	@Override
 	public void confirmOrder() {
-		// TODO Auto-generated method stub
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(OrderActivity.this, "功能缺失", Toast.LENGTH_SHORT).show();
+			}
+		});
 		
 	}
 
@@ -180,9 +232,13 @@ public class OrderActivity extends Activity implements IOrderMediator{
 		{
 			mBtnOrder.setText("提交订单");
 		}
-		else if(mOrder.getState()==Order.PAYSTATE_UNDONE)
+		else if(mOrder.getState()==Order.STATE_UNPAY)
 		{
 			mBtnOrder.setText("支付订单");
+		}
+		else if(mOrder.getState()==Order.STATE_SENDING)
+		{
+			mBtnOrder.setText("提醒发货");
 		}
 		else if(mOrder.getState()==Order.STATE_SENDING)
 		{
@@ -200,9 +256,18 @@ public class OrderActivity extends Activity implements IOrderMediator{
 				{
 					submitOrder();
 				}
-				else if(mOrder.getState()==Order.PAYSTATE_UNDONE)
+				else if(mOrder.getState()==Order.STATE_UNPAY)
 				{
 					payOrder();
+				}
+				else if(mOrder.getState()==Order.STATE_UNSEND)
+				{
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(OrderActivity.this, "不支持此功能", Toast.LENGTH_SHORT).show();
+						}
+					});
 				}
 				else if(mOrder.getState()==Order.STATE_SENDING)
 				{
@@ -210,10 +275,37 @@ public class OrderActivity extends Activity implements IOrderMediator{
 				}
 				else if(mOrder.getState()==Order.STATE_RECEIVED)
 				{
-					mBtnOrder.setText("重新购买");
-					Order order = CreateOrderTransaction.createOrderFromOrder(mOrder);
+					//Order order = CreateOrderTransaction.createOrderFromOrder(mOrder);
+					//
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(OrderActivity.this, "未想好如何做", Toast.LENGTH_SHORT).show();
+						}
+					});
 				}
 			}
 		});
+	}
+
+	@Override
+	public  void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if(requestCode == REQUEST_PAY)
+		{
+			String result = data.getStringExtra("result");
+			if(result.endsWith("success"))
+			{
+				Toast.makeText(OrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+				PayOrderTransaction transaction = new PayOrderTransaction(mOrder);
+				transaction.pay();
+				mBtnOrder.setEnabled(false);
+
+			}
+			else
+			{
+				Toast.makeText(OrderActivity.this, "支付失败", Toast.LENGTH_SHORT).show();
+			}
+		}
 	}
 }

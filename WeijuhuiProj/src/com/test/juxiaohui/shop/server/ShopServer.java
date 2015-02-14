@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.JsonWriter;
 import junit.framework.Assert;
 
 import org.apache.http.HttpResponse;
@@ -69,27 +68,24 @@ public class ShopServer {
 	public void login(String username, String password)
 	{
 		String url = String.format("%sUser/login&name=%s&password=%s", SERVER_ADDRESS_ROOT, username, password);
-		HttpPost post = new HttpPost(url);
-		try {
-			HttpResponse httpResponse = new DefaultHttpClient().execute(post);
-			Assert.assertTrue(httpResponse.getStatusLine().getStatusCode() == 200);
-			String str = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-			try {
-				JSONObject obj = new JSONObject(str);
-				Log.v("test", obj.toString());
-				obj = obj.getJSONObject("data");
-				mSession = obj.getString("authid");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		SyncHTTPCaller<Void> caller = new SyncHTTPCaller<Void>(
+				url) {
+
+			@Override
+			public Void postExcute(String result) {
+				try {
+					JSONObject obj = new JSONObject(result);
+					obj = obj.getJSONObject("data");
+					mSession = obj.getString("authid");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return null;
 			}
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		};
+		caller.execute();
+
+
 	}
 	
 	public List<ShopCategory> getCategoryList()

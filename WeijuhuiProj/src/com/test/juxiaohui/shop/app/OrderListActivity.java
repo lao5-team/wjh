@@ -2,6 +2,7 @@ package com.test.juxiaohui.shop.app;
 
 import java.util.List;
 
+import android.widget.AdapterView;
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.domain.UserManager;
@@ -39,7 +40,7 @@ public class OrderListActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		mOrderList = OrderManager.getInstance().getUsersOrderList(UserManager.getInstance().getCurrentUser().mID);
+		mOrderList = OrderManager.getInstance().getUsersOrderList("yh");
 		mAdapter = new CommonAdapter<Order>(mOrderList, new IAdapterItem<Order>() {
 
 			@Override
@@ -52,8 +53,8 @@ public class OrderListActivity extends Activity {
 					holder.tvStatus = (TextView)itemView.findViewById(R.id.textView_state);
 					holder.tvId = (TextView)itemView.findViewById(R.id.textView_id);
 					holder.tvPay = (TextView)itemView.findViewById(R.id.textView_price);
-					holder.btnRebuy = (Button)itemView.findViewById(R.id.button_buy);
-					holder.lvGoods = (ListView)itemView.findViewById(R.id.listView_goods);
+					//holder.btnRebuy = (Button)itemView.findViewById(R.id.button_buy);
+					//holder.lvGoods = (ListView)itemView.findViewById(R.id.listView_goods);
 					itemView.setTag(holder);
 					convertView = itemView;
 				}
@@ -62,15 +63,31 @@ public class OrderListActivity extends Activity {
 				holder.tvStatus.setText(getStateString(fOrder));
 				holder.tvId.setText("订单号 " + fOrder.getmId());
 				holder.tvPay.setText("支付金额 " + fOrder.calcTotalPrice() + " 元");
-				holder.btnRebuy.setOnClickListener(new OnClickListener() {
-					
+				//holder.btnRebuy.setOnClickListener(new OnClickListener() {
+/*
 					@Override
 					public void onClick(View v) {
 						//#
 					}
+				});*/
+				//holder.lvGoods.setAdapter(new CommonAdapter<ChartItem>(fOrder.getItems(), new Chart.AdapterItem(OrderListActivity.this, null)));
+				convertView.setClickable(true);
+				convertView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						OrderActivity.startActivity(OrderListActivity.this, fOrder);
+					}
 				});
-				holder.lvGoods.setAdapter(new CommonAdapter<ChartItem>(fOrder.getItems(), new Chart.AdapterItem(OrderListActivity.this, null)));
 				return convertView;
+			}
+		});
+		setContentView(R.layout.activity_orderlist);
+		ListView listView = (ListView)findViewById(R.id.listView_orderlist);
+		listView.setAdapter(mAdapter);
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				OrderActivity.startActivity(OrderListActivity.this, mOrderList.get(position));
 			}
 		});
 	}

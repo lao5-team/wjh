@@ -24,7 +24,10 @@ public class CommonAdapter<T> extends BaseAdapter {
 		mItem = item;
 	}
 
-	
+	/**
+	 * 更新数据
+	 * @param dataList
+	 */
     public void setData(List<T> dataList)
     {
     	if(null == dataList)
@@ -32,6 +35,7 @@ public class CommonAdapter<T> extends BaseAdapter {
     		throw new IllegalArgumentException("dataList is null !");
     	}
     	mDataList = dataList;
+		notifyDataSetChanged();
     }
     
 	@Override
