@@ -339,12 +339,15 @@ public class Chart {
 			if(null != mMediator)
 			{
 				holder.cbSelect.setChecked(data.isSelected());
-				holder.cbSelect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				holder.cbSelect.setOnClickListener(new OnClickListener() {
+					
 					@Override
-					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						mMediator.selectItem(fData.getID(), isChecked);
+					public void onClick(View v) {
+						CheckBox cb = (CheckBox)v;
+						mMediator.selectItem(fData.getID(), cb.isChecked());
+						
 					}
-				});				
+				});
 			}
 			else
 			{
