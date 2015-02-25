@@ -2,27 +2,25 @@ package com.test.juxiaohui.shop.app;
 
 import java.util.List;
 
-import android.widget.AdapterView;
-import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.domain.UserManager;
-import com.test.juxiaohui.shop.data.Chart;
+import com.test.juxiaohui.shop.app.OrderListActivity.ViewHolder;
 import com.test.juxiaohui.shop.data.Order;
 import com.test.juxiaohui.shop.data.OrderManager;
-import com.test.juxiaohui.shop.data.Chart.ChartItem;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class OrderListActivity extends Activity {
-	
+public class OrderListFragment extends Fragment {
 	ListView mListView;
 	CommonAdapter<Order> mAdapter;
 	List<Order> mOrderList;
@@ -37,7 +35,7 @@ public class OrderListActivity extends Activity {
 		
 	}
 	@Override
-	public void onCreate(Bundle savedInstanceState)
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		mOrderList = OrderManager.getInstance().getUsersOrderList("yh");
@@ -48,7 +46,7 @@ public class OrderListActivity extends Activity {
 				// TODO Auto-generated method stub
 				if(null == convertView)
 				{
-					View itemView = getLayoutInflater().inflate(R.layout.item_order, null);
+					View itemView = getActivity().getLayoutInflater().inflate(R.layout.item_order, null);
 					ViewHolder holder = new ViewHolder();
 					holder.tvStatus = (TextView)itemView.findViewById(R.id.textView_state);
 					holder.tvId = (TextView)itemView.findViewById(R.id.textView_id);
@@ -65,21 +63,22 @@ public class OrderListActivity extends Activity {
 				convertView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						OrderActivity.startActivity(OrderListActivity.this, fOrder);
+						OrderActivity.startActivity(getActivity(), fOrder);
 					}
 				});
 				return convertView;
 			}
 		});
-		setContentView(R.layout.activity_orderlist);
-		ListView listView = (ListView)findViewById(R.id.listView_orderlist);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.activity_orderlist, null);
+		ListView listView = (ListView)view.findViewById(R.id.listView_orderlist);
 		listView.setAdapter(mAdapter);
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				OrderActivity.startActivity(OrderListActivity.this, mOrderList.get(position));
+				OrderActivity.startActivity(getActivity(), mOrderList.get(position));
 			}
 		});
+		return view;
 	}
 	
 	String getStateString(Order order)
@@ -98,5 +97,4 @@ public class OrderListActivity extends Activity {
 		}
 		return "未知状态";
 	}
-
 }

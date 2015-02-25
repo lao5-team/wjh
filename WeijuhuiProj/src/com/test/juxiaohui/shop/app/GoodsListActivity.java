@@ -26,6 +26,25 @@ import android.widget.TextView;
  */
 public class GoodsListActivity extends Activity {
 	
+	public static class IntentWrapper
+	{
+		Intent mIntent = null;
+		public IntentWrapper(Intent intent)
+		{
+			mIntent = intent;
+		}
+		
+		public void setSubCateID(String id)
+		{
+			mIntent.putExtra("id", id);
+		}
+		
+		public String getSubCateID()
+		{
+			return mIntent.getStringExtra("id");
+		}
+	}
+	
 	private class GoodsItem implements IAdapterItem<Goods>
 	{
 		private class ViewHolder
@@ -79,7 +98,7 @@ public class GoodsListActivity extends Activity {
 					int position, long id) {
 				Goods goods = mDataList.get(position);
 				Intent intent = new Intent(GoodsListActivity.this, GoodsActivity.class);
-				IntentWrapper wrapper = new IntentWrapper(intent);
+				GoodsActivity.IntentWrapper wrapper = new GoodsActivity.IntentWrapper(intent);
 				wrapper.setGoods(goods);
 				GoodsListActivity.this.startActivity(intent);
 			}
@@ -89,7 +108,7 @@ public class GoodsListActivity extends Activity {
 	private void initData()
 	{
 		Intent intent = getIntent();
-		ShopActivity.IntentWrapper wrapper = new ShopActivity.IntentWrapper(intent);
+		IntentWrapper wrapper = new IntentWrapper(intent);
 		mDataList = ShopDataManager.getInstance().getGoodsListinCategory(wrapper.getSubCateID(), 0, 10);
 	}
 
