@@ -502,10 +502,10 @@ public class EntryActivity extends FragmentActivity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			moveTaskToBack(false);
-			return true;
-		}
+//		if (keyCode == KeyEvent.KEYCODE_BACK) {
+//			moveTaskToBack(false);
+//			return true;
+//		}
 		return super.onKeyDown(keyCode, event);
 	}
 

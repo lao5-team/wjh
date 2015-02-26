@@ -63,7 +63,7 @@ public class UserinfoFragment extends Fragment {
 	public UserinfoFragment(MyUser user)
 	{
 		//Assert.assertNotNull(user);
-		if(null == user)
+		if(null == user&&null!=getActivity())
 		{
 			Toast.makeText(getActivity(), "No current user, do you test in local mode?", Toast.LENGTH_SHORT).show();
 			return;

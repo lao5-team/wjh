@@ -127,6 +127,9 @@
         </activity>
         <activity android:name=".shop.app.ShopMainActivity"
                   android:theme="@style/horizontal_slide">
+        </activity>
+        
+        <activity android:name=".activity.EntryTest" android:theme="@style/horizontal_slide">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
