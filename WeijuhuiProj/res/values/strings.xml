@@ -113,4 +113,7 @@
     <string name="nan">男</string>
     <string name="buxian">不限</string>
     <string name="daiguimi">对方可携带一名闺蜜</string>
+    
+    <!--  register about -->
+    <string name="register_text">注册</string>
 </resources>
