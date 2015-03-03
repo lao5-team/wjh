@@ -128,12 +128,18 @@
         <activity android:name=".shop.app.ShopMainActivity"
                   android:theme="@style/horizontal_slide">
         </activity>
-        
-        <activity android:name=".activity.EntryTest" android:theme="@style/horizontal_slide">
+
+        <activity android:name=".theone.CameraActivity"
+                  android:theme="@style/horizontal_slide">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+
+
+        
+        <activity android:name=".activity.EntryTest" android:theme="@style/horizontal_slide">
         </activity>
     </application>
 
@@ -151,7 +157,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-
+    <uses-permission android:name="android.permission.CAMERA" />
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:label="Test Activty"
