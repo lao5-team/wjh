@@ -8,6 +8,7 @@
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="com.test.juxiaohui" />
 
+
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="19" />
@@ -135,6 +136,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".mdxc.app.LoginActivity"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

@@ -12,17 +12,14 @@ import com.test.juxiaohui.Constant;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.adapter.ActivityMemberSelectAdapter;
 import com.test.juxiaohui.adapter.ActivityMemberStateAdapter;
-import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.widget.Sidebar;
 import com.test.juxiaohui.R;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;

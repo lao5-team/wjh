@@ -13,7 +13,6 @@
  */
 package com.test.juxiaohui.activity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,13 +20,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.easemob.chat.EMChatConfig;
-import com.easemob.chat.EMChatManager;
-import com.easemob.exceptions.EMNetworkUnconnectedException;
-import com.easemob.exceptions.EaseMobException;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.data.MyUser;
 /**

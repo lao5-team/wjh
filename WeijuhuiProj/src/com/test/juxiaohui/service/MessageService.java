@@ -2,9 +2,7 @@ package com.test.juxiaohui.service;
 
 import java.util.ArrayList;
 
-import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.activity.ActivityDetailActivity;
 import com.test.juxiaohui.activity.MessagesActivity;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.message.MyMessage;

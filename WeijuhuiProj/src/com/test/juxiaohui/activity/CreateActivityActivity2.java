@@ -5,33 +5,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import junit.framework.Assert;
-
-import com.easemob.chat.EMChatManager;
-import com.easemob.chat.EMConversation;
-import com.easemob.chat.EMGroup;
-import com.easemob.chat.EMGroupManager;
-import com.easemob.chat.EMMessage;
-import com.easemob.chat.TextMessageBody;
-import com.easemob.chat.EMMessage.ChatType;
-import com.easemob.exceptions.EaseMobException;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.ActivityData.ActivityBuilder;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
-import com.test.juxiaohui.data.message.MyMessage;
-import com.test.juxiaohui.domain.MessageManager;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.UserManager;
-import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.mediator.IActivityCreateMediator;
-import com.test.juxiaohui.mediator.IActivityDetailMediator;
 import com.test.juxiaohui.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -39,14 +24,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract.Events;
 import android.provider.CalendarContract.Reminders;
-import android.text.TextWatcher;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 

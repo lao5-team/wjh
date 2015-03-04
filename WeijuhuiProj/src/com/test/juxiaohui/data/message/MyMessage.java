@@ -2,14 +2,11 @@ package com.test.juxiaohui.data.message;
 
 import java.io.Serializable;
 
-import junit.framework.Assert;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 
-import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 
 /**

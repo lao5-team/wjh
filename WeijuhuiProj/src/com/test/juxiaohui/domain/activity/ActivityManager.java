@@ -5,23 +5,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.cache.temp.JSONCache;
 import com.test.juxiaohui.data.ActivityData;
-import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
-import com.test.juxiaohui.data.MyUser;
-import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
-import com.test.juxiaohui.domain.MessageManager.MessageListener;
 
 public class ActivityManager {
 	private static ActivityManager mInstance = null;

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import junit.framework.Assert;
 
-import com.test.juxiaohui.Constant;
-import com.test.juxiaohui.activity.ActivityMembersActivity;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.R;
 
@@ -14,12 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class ActivityMemberStateAdapter extends ArrayAdapter<MyUser>  {
 

@@ -19,22 +19,16 @@ import java.util.List;
 
 import com.test.juxiaohui.Constant;
 import com.test.juxiaohui.activity.ActivityMembersActivity;
-import com.test.juxiaohui.activity.ContactlistFragment;
+import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.domain.User;
 import com.test.juxiaohui.widget.Sidebar;
 import com.test.juxiaohui.R;
 
-import android.app.Activity;
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -59,7 +53,7 @@ public class ActivityMemberSelectAdapter extends ArrayAdapter<User>  implements 
 	private SparseIntArray sectionOfPosition;
 	private Sidebar sidebar;
 	private int res;
-	private ArrayList<com.test.juxiaohui.data.MyUser> mSelectedMembers = new ArrayList<com.test.juxiaohui.data.MyUser>();
+	private ArrayList<MyUser> mSelectedMembers = new ArrayList<MyUser>();
 	private HashMap<String, Boolean> mSelectedMaps = new  HashMap<String, Boolean>();
 	/**
 	 * @param context
@@ -68,7 +62,7 @@ public class ActivityMemberSelectAdapter extends ArrayAdapter<User>  implements 
 	 * @param sidebar
 	 * @param type  联系人的使用类型 ContactlistFragment.CONTACTS ,ContactlistFragment.ACTIVITY 
 	 */
-	public ActivityMemberSelectAdapter(Context context, int resource, List<User> objects, ArrayList<com.test.juxiaohui.data.MyUser> selectMembers, Sidebar sidebar) {
+	public ActivityMemberSelectAdapter(Context context, int resource, List<User> objects, ArrayList<MyUser> selectMembers, Sidebar sidebar) {
 		super(context, resource, objects);
 		this.res = resource;
 		this.sidebar=sidebar;
@@ -76,7 +70,7 @@ public class ActivityMemberSelectAdapter extends ArrayAdapter<User>  implements 
 		if(null!=selectMembers)
 		{
 			mSelectedMembers = selectMembers;
-			for(com.test.juxiaohui.data.MyUser user: mSelectedMembers)
+			for(MyUser user: mSelectedMembers)
 			{
 				mSelectedMaps.put(user.mName, true);
 			}
@@ -216,7 +210,7 @@ public class ActivityMemberSelectAdapter extends ArrayAdapter<User>  implements 
 				return;
 			}
 		}
-		com.test.juxiaohui.data.MyUser user1 = new com.test.juxiaohui.data.MyUser();
+		MyUser user1 = new MyUser();
 		user1.mName = user.getNick();
 		mSelectedMembers.add(user1);
 		mSelectedMaps.put(user1.mName, true);

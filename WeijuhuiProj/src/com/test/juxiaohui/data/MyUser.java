@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import junit.framework.Assert;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

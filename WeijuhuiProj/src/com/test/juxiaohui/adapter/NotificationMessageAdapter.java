@@ -2,7 +2,6 @@ package com.test.juxiaohui.adapter;
 
 import java.util.ArrayList;
 
-import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.activity.ActivityDetailActivity;
 import com.test.juxiaohui.data.ActivityData;
@@ -13,7 +12,6 @@ import com.test.juxiaohui.data.message.CommentMessage;
 import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.UserManager;
-import com.test.juxiaohui.domain.activity.ActivityManager;
 
 import android.content.Context;
 import android.content.Intent;

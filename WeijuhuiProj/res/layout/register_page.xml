@@ -7,7 +7,7 @@
 
 
     
-    <ScrollView
+ <!--   <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bookshelf_bg_color" >
@@ -308,6 +308,6 @@
                 android:background="@drawable/btn_blue_style"
                 android:padding="0dp" />
         </LinearLayout>
-    </ScrollView>
+    </ScrollView>-->
 
 </LinearLayout>

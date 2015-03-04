@@ -4,7 +4,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.test.juxiaohui.data.ActivityData;
-import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.domain.MyServerManager;
 
 public class ActivityComment extends Comment {

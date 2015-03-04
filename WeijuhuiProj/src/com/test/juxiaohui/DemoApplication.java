@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,25 +32,18 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.app.NotificationManager;
 
 import com.easemob.chat.ConnectionListener;
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMChatOptions;
-import com.easemob.chat.EMContactListener;
-import com.easemob.chat.EMContactManager;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.OnMessageNotifyListener;
 import com.easemob.chat.TextMessageBody;
-import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.chat.OnNotificationClickListener;
-import com.test.juxiaohui.activity.ChatActivity;
 import com.test.juxiaohui.activity.EntryActivity;
 import com.test.juxiaohui.activity.MainActivity;
 import com.test.juxiaohui.data.ActivityData;
-import com.test.juxiaohui.data.DbOpenHelper;
-import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.UserDao;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
 import com.test.juxiaohui.data.message.MyMessage;
@@ -60,7 +51,6 @@ import com.test.juxiaohui.domain.MessageManager;
 import com.test.juxiaohui.domain.User;
 import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.utils.PreferenceUtils;
-import com.test.juxiaohui.R;
 //import com.easemob.chatuidemo.activity.ChatActivity;
 //import com.easemob.chatuidemo.activity.MainActivity;
 

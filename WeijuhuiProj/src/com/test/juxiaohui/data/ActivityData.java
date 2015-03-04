@@ -12,12 +12,8 @@ import org.json.JSONObject;
 
 import junit.framework.Assert;
 import android.text.format.DateFormat;
-import android.view.inputmethod.CompletionInfo;
 
-import com.test.juxiaohui.DemoApplication;
-import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
-import com.test.juxiaohui.data.DianpingDao.SimpleBusiness;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.UserManager;
 
