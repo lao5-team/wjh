@@ -1,6 +1,10 @@
 package com.test.juxiaohui.common.manager;
 
 import com.test.juxiaohui.common.dal.IUserServer;
+import com.test.juxiaohui.mdxc.server.TestUserServer;
+import com.test.juxiaohui.utils.SyncHTTPCaller;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by yihao on 15/3/4.
@@ -10,20 +14,22 @@ public class ServerManager {
     private static ServerManager mInstance = null;
     private IUserServer mUserServer;
 
+
+
     private ServerManager()
     {
-
+        mUserServer = new TestUserServer();
     }
 
-    public void register(String username ,String password)
+    public String register(String username ,String password)
     {
-        mUserServer.register(username, password);
+        return mUserServer.register(username, password);
     }
 
     public String login(String username ,String password)
     {
-        mUserServer.login(username, password);
-        return "Success";
+        return mUserServer.login(username, password);
+
     }
 
     public void logout()
@@ -44,7 +50,6 @@ public class ServerManager {
         }
         return mInstance;
     }
-
 
 
 

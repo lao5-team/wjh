@@ -2,9 +2,12 @@ package com.test.juxiaohui.mdxc.app;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.common.manager.ServerManager;
 import com.test.juxiaohui.mdxc.mediator.ILoginMediator;
@@ -18,10 +21,30 @@ public class LoginActivity extends Activity implements ILoginMediator{
     EditText mEtxPassword;
     Button mBtnOK;
     Button mBtnCancel;
+    String mLoginResult = "";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mdxc_activity_login);
+        addUsernameView();
+        addPasswordView();
+
+        mBtnOK = (Button)findViewById(R.id.button_OK);
+        mBtnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                confirm();
+            }
+        });
+
+        mBtnCancel = (Button)findViewById(R.id.button_Cancel);
+        mBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancel();
+            }
+        });
     }
 
     @Override
@@ -31,7 +54,7 @@ public class LoginActivity extends Activity implements ILoginMediator{
 
     @Override
     public void addPasswordView() {
-        mEtxPassword = (EditText)findViewById(R.id.editText_username);
+        mEtxPassword = (EditText)findViewById(R.id.editText_password);
     }
 
     @Override
@@ -51,8 +74,8 @@ public class LoginActivity extends Activity implements ILoginMediator{
 
         if(isValid)
         {
-            String result = ServerManager.getInstance().login(mEtxUsername.getEditableText().toString(), mEtxPassword.getEditableText().toString());
-            if(result.contains("Success"))
+            mLoginResult = ServerManager.getInstance().login(mEtxUsername.getEditableText().toString(), mEtxPassword.getEditableText().toString());
+            if(mLoginResult.contains("Success"))
             {
                 showErrorMessage("Login Success");
             }
@@ -73,5 +96,11 @@ public class LoginActivity extends Activity implements ILoginMediator{
                 Toast.makeText(LoginActivity.this, message,Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public String getLoginResult()
+    {
+        Log.v(DemoApplication.TAG, "Login Result = " + mLoginResult);
+        return mLoginResult;
     }
 }

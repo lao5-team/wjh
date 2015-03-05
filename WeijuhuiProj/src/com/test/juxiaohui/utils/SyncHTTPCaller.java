@@ -24,7 +24,7 @@ public abstract class SyncHTTPCaller<T> {
 	
 	String mURL;
 	String mCookie = "";
-	String mEntity = "";
+	String mEntity = null;
 	public SyncHTTPCaller(String URL)
 	{
 		mURL = URL;
@@ -48,18 +48,10 @@ public abstract class SyncHTTPCaller<T> {
 			public T call() throws Exception {
 				T result = null;
 				HttpPost post = new HttpPost(mURL);
-				//post.addHeader("Cookie", mCookie);
-				//post.setEntity(new StringEntity("test order"));
 
-				if(mEntity.length()>0)
+				if(mEntity!=null)
 				{
-					List params=new ArrayList();
-					params.add(new BasicNameValuePair("products", mEntity));
-					post.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-/*					HttpParams params = new BasicHttpParams();
-					params.setParameter("products", mEntity);
-					params.setParameter("authid", mCookie);
-					post.setParams(params);*/
+					post.setEntity(new StringEntity(mEntity, "utf-8"));
 				}
 
 				HttpResponse httpResponse;

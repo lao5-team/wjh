@@ -25,7 +25,7 @@ public class User {
 
     public String getInnerName()
     {
-        return mPassword;
+        return mUsername;
     }
 
     public void setUsername(String username)
