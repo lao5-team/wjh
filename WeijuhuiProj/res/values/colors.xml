@@ -2,8 +2,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/color1" name="Red">#FFFF0000</color>
     <color android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/color2" name="Blue">#FF0000FF</color>
-         <color name="common_top_bar_blue">#4ebcd3</color>
-      <color name="btn_login_normal">#007086</color>
+    <color name="common_top_bar_blue">#4ebcd3</color>
+    <color name="btn_login_normal">#007086</color>
     <color name="btn_login_pressed">#303744</color>
     <color name="btn_logout_normal">#d33f3f</color>
     <color name="btn_logout_pressed">#DA5A4D</color>
@@ -34,4 +34,13 @@
      <color name="grid_state_pressed">#1Affffff</color>
     <color name="grid_state_focused">#80000000</color>
     <color name="gray_light">#e0e0e0</color>
+    
+    <!-- normal color -->
+    <color name="white">#ffffff</color>
+    
+    <!-- register about -->
+    <color name="register_backgroud">#ffefefef</color>
+    <color name="register_text_color">#ff333333</color>
+    <color name="register_hint_text_color">#ffdddddd</color>
+    <color name="color_c2c2c2">#ffc2c2c2</color>
 </resources>

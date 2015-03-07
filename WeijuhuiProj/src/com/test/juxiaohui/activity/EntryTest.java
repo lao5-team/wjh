@@ -1,6 +1,7 @@
 package com.test.juxiaohui.activity;
 
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.mdxc.app.RegisterActivity;
 import com.test.juxiaohui.shop.app.ShopMainActivity;
 
 import android.app.Activity;
@@ -34,6 +35,16 @@ public class EntryTest extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(EntryTest.this, ShopMainActivity.class);
 				startActivity(intent);				
+			}
+		});
+		
+		Button btn_register = (Button)findViewById(R.id.button_register);
+		btn_register.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				RegisterActivity.startActivity(EntryTest.this);
 			}
 		});
 	}

@@ -116,4 +116,11 @@
     
     <!--  register about -->
     <string name="register_text">注册</string>
+    <string name="telephone_number">手机号码</string>
+    <string name="password">密码</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="name_is_null">请输入手机号码</string>
+    <string name="password_is_null">请输入密码</string>
+    <string name="user_name_invalid">您输入的手机号码无效，请重新输入</string>
+    <string name="password_confirm_error">您两次输入的密码不一致，请重新输入</string>
 </resources>
