@@ -1,9 +1,11 @@
 package com.test.juxiaohui.mdxc.app;
 
 
+import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -114,10 +116,28 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 			mRegisterResult = "password_confirm_error";
 			return;
 		}
-		showErrorMessage(""+name+"      "+password);
-		mRegisterResult = ServerManager.getInstance().register(name, password);
+		String[] params = {name,password};
+		new RegisterTask().execute(params);
 	}
 	
+	//注册调用不要在主线程中，否则会抛异常。
+	private class RegisterTask extends AsyncTask<String, Integer, String>
+	{
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			// TODO Auto-generated method stub
+			return ServerManager.getInstance().register(arg0[0], arg0[1]);
+		}
+		
+		@Override
+		protected void onPostExecute(String result)
+		{
+			mRegisterResult = result;
+			super.onPostExecute(result);
+		}
+		
+	}
 
 	@Override
 	public void cancel() {
