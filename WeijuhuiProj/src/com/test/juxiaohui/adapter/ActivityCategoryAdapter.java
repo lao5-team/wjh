@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/**
+ * 给活动分类展示用，点击某一个分类时，会仅显示该分类的活动列表
+ */
 public class ActivityCategoryAdapter extends BaseAdapter {
 
 	String[] mCategories = {};

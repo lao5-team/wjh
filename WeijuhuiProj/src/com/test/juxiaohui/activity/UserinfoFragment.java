@@ -70,7 +70,7 @@ public class UserinfoFragment extends Fragment {
 		}
 		
 		mUser = user;
-		Log.v(DemoApplication.TAG, String.format("Userinfo is %s", MyUser.toJSON(user).toString()));
+		//Log.v(DemoApplication.TAG, String.format("Userinfo is %s", MyUser.toJSON(user).toString()));
 	}
 	
 	@Override

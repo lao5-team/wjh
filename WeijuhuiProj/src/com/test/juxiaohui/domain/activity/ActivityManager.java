@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.test.juxiaohui.domain.BmobServerManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,9 +106,10 @@ public class ActivityManager {
 	 * 返回最近的活动
 	 * @return 
 	 */
-	public ArrayList<ActivityData> getRecentActivity()
+	public List<ActivityData> getRecentActivity()
 	{
-		return MyServerManager.getInstance().getAllActivity();
+		List<String> ids = BmobServerManager.getInstance().getAllActivityIds();
+		return BmobServerManager.getInstance().getActivityByIds(ids);
 	}
 	
 	/**
@@ -183,6 +185,29 @@ public class ActivityManager {
 		return null;
 		
 	}
+
+	public List<String> getIdsByType(String type)
+	{
+		return BmobServerManager.getInstance().getActivityIdsByType(type);
+
+	}
+
+	public List<ActivityData> getActivityByIds(List<String> ids)
+	{
+		return BmobServerManager.getInstance().getActivityByIds(ids);
+	}
+
+
+
+	public void clearActivityTest()
+	{
+		File file = new File(DemoApplication.getInstance().getCacheDir() + File.separator + "activities.txt");
+		file.delete();
+		mActivityList.clear();
+		notifyDataChanged();
+	}
+
+
 	
 	private void notifyDataChanged()
 	{
@@ -247,13 +272,7 @@ public class ActivityManager {
 		}		
 	}
 	
-	public void clearActivityTest()
-	{
-		File file = new File(DemoApplication.getInstance().getCacheDir() + File.separator + "activities.txt");
-		file.delete();
-		mActivityList.clear();
-		notifyDataChanged();
-	}
+
 
 	
 	

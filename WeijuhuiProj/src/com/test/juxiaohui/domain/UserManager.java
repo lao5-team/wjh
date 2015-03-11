@@ -6,6 +6,9 @@ import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.DbOpenHelper;
 import com.test.juxiaohui.data.MyUser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserManager {
 	private static UserManager mInstance = null;
 	private MyUser mCurrentUser = null;
@@ -89,6 +92,11 @@ public class UserManager {
 		{
 			MyServerManager.getInstance().updateUserInfo(user);
 		}
+	}
+
+	public List<MyUser> getUsers(List<String> names)
+	{
+		return new ArrayList<MyUser>();
 	}
 	
 }

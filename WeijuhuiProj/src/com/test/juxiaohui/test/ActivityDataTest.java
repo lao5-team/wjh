@@ -34,18 +34,18 @@ public class ActivityDataTest extends InstrumentationTestRunner {
 		MyUser testUser = new MyUser();
 		testUser.mName = "testCreator";
 		
-		ArrayList<MyUser> users = new ArrayList<MyUser>();
+		ArrayList<String> users = new ArrayList<String>();
 		MyUser testGuest = new MyUser();
 		testGuest.mName = "test0";
-		users.add(testGuest);
+		users.add(testGuest.mName);
 		
 		testGuest = new MyUser();
 		testGuest.mName = "test1";
-		users.add(testGuest);
+		users.add(testGuest.mName);
 		
 		testGuest = new MyUser();
 		testGuest.mName = "test2";
-		users.add(testGuest);	
+		users.add(testGuest.mName);
 		
 		try {
 			ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2014年9月20日16时")

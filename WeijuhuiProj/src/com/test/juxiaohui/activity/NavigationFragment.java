@@ -2,6 +2,7 @@ package com.test.juxiaohui.activity;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.test.juxiaohui.adapter.ActivityAdapter;
 import com.test.juxiaohui.adapter.ActivityCategoryAdapter;
@@ -45,8 +46,8 @@ public class NavigationFragment extends Fragment {
 	String mCity;
 	ActivityCategoryAdapter mCategoryAdapter;
 	ActivityAdapter mRecentActivityAdapter;
-	//String []mCities =  {"北京","上海","广州","深圳"};
-	String []mCategories = {"吃饭", "打球", "恐龙", "泡妹子","喝咖啡","斗地主"};
+
+	String []mCategories = {"翡翠", "和田玉", "蜜蜡", "祖母绿", "红蓝宝", "珍珠"};
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_navigation, container, false);
@@ -68,9 +69,24 @@ public class NavigationFragment extends Fragment {
 		mRecentActivityAdapter = new ActivityAdapter(this, new IActivityLoader() {
 			
 			@Override
-			public ArrayList<ActivityData> getActivityList() {
+			public List<ActivityData> getActivityList() {
 				// TODO Auto-generated method stub
-				return ActivityManager.getInstance().getRecentActivity();
+				Thread t = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						List<ActivityData> datas = ActivityManager.getInstance().getRecentActivity();
+						mRecentActivityAdapter.setData(datas);
+						getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								mRecentActivityAdapter.notifyDataSetChanged();
+							}
+						});
+
+					}
+				});
+				t.start();
+				return new ArrayList<ActivityData>();//ActivityManager.getInstance().getRecentActivity();
 			}
 		});
 		
@@ -104,6 +120,12 @@ public class NavigationFragment extends Fragment {
 		
 		mGVCategory = (GridView)getView().findViewById(R.id.gridView_category);
 		mGVCategory.setAdapter(mCategoryAdapter);
+		mGVCategory.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				showActivityByType(mCategories[position]);
+			}
+		});
 		
 		mLvActivity = (ListView)getView().findViewById(R.id.listView_activity);
 		mLvActivity.setAdapter(mRecentActivityAdapter);
@@ -144,5 +166,13 @@ public class NavigationFragment extends Fragment {
 			}
 		});
 		
+	}
+
+	public void showActivityByType(String type)
+	{
+		List<String> ids = ActivityManager.getInstance().getIdsByType(type);
+		List<ActivityData> datas = ActivityManager.getInstance().getActivityByIds(ids);
+		mRecentActivityAdapter.setData(datas);
+		mRecentActivityAdapter.notifyDataSetChanged();
 	}
 }

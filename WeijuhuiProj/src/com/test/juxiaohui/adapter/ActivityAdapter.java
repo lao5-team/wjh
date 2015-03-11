@@ -1,6 +1,7 @@
 package com.test.juxiaohui.adapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.DemoApplication;
@@ -28,7 +29,7 @@ public class ActivityAdapter extends BaseAdapter {
 
 	private Fragment mFragment = null;
 	private IActivityLoader mLoader = null;
-	private ArrayList<ActivityData> mActivityList;
+	private List<ActivityData> mActivityList;
 	private static class SBItemViewHolder
 	{
 		public TextView mTvName;
@@ -119,9 +120,18 @@ public class ActivityAdapter extends BaseAdapter {
 		}
 		ActivityData data = (ActivityData)getItem(position);
 		holder.mTvName.setText(data.mTitle);
-		holder.mFromUser.setText("组织者: " + data.mCreator.mName);			
-		//Picasso.with(mFragment.getActivity()).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
+		//temp delete
+		//holder.mFromUser.setText("组织者: " + data.mCreator.mName);
 		return convertView;
+	}
+
+	public void setData(List<ActivityData> datas)
+	{
+		if(null != datas)
+		{
+			mActivityList = datas;
+		}
+
 	}
 
 }

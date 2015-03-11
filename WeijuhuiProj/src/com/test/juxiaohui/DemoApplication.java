@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import cn.bmob.v3.Bmob;
 import junit.framework.Assert;
 
 import org.json.JSONException;
@@ -173,56 +174,10 @@ public class DemoApplication extends Application {
 		
 		//设置一个connectionlistener监听账户重复登陆
 		EMChatManager.getInstance().addConnectionListener(new MyConnectionListener());
-		//取消注释，app在后台，有新消息来时，状态栏的消息提示换成自己写的
-//		options.setNotifyText(new OnMessageNotifyListener() {
-//			
-//			@Override
-//			public String onNewMessageNotify(EMMessage message) {
-//				//可以根据message的类型提示不同文字，demo简单的覆盖了原来的提示
-//				return "你的好基友" + message.getFrom() + "发来了一条消息哦";
-//			}
-//			
-//			@Override
-//			public String onLatestMessageNotify(EMMessage message, int fromUsersNum, int messageNum) {
-//				return fromUsersNum + "个基友，发来了" + messageNum + "条消息";
-//			}
-//		});
-		
-		
-		//MobclickAgent.onError(applicationContext);
-		
-//		EMContactManager.getInstance().setContactListener(new EMContactListener() {
-//			
-//			@Override
-//			public void onContactRefused(String arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void onContactInvited(String arg0, String arg1) {
-//				showInvitedNotification(arg0);
-//			}
-//			
-//			@Override
-//			public void onContactDeleted(List<String> arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void onContactAgreed(String arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void onContactAdded(List<String> arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
+
 		EMChat.getInstance().setAppInited();
+
+		Bmob.initialize(this, "2bcee996bebe106a29ac7c8cde15078a");
 
 	}
 

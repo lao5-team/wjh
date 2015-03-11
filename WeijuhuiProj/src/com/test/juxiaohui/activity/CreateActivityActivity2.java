@@ -1,37 +1,33 @@
 package com.test.juxiaohui.activity;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import junit.framework.Assert;
+import android.app.*;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.widget.*;
+import com.test.juxiaohui.Constant;
 
-import com.easemob.chat.EMChatManager;
-import com.easemob.chat.EMConversation;
-import com.easemob.chat.EMGroup;
-import com.easemob.chat.EMGroupManager;
-import com.easemob.chat.EMMessage;
-import com.easemob.chat.TextMessageBody;
-import com.easemob.chat.EMMessage.ChatType;
-import com.easemob.exceptions.EaseMobException;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.ActivityData.ActivityBuilder;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
-import com.test.juxiaohui.data.message.MyMessage;
-import com.test.juxiaohui.domain.MessageManager;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.UserManager;
-import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.mediator.IActivityCreateMediator;
-import com.test.juxiaohui.mediator.IActivityDetailMediator;
 import com.test.juxiaohui.R;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -39,21 +35,27 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract.Events;
 import android.provider.CalendarContract.Reminders;
-import android.text.TextWatcher;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.Toast;
 
 public class CreateActivityActivity2 extends Activity {
-	
-	
-	
+
+
+	private ImageView mIvXuanchuan;
+
+	/* request code */
+	private static final int MEMBERS_REQUEST_CODE = 0;
+	private static final int BUSINESS_REQUEST_CODE = 1;
+	private static final int DATE_REQUEST_CODE = 2;
+	private static final int LOCATION_REQUEST_CODE = 3;
+	private static final int IMAGE_REQUEST_CODE = 4;
+	private static final int CAMERA_REQUEST_CODE = 5;
+	private static final int RESULT_REQUEST_CODE = 6;
+
+	private String[] items = new String[] { "选择本地图片", "拍照" };
+	private String IMAGE_AVATAR = Constant.CACHE_DIR + File.separator + "avatar.jpg";
+
 	public static class IntentBuilder
 	{
 		Intent mIntent;
@@ -106,10 +108,7 @@ public class CreateActivityActivity2 extends Activity {
 	private ComplexBusiness mComplexBusiness;
 	private Date mBeginDate;
 	private int mUseType;
-	private final int INTENT_MEMBERS = 0;
-	private final int INTENT_BUSINESS = 1;
-	private final int INTENT_DATE = 2;
-	private final int INTENT_LOCATION = 3;
+
 	
 	public static final int USE_CREATE = 4;
 	public static final int USE_EDIT = 5;
@@ -134,39 +133,48 @@ public class CreateActivityActivity2 extends Activity {
 			}
 			
 		}
-		
-		@Override
-		public void setPayType(int type) {
-			mActivityBuilder.setSpentType(type);
-			if(type == ActivityData.PAY_ME)
-			{
-				mCBPayAA.setChecked(false);
-				mCBPayOther.setChecked(false);
-			}
-			else if(type == ActivityData.PAY_AA)
-			{
-				mCBPayMe.setChecked(false);
-				mCBPayOther.setChecked(false);
-			}
-			else if(type == ActivityData.PAY_OTHER)
-			{
-				mCBPayMe.setChecked(false);
-				mCBPayAA.setChecked(false);
-			}			
-		}
+
 		
 		@Override
 		public void setMembers(ArrayList<MyUser> users) {
 			String usersString = "";
+			ArrayList<String> names = new ArrayList<String>();
 			for(MyUser user:users)
 			{
 				usersString += user.mName + " ";
+				names.add(user.mName);
 			}
 			mBtnSelectFriends.setText(usersString);
-			mActivityBuilder.setInviteUsers(users);
+			mActivityBuilder.setInviteUsers(names);
 			
 		}
-		
+
+		/**
+		 * 设置地点描述信息
+		 *
+		 * @param text
+		 */
+		@Override
+		public void setLocDesc(String text)
+		{
+			mActivityBuilder.setLocDesc(text);
+		}
+
+		/**
+		 * @param x
+		 * @param y
+		 */
+		@Override
+		public void setLocCoord(float x, float y)
+		{
+			mActivityBuilder.setLocCoord(x, y);
+		}
+
+		@Override
+		public void setImgUrl(String url) {
+			mActivityBuilder.setImgUrl(url);
+		}
+
 		@Override
 		public void setContent(String content) {
 			mActivityBuilder.setContent(content);
@@ -193,7 +201,7 @@ public class CreateActivityActivity2 extends Activity {
 									if (!CreateActivityActivity2.this.isFinishing())
 										pd.dismiss();
 									addActivityToCalendar(mActivityData);
-									Toast.makeText(getApplicationContext(), "创建活动成功", 0).show();
+									Toast.makeText(getApplicationContext(), "创建活动成功", Toast.LENGTH_SHORT).show();
 									CreateActivityActivity2.this.finish();		
 								}
 							});
@@ -204,16 +212,17 @@ public class CreateActivityActivity2 extends Activity {
 							mMediator.setCreator(UserManager.getInstance().getCurrentUser());
 							if(null != (mActivityData = mMediator.createActivityData()))
 							{
-								UserManager.getInstance().getCurrentUser().startActivity(mActivityData);
+								//UserManager.getInstance().getCurrentUser().startActivity(mActivityData);
+								MyServerManager.getInstance().createActivity2(mActivityData);
 								runOnUiThread(new Runnable() {
-									
+
 									@Override
 									public void run() {
 										if (!CreateActivityActivity2.this.isFinishing())
 											pd.dismiss();
 										addActivityToCalendar(mActivityData);
-										Toast.makeText(getApplicationContext(), "创建活动成功", 0).show();
-										CreateActivityActivity2.this.finish();		
+										Toast.makeText(getApplicationContext(), "创建活动成功", Toast.LENGTH_SHORT).show();
+										CreateActivityActivity2.this.finish();
 									}
 								});
 							}				
@@ -315,7 +324,7 @@ public class CreateActivityActivity2 extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(CreateActivityActivity2.this, CreateActivityActivity.class);
-				startActivityForResult(intent, INTENT_BUSINESS);
+				startActivityForResult(intent, BUSINESS_REQUEST_CODE);
 			}
 		});
 		
@@ -334,7 +343,7 @@ public class CreateActivityActivity2 extends Activity {
 				{
 					intent.putExtra("members", mActivityData.mUsers);
 				}
-				startActivityForResult(intent, INTENT_MEMBERS);				
+				startActivityForResult(intent, MEMBERS_REQUEST_CODE);
 			}
 		});
 		
@@ -344,7 +353,7 @@ public class CreateActivityActivity2 extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(CreateActivityActivity2.this, DateActivity.class);
-				startActivityForResult(intent, INTENT_DATE);				
+				startActivityForResult(intent, DATE_REQUEST_CODE);
 			}
 		});
 		
@@ -379,6 +388,17 @@ public class CreateActivityActivity2 extends Activity {
 			});
 		}
 
+		//for yxpj
+		mIvXuanchuan = (ImageView)findViewById(R.id.imageView_xuanchuan);
+		mIvXuanchuan.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDialog();
+			}
+		});
+
+
+
 			
 	}
 	
@@ -401,21 +421,45 @@ public class CreateActivityActivity2 extends Activity {
 		{
 			switch(requestCode)
 			{
-			case INTENT_BUSINESS:
+			case BUSINESS_REQUEST_CODE:
 				mComplexBusiness = (ComplexBusiness) data.getSerializableExtra("business");
 				mBtnSelectBusiness.setText(mComplexBusiness.mName);
 				break;
 				
-			case INTENT_MEMBERS:
+			case MEMBERS_REQUEST_CODE:
 				ArrayList<MyUser> users = (ArrayList<MyUser>) data.getSerializableExtra("members");
 				mMediator.setMembers(users);
 				break;
 				
-			case INTENT_DATE:
+			case DATE_REQUEST_CODE:
 				Date date = (Date)data.getSerializableExtra("date");
 				mBtnSelectDate.setText(DateFormat.format(ActivityData.dataPattern, date));
 				mMediator.setTime(date);
 				break;
+			}
+		}
+
+		if (resultCode != Activity.RESULT_CANCELED) {
+
+			switch (requestCode) {
+				case IMAGE_REQUEST_CODE:
+					startPhotoZoom(data.getData());
+					break;
+				case CAMERA_REQUEST_CODE:
+					if (hasSdcard()) {
+						File tempFile = new File(IMAGE_AVATAR);
+						startPhotoZoom(Uri.fromFile(tempFile));
+					} else {
+						Toast.makeText(CreateActivityActivity2.this, "未找到存储卡，无法存储照片！",
+								Toast.LENGTH_LONG).show();
+					}
+
+					break;
+				case RESULT_REQUEST_CODE:
+					if (data != null) {
+						getImageToView(data);
+					}
+					break;
 			}
 		}
 		
@@ -436,23 +480,11 @@ public class CreateActivityActivity2 extends Activity {
 			mMediator.setTime(mBeginDate);
 			mBtnSelectDate.setText(DateFormat.format(ActivityData.dataPattern, mBeginDate));
 			String users = "";
-			for(MyUser user:mActivityData.mInvitingUsers)
+			for(String name:mActivityData.mInvitingUsers)
 			{
-				users += user.mName + " ";
+				users += name + " ";
 			}
-			mBtnSelectFriends.setText(users);		
-			if(mActivityData.mSpentType == 0)
-			{
-				mCBPayMe.setChecked(true);
-			}
-			if(mActivityData.mSpentType == 1)
-			{
-				mCBPayAA.setChecked(true);
-			}
-			if(mActivityData.mSpentType == 2)
-			{
-				mCBPayOther.setChecked(true);
-			}
+			mBtnSelectFriends.setText(users);
 		}
 		
 	}
@@ -489,6 +521,121 @@ public class CreateActivityActivity2 extends Activity {
 			return false;			
 		}
 		return true;
+	}
+
+	private void showDialog() {
+		String[] items = new String[] { "选择本地图片", "拍照" };
+		new android.app.AlertDialog.Builder(this)
+				.setTitle("设置头像")
+				.setItems(items, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+							case 0:
+								Intent intentFromGallery = new Intent();
+								intentFromGallery.setType("image/*"); // 设置文件类型
+								intentFromGallery
+										.setAction(Intent.ACTION_GET_CONTENT);
+								startActivityForResult(intentFromGallery,
+										IMAGE_REQUEST_CODE);
+								break;
+							case 1:
+
+								Intent intentFromCapture = new Intent(
+										MediaStore.ACTION_IMAGE_CAPTURE);
+								// 判断存储卡是否可以用，可用进行存储
+								if (hasSdcard()) {
+
+									intentFromCapture.putExtra(
+											MediaStore.EXTRA_OUTPUT,
+											Uri.fromFile(new File(IMAGE_AVATAR)));
+								}
+
+								startActivityForResult(intentFromCapture,
+										CAMERA_REQUEST_CODE);
+								break;
+						}
+					}
+				})
+				.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).show();
+
+	}
+
+	/**
+	 * 保存裁剪之后的图片数据
+	 *
+	 */
+	private void getImageToView(Intent data) {
+		Bundle extras = data.getExtras();
+		if (extras != null) {
+			Bitmap photo = extras.getParcelable("data");
+			Drawable drawable = new BitmapDrawable(photo);
+			mIvXuanchuan.setImageDrawable(drawable);
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(IMAGE_AVATAR);
+				photo.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+				Thread t = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						String imgUrl = MyServerManager.getInstance()
+								.uploadImage(new File(IMAGE_AVATAR));
+						if (null != imgUrl) {
+							mActivityData.mImgUrl = imgUrl;
+						} else {
+							CreateActivityActivity2.this.runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									Toast.makeText(CreateActivityActivity2.this, "头像修改失败",
+											Toast.LENGTH_SHORT).show();
+								}
+							});
+						}
+					}
+				});
+				t.start();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Toast.makeText(CreateActivityActivity2.this, "头像上传失败", Toast.LENGTH_SHORT)
+						.show();
+			}
+
+		}
+	}
+
+	public  boolean hasSdcard(){
+		String state = Environment.getExternalStorageState();
+		if(state.equals(Environment.MEDIA_MOUNTED)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+	public void startPhotoZoom(Uri uri) {
+
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");
+		// 设置裁剪
+		intent.putExtra("crop", "true");
+		// aspectX aspectY 是宽高的比例
+		intent.putExtra("aspectX", 1);
+		intent.putExtra("aspectY", 1);
+		// outputX outputY 是裁剪图片宽高
+		intent.putExtra("outputX", 320);
+		intent.putExtra("outputY", 320);
+		intent.putExtra("return-data", true);
+		startActivityForResult(intent, RESULT_REQUEST_CODE);
 	}
 
 }

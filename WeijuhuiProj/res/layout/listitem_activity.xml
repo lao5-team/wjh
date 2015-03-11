@@ -9,8 +9,7 @@
         android:layout_width="72dip"
         android:layout_height="72dip" 
         android:layout_alignParentLeft="true"
-        android:visibility="gone"
-        />
+        android:src="@drawable/xuanchuan"/>
 
     <TextView
         android:id="@+id/textView_from"

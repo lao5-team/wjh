@@ -45,14 +45,14 @@ public class MyServerManager {
 		}
 	}
 	
-	private static MyServerManager mInstance = null;
+	protected static MyServerManager mInstance = null;
 	String IP_ADDRESS = "http://103.31.201.252";//"http://117.78.3.87:80";
 	final String IP_ADDRESS_UPLOAD = "http://117.78.3.87:81/upload";
 	public final String EXCEPTION_NOT_LOGIN = "You have not login!";
 	String mToken;
 	String mUserName;
 	boolean LOCAL_DEBUG = false;
-	private MyServerManager() {
+	protected MyServerManager() {
 		if(LOCAL_DEBUG)
 		{
 			IP_ADDRESS = "http://192.168.1.102:80";
@@ -420,6 +420,11 @@ public class MyServerManager {
 			e.printStackTrace();
 			return null;
 		}		
+	}
+
+	public String createActivity2(ActivityData data) {
+		data.save(DemoApplication.applicationContext);
+		return "";
 	}
 
 	/**

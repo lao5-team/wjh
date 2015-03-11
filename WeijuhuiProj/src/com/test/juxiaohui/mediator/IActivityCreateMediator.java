@@ -26,19 +26,29 @@ public interface IActivityCreateMediator {
 	 * @param date
 	 */
 	public void setTime(Date date);
-	
-	/**
-	 * 设置付费方式
-	 * @param type
-	 */
-	public void setPayType(int type);
+
 	
 	/**
 	 * 设置活动成员
 	 * @param users
 	 */
 	public void setMembers(ArrayList<MyUser> users);
-	
+
+	/**
+	 * 设置地点描述信息
+	 * @param text
+	 */
+	public void setLocDesc(String text);
+
+	/**
+	 *
+	 * @param x
+	 * @param y
+	 */
+	public void setLocCoord(float x, float y);
+
+	public void setImgUrl(String url);
+
 	/**
 	 * 当左（确认）按钮按下时触发
 	 */

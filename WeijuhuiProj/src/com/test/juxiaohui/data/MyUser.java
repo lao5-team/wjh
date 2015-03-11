@@ -3,6 +3,7 @@ package com.test.juxiaohui.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.test.juxiaohui.domain.BmobServerManager;
 import junit.framework.Assert;
 
 import org.json.JSONArray;
@@ -33,6 +34,8 @@ public class MyUser implements Serializable {
 	public ArrayList<String> mDoingActivities = new ArrayList<String>();
 	public ArrayList<String> mFinishedActivities = new ArrayList<String>();
 	public String mID;
+
+	public static MyServerManager SERVER_MANAGER = BmobServerManager.getInstance();
 	/**
 	 * 用户的聚会状态，包括待确定 {@link UNCONFIRMED}，确定{@link CONFIRMED}
 	 * 报名，待支付
@@ -97,18 +100,17 @@ public class MyUser implements Serializable {
 	 */
 	public void startActivity(ActivityData data)
 	{
-		//Assert.assertTrue(mData.mState == ActivityData.UNBEGIN);
-		//mData.mState = ActivityData.BEGIN;
-		data.mID = MyServerManager.getInstance().createActivity(data);
+		data.mID = MyServerManager.getInstance().createActivity2(data);
 		
 		/*该代码是为了增强数据的完整性*/
 		for(int i=0; i<data.mInvitingUsers.size(); i++)
 		{
-			MyUser user = MyServerManager.getInstance().getUserInfo(data.mInvitingUsers.get(i).mName);
-			data.mInvitingUsers.set(i, user);  
+			MyUser user = SERVER_MANAGER.getUserInfo(data.mInvitingUsers.get(i));
+			data.mInvitingUsers.set(i, user.mID);
 		}
-		
-		data.mCreator = MyServerManager.getInstance().getUserInfo(data.mCreator.mName);
+
+		/*temp delete*/
+		//data.mCreator = MyServerManager.getInstance().getUserInfo(data.mCreator.mName);
 		
 		//自己正在进行的活动+1
 		MyServerManager.getInstance().addUserActivity(UserManager.getInstance().getCurrentUser().mID, data.mID, "doing_activity");
@@ -130,9 +132,9 @@ public class MyUser implements Serializable {
 			message.mAction = ActivityMessage.ACTION_INVITE;
 			message.mActivityName = data.mTitle;
 			message.mFromUser = UserManager.getInstance().getCurrentUser();
-			for(MyUser user:data.mInvitingUsers)
+			for(String id:data.mInvitingUsers)
 			{
-				MyServerManager.getInstance().sendMessage(user.mID, message);
+				MyServerManager.getInstance().sendMessage(id, message);
 			}			
 		}
 
@@ -151,32 +153,12 @@ public class MyUser implements Serializable {
 		message.mAction = ActivityMessage.ACTION_APPLY;
 		message.mActivityName = data.mTitle;
 		message.mFromUser = UserManager.getInstance().getCurrentUser();
-		
-		MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);
+
+		//temp delete
+		//MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);
 		
 	}	
-	
-	
-	
-	/**
-	 * 确认活动开始，进入进行中状态
-	 */
-//	public void confirmActivity()
-//	{
-//		//Assert.assertTrue(mData.mState == ActivityData.BEGIN);
-//		//mData.mState = ActivityData.PROCESSING;
-//		
-//		if(mData.mUsers.size() == 1)
-//		{
-//			sendActivityToSingle(mData, "update");
-//		}
-//		else if(mData.mUsers.size() > 1)
-//		{
-//			sendActivityToGroup(mData, "update");
-//		}	
-//		ActivityManager.getInstance().updateActivity(this);
-//		
-//	}
+
 	
 	/**
 	 * 取消活动
@@ -198,15 +180,15 @@ public class MyUser implements Serializable {
 		.setActivityID(data.mID)
 		.setActivityTitle(data.mTitle)
 		.setFromUser(UserManager.getInstance().getCurrentUser()).create();
-		for(MyUser user:data.mUsers)
+		for(String id:data.mUsers)
 		{
-			MyServerManager.getInstance().sendMessage(user.mID, aMessage);
+			MyServerManager.getInstance().sendMessage(id, aMessage);
 		}
 		
 		//所有活动成员，正在进行的活动-1
-		for(MyUser user:data.mUsers)
+		for(String id:data.mUsers)
 		{
-			MyServerManager.getInstance().removeUserActivity(user.mID, data.mID, "doing_activity");
+			MyServerManager.getInstance().removeUserActivity(id, data.mID, "doing_activity");
 		}		
 	}
 	
@@ -227,16 +209,17 @@ public class MyUser implements Serializable {
 		message.mAction = ActivityMessage.ACTION_FINISH;
 		message.mActivityName = data.mTitle;
 		message.mFromUser = UserManager.getInstance().getCurrentUser();
-		for(MyUser user:data.mUsers)
+		for(String id:data.mUsers)
 		{
-			MyServerManager.getInstance().sendMessage(user.mID, message);
+			MyServerManager.getInstance().sendMessage(id, message);
 		}
 		
 		//将活动移至完成活动列表中
-		MyServerManager.getInstance().moveActivity(data.mCreator.mID, data.mID, "doing_activity", "finish_activity");
-		for(MyUser user:data.mUsers)
+		//temp delete
+		//MyServerManager.getInstance().moveActivity(data.mCreator.mID, data.mID, "doing_activity", "finish_activity");
+		for(String id:data.mUsers)
 		{
-			MyServerManager.getInstance().moveActivity(user.mID, data.mID, "doing_activity", "finish_activity");
+			MyServerManager.getInstance().moveActivity(id, data.mID, "doing_activity", "finish_activity");
 		}		
 	}
 	
@@ -253,7 +236,8 @@ public class MyUser implements Serializable {
 		message.mAction = ActivityMessage.ACTION_ACCEPT_INVITE;
 		message.mActivityName = data.mTitle;
 		message.mFromUser = UserManager.getInstance().getCurrentUser();
-		MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);
+		//temp delete
+		//MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);
 		
 		//自己正在进行的活动+1
 		MyServerManager.getInstance().addUserActivity(UserManager.getInstance().getCurrentUser().mID, message.mActivityID, "doing_activity");
@@ -302,7 +286,8 @@ public class MyUser implements Serializable {
 		message.mAction = ActivityMessage.ACTION_REFUSE_INVITE;
 		message.mActivityName = data.mTitle;
 		message.mFromUser = UserManager.getInstance().getCurrentUser();
-		MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);	
+		//temp delete
+		//MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);
 		
 		//活动参与者移除自己
 		//data.removeUser(UserManager.getInstance().getCurrentUser());
@@ -343,7 +328,8 @@ public class MyUser implements Serializable {
 		.setActivityTitle(data.mTitle)
 		.setFromUser(this)
 		.create();
-		MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);	
+		//temp delete
+		//MyServerManager.getInstance().sendMessage(data.mCreator.mID, message);
 		
 		//活动参与者移除自己
 		data.removeUser(UserManager.getInstance().getCurrentUser());
@@ -362,7 +348,9 @@ public class MyUser implements Serializable {
 	public String getMyRoleType(ActivityData data)
 	{
 		String currentName = DemoApplication.getInstance().getUserName();
-		if(data.mCreator.mName.equals(currentName))
+		////temp delete
+		//if(data.mCreator.mName.equals(currentName))
+		if(data.mImgUrl!=null)
 		{
 			return CREATOR;
 		}
@@ -391,7 +379,8 @@ public class MyUser implements Serializable {
 			if(null != data)
 			{
 				/*如果是非活动创建者评论，则要让创建者收到消息*/
-				if(!(data.mCreator.mName.equals(UserManager.getInstance().getCurrentUser().mName)))
+				//temp delete
+				/*if(!(data.mCreator.mName.equals(UserManager.getInstance().getCurrentUser().mName)))
 				{
 					CommentMessage message = new CommentMessage();
 					message.mFromUser = UserManager.getInstance().getCurrentUser();
@@ -399,7 +388,7 @@ public class MyUser implements Serializable {
 					message.mCommentID = commentID;
 					MyUser user = MyServerManager.getInstance().getUserInfo(data.mCreator.mName);
 					MyServerManager.getInstance().sendMessage(user.mID, message);
-				}				
+				}	*/
 			}
 			return commentID;	
 		}

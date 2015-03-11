@@ -123,8 +123,9 @@ public class ActivityComment extends Comment {
 		ActivityData activityData = MyServerManager.getInstance().getActivity(mActivityID);
 		if(mUserName.equals(userName))
 			return true;
-		else if(activityData.mCreator.mID.equals(userName))
-			return true;
+		//temp delete
+		//else if(activityData.mCreator.mID.equals(userName))
+		//	return true;
 		else 
 			return false;
 	}

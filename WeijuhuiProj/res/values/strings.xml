@@ -71,7 +71,7 @@
     <string name="location">地点</string>
     <string name="search">搜索</string>
     <string name="writeContent">编辑聚会内容</string>
-    <string name="select_business_room">预订聚会场所</string>
+    <string name="select_business_room">选择聚会地点</string>
     <string name="select_time">选择聚会时间</string>
     <string name="select_location">选择聚会地点</string>
     <string name="title">主题</string>

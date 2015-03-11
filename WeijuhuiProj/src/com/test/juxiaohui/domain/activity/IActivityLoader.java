@@ -1,6 +1,7 @@
 package com.test.juxiaohui.domain.activity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.test.juxiaohui.data.ActivityData;
 
@@ -9,5 +10,5 @@ import com.test.juxiaohui.data.ActivityData;
  *
  */
 public interface IActivityLoader {
-	ArrayList<ActivityData> getActivityList();
+	List<ActivityData> getActivityList();
 }

@@ -57,6 +57,7 @@ import android.widget.Toast;
  * 3 添加好友
  * 4 发起聚会，向好友发送邀请单
  */
+
 public class ActivityDetailActivity extends FragmentActivity {
 	/** 
 	 * 用来对intent数据进行规范式处理
@@ -143,8 +144,8 @@ public class ActivityDetailActivity extends FragmentActivity {
 			showTitle(data.mTitle);
 			showContent(data.mContent);
 			showTime(data.mBeginDate);
-			showMembers(data.mUsers);
-			showPayType(data.mSpentType);
+			UserManager.getInstance().getUsers(data.mUsers);
+			//showPayType(data.mSpentType);
 			if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
 			{
 				mBtnConfirm.setText("完成");
@@ -165,24 +166,16 @@ public class ActivityDetailActivity extends FragmentActivity {
 		@Override
 		public void changeMembers(ArrayList<MyUser> users) {
 			mData.mUsers.clear();
-			mData.mUsers.addAll(users);
+			for(MyUser user:users)
+			{
+				mData.mUsers.add(user.mName);
+			}
 			showMembers(users);
 		}
 
 		@Override
 		public void showPayType(int type) {
-			if(mData.mSpentType == 0)
-			{
-				mCBPayMe.setChecked(true);
-			}
-			if(mData.mSpentType == 1)
-			{
-				mCBPayAA.setChecked(true);
-			}
-			if(mData.mSpentType == 2)
-			{
-				mCBPayOther.setChecked(true);
-			}
+
 		}
 
 		@Override
@@ -408,7 +401,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 	
 	private void sendActivityToSingle(ActivityData data)
 	{
-		EMConversation conversation = EMChatManager.getInstance().getConversation(data.mUsers.get(0).mName);
+		EMConversation conversation = EMChatManager.getInstance().getConversation(data.mUsers.get(0));
 		
 		EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
 		// 如果是群聊，设置chattype,默认是单聊
@@ -432,7 +425,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 			String[] names = new String[data.mUsers.size()];
 			for(int i=0; i<data.mUsers.size(); i++)
 			{
-				names[i] = data.mUsers.get(i).mName;
+				names[i] = data.mUsers.get(i);
 			}
 			group = EMGroupManager.getInstance().createPrivateGroup("", "", names, false);
 			EMConversation conversation = EMChatManager.getInstance().getConversation(group.getGroupId());										
