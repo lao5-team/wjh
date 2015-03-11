@@ -43,12 +43,17 @@ public class BmobServerManager extends MyServerManager {
 
             @Override
             public void executeImpl() {
-                BmobQuery<String> query = new BmobQuery<String>();
+                BmobQuery<ActivityData> query = new BmobQuery<ActivityData>();
                 query.addWhereEqualTo("mJewelType", fType);
-                query.findObjects(DemoApplication.applicationContext, new FindListener<String>() {
+                query.findObjects(DemoApplication.applicationContext, new FindListener<ActivityData>() {
                     @Override
-                    public void onSuccess(List<String> object) {
-                        onResult(object);
+                    public void onSuccess(List<ActivityData> object) {
+                        List<String> ids = new ArrayList<String>();
+                        for(ActivityData data:object)
+                        {
+                            ids.add(data.getObjectId());
+                        }
+                        onResult(ids);
 
                     }
 
@@ -71,7 +76,7 @@ public class BmobServerManager extends MyServerManager {
             @Override
             public void executeImpl() {
                 BmobQuery<ActivityData> query = new BmobQuery<ActivityData>();
-                query.addWhereContainsAll("objectId", fIds);
+                query.addWhereContainedIn("objectId", fIds);
                 query.findObjects(DemoApplication.applicationContext, new FindListener<ActivityData>() {
                     @Override
                     public void onSuccess(List<ActivityData> object) {

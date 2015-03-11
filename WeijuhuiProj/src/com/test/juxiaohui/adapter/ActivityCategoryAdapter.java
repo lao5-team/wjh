@@ -20,7 +20,7 @@ public class ActivityCategoryAdapter extends BaseAdapter {
 	{
 		mContext = context;
 	}
-	
+	int mSelectIndex = -1;
 	public void setData(String []categories)
 	{
 		mCategories = categories;
@@ -48,11 +48,25 @@ public class ActivityCategoryAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		TextView tv = new TextView(mContext);
+		if(position == mSelectIndex)
+		{
+			tv.setBackgroundColor(0xffff0000);
+		}
+		else
+		{
+			tv.setBackgroundColor(0xffffffff);
+		}
 		//tv.setBackgroundResource(R.drawable.bg_activity_categories);
 		tv.setText(mCategories[position]);
 		tv.setGravity(Gravity.CENTER);
 		tv.setTextSize(20);
+
 		return tv;
+	}
+
+	public void setSelectIndex(int index)
+	{
+		mSelectIndex = index;
 	}
 
 }

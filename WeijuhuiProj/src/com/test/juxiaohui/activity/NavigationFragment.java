@@ -123,7 +123,9 @@ public class NavigationFragment extends Fragment {
 		mGVCategory.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				mCategoryAdapter.setSelectIndex(position);
 				showActivityByType(mCategories[position]);
+				mCategoryAdapter.notifyDataSetChanged();
 			}
 		});
 		
@@ -170,9 +172,22 @@ public class NavigationFragment extends Fragment {
 
 	public void showActivityByType(String type)
 	{
-		List<String> ids = ActivityManager.getInstance().getIdsByType(type);
-		List<ActivityData> datas = ActivityManager.getInstance().getActivityByIds(ids);
-		mRecentActivityAdapter.setData(datas);
-		mRecentActivityAdapter.notifyDataSetChanged();
+		final String fType = type;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				List<String> ids = ActivityManager.getInstance().getIdsByType(fType);
+				List<ActivityData> datas = ActivityManager.getInstance().getActivityByIds(ids);
+				mRecentActivityAdapter.setData(datas);
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						mRecentActivityAdapter.notifyDataSetChanged();
+					}
+				});
+
+			}
+		});
+		t.start();
 	}
 }

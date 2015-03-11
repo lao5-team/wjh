@@ -12,13 +12,17 @@ import android.app.*;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.ViewGroup;
 import android.widget.*;
 import com.test.juxiaohui.Constant;
 
 import com.test.juxiaohui.DemoApplication;
+import com.test.juxiaohui.adapter.ActivityAdapter;
+import com.test.juxiaohui.adapter.ActivityCategoryAdapter;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.ActivityData.ActivityBuilder;
 import com.test.juxiaohui.data.MyUser;
@@ -56,6 +60,8 @@ public class CreateActivityActivity2 extends Activity {
 	private String[] items = new String[] { "选择本地图片", "拍照" };
 	private String IMAGE_AVATAR = Constant.CACHE_DIR + File.separator + "avatar.jpg";
 
+	//for yxpj
+	private String [] mCategories = {"翡翠", "和田玉", "蜜蜡", "祖母绿", "红蓝宝", "珍珠"};
 	public static class IntentBuilder
 	{
 		Intent mIntent;
@@ -103,6 +109,7 @@ public class CreateActivityActivity2 extends Activity {
 	private CheckBox mCBPayMe;
 	private CheckBox mCBPayAA;
 	private CheckBox mCBPayOther;
+	private com.test.juxiaohui.widget.ExpandGridView mGVType;
 	//Data
 	private ActivityData mActivityData;
 	private ComplexBusiness mComplexBusiness;
@@ -245,6 +252,11 @@ public class CreateActivityActivity2 extends Activity {
 		}
 
 		@Override
+		public void setType(String type) {
+			mActivityBuilder.setType(type);
+		}
+
+		@Override
 		public void setCreator(MyUser user) {
 			mActivityBuilder.setCreator(user);
 		}
@@ -299,7 +311,12 @@ public class CreateActivityActivity2 extends Activity {
 			
 		}
 	};
-	
+	private ActivityCategoryAdapter mCategoryAdapter;
+
+	private String mSelectType = "翡翠";
+
+
+
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -396,10 +413,27 @@ public class CreateActivityActivity2 extends Activity {
 				showDialog();
 			}
 		});
+		mGVType = (com.test.juxiaohui.widget.ExpandGridView)findViewById(R.id.gridView_type);
+		mGVType.setAdapter(mCategoryAdapter);
+		mGVType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				//mCategoryAdapter.notifyDataSetChanged();
+				mCategoryAdapter.setSelectIndex(position);
+				mCategoryAdapter.notifyDataSetChanged();
+				mMediator.setType(mCategories[position]);
+			}
+		});
 
 
 
-			
+
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
 	}
 	
 	public void initData()
@@ -412,6 +446,11 @@ public class CreateActivityActivity2 extends Activity {
 		{
 			mActivityData = MyServerManager.getInstance().getActivity(ib.getActivityID());
 		}
+
+		mCategoryAdapter = new ActivityCategoryAdapter(this);
+		mCategoryAdapter.setData(mCategories);
+		mCategoryAdapter.setSelectIndex(0);
+		mMediator.setType(mCategories[0]);
 		
 	}
 	
@@ -637,5 +676,7 @@ public class CreateActivityActivity2 extends Activity {
 		intent.putExtra("return-data", true);
 		startActivityForResult(intent, RESULT_REQUEST_CODE);
 	}
+
+
 
 }

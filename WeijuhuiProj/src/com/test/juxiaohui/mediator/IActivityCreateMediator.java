@@ -60,6 +60,8 @@ public interface IActivityCreateMediator {
 	public void onCancelClicked();
 	
 	public ActivityData createActivityData();
+
+	public void setType(String type);
 	
 
 }

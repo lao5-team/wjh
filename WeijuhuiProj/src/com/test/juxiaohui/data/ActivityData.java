@@ -342,6 +342,12 @@ public class ActivityData extends BmobObject implements Serializable {
 			return this;
 		}
 
+		public ActivityBuilder setType(String type)
+		{
+			mData.mJewelType = type;
+			return this;
+		}
+
 		public ActivityData create()
 		{
 			Assert.assertNotNull("ActivityData must have Title!",mData.mTitle);
