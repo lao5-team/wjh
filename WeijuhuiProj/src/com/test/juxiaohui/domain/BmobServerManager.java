@@ -1,12 +1,15 @@
 package com.test.juxiaohui.domain;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UploadFileListener;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.utils.SyncCallback;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,15 +121,51 @@ public class BmobServerManager extends MyServerManager {
                     }
                 });
 
-//                try {
-//                    Thread.sleep(10000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
             }
         };
         //
         return callback.executeBegin();
-        //return new ArrayList<String>();
+
+    }
+
+    @Override
+    public String uploadImage(File file) {
+
+        final File fFile = file;
+        SyncCallback<String> callback = new SyncCallback<String>()
+        {
+
+            @Override
+            public void executeImpl() {
+                final BmobFile bmobFile = new BmobFile(fFile);
+                bmobFile.uploadblock(DemoApplication.applicationContext, new UploadFileListener() {
+
+                    @Override
+                    public void onSuccess() {
+                        // TODO Auto-generated method stub
+                        //bmobFile.getUrl()---返回的上传文件的地址（不带域名）
+                        //bmobFile.getFileUrl(context)--返回的上传文件的完整地址（带域名）
+                        //toast("上传文件成功:" + bmobFile.getFileUrl(context));
+                        onResult(bmobFile.getFileUrl(DemoApplication.applicationContext));
+                    }
+
+                    @Override
+                    public void onProgress(Integer value) {
+                        // TODO Auto-generated method stub
+                        // 返回的上传进度（百分比）
+                    }
+
+                    @Override
+                    public void onFailure(int code, String msg) {
+                        // TODO Auto-generated method stub
+                        //toast("上传文件失败：" + msg);
+                        onResult("null");
+                    }
+                });
+            }
+        };
+
+        return callback.executeBegin();
+
     }
 }

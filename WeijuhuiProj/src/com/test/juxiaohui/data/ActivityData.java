@@ -42,9 +42,9 @@ public class ActivityData extends BmobObject implements Serializable {
 	//public float mSpent;    //活动所需金额
 	//public String mGroupID;  //多人活动的groupID，供环信使用
 	public int mStatus;       //活动状态
-	public String mCreator;  //活动创建者
-	public String mTitle;    //活动标题
-	public String mContent;  //活动内容介绍
+	public String mCreator = "";  //活动创建者
+	public String mTitle = "";    //活动标题
+	public String mContent = "";  //活动内容介绍
 
 	//for YXPJ
 	public static String TYPE_FEICUI = "feicui";
@@ -224,7 +224,7 @@ public class ActivityData extends BmobObject implements Serializable {
 		users.add(testGuest2.mID);
 			try {
 				ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2015年3月15日16时")
-				).setCreator(testUser).
+				).setCreator(testUser.mName).
 						setInviteUsers(users).setTitle(test_title).setContent("黄老师蜜蜡加工").
 						setGroupID("testGroup0").setSpentType(0).
 						create();
@@ -261,10 +261,11 @@ public class ActivityData extends BmobObject implements Serializable {
 			mData.mInvitingUsers.addAll(users);
 			return this;
 		}		
-		public ActivityBuilder setCreator(MyUser user)
+		public ActivityBuilder setCreator(String userName)
 		{
 			//temp delete
 			//mData.mCreator = user;
+			mData.mCreator = userName;
 			return this;
 		}
 		
@@ -347,6 +348,8 @@ public class ActivityData extends BmobObject implements Serializable {
 			mData.mJewelType = type;
 			return this;
 		}
+
+
 
 		public ActivityData create()
 		{

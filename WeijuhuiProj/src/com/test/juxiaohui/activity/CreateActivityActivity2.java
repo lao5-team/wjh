@@ -27,6 +27,7 @@ import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.ActivityData.ActivityBuilder;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
+import com.test.juxiaohui.domain.BmobServerManager;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.mediator.IActivityCreateMediator;
@@ -186,6 +187,7 @@ public class CreateActivityActivity2 extends Activity {
 		public void setContent(String content) {
 			mActivityBuilder.setContent(content);
 		}
+
 		
 		@Override
 		public void onOKClicked() {
@@ -216,7 +218,7 @@ public class CreateActivityActivity2 extends Activity {
 						}
 						else
 						{
-							mMediator.setCreator(UserManager.getInstance().getCurrentUser());
+							mMediator.setCreator(UserManager.getInstance().getCurrentUser().mName);
 							if(null != (mActivityData = mMediator.createActivityData()))
 							{
 								//UserManager.getInstance().getCurrentUser().startActivity(mActivityData);
@@ -257,8 +259,8 @@ public class CreateActivityActivity2 extends Activity {
 		}
 
 		@Override
-		public void setCreator(MyUser user) {
-			mActivityBuilder.setCreator(user);
+		public void setCreator(String username) {
+			mActivityBuilder.setCreator(username);
 		}
 		
 		private void addActivityToCalendar(ActivityData data)
@@ -624,10 +626,10 @@ public class CreateActivityActivity2 extends Activity {
 				Thread t = new Thread(new Runnable() {
 					@Override
 					public void run() {
-						String imgUrl = MyServerManager.getInstance()
+						String imgUrl = BmobServerManager.getInstance()
 								.uploadImage(new File(IMAGE_AVATAR));
 						if (null != imgUrl) {
-							mActivityData.mImgUrl = imgUrl;
+							mMediator.setImgUrl(imgUrl);
 						} else {
 							CreateActivityActivity2.this.runOnUiThread(new Runnable() {
 

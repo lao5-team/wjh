@@ -8,7 +8,7 @@ import com.test.juxiaohui.data.MyUser;
 
 public interface IActivityCreateMediator {
 	
-	public void setCreator(MyUser user);
+	public void setCreator(String username);
 	/**
 	 * 设置活动标题
 	 * @param title

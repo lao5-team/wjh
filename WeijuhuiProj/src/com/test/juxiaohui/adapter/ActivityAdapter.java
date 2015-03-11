@@ -35,14 +35,14 @@ public class ActivityAdapter extends BaseAdapter {
 		public TextView mTvName;
 		public TextView mFromUser;
 		public TextView mTvState;
-		//public ImageView mImgPic;
+		public ImageView mImgPic;
 		
 		public void createFromView(View view)
 		{
 			mTvName = (TextView)view.findViewById(R.id.textView_activity);
 			mFromUser = (TextView)view.findViewById(R.id.textView_from);
 			mTvState = (TextView)view.findViewById(R.id.textView_state);
-			//mImgPic = (ImageView)view.findViewById(R.id.imageView_pic);
+			mImgPic = (ImageView)view.findViewById(R.id.imageView_pic);
 		}
 		
 	}
@@ -120,8 +120,14 @@ public class ActivityAdapter extends BaseAdapter {
 		}
 		ActivityData data = (ActivityData)getItem(position);
 		holder.mTvName.setText(data.mTitle);
+		if(null!=data.mImgUrl&&data.mImgUrl.length()>0)
+		{
+			Picasso.with(mFragment.getActivity()).load(data.mImgUrl).into(holder.mImgPic);
+		}
+
 		//temp delete
-		//holder.mFromUser.setText("组织者: " + data.mCreator.mName);
+		holder.mFromUser.setText("组织者: " + data.mCreator);
+		holder.mTvState.setText(data.mContent);
 		return convertView;
 	}
 

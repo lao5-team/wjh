@@ -49,7 +49,7 @@ public class ActivityDataTest extends InstrumentationTestRunner {
 		
 		try {
 			ActivityData data = new ActivityData.ActivityBuilder().setBeginTime(new SimpleDateFormat(ActivityData.dataPattern).parse("2014年9月20日16时")
-					).setComplexBusiness(testCB).setCreator(testUser).setUsers(users).create();
+					).setComplexBusiness(testCB).setCreator(testUser.mName).setUsers(users).create();
 			
 			String stringJSON = ActivityData.toJSON(data).toString();
 			Log.v(DemoApplication.TAG, stringJSON);

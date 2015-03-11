@@ -47,7 +47,7 @@ public class NavigationFragment extends Fragment {
 	ActivityCategoryAdapter mCategoryAdapter;
 	ActivityAdapter mRecentActivityAdapter;
 
-	String []mCategories = {"翡翠", "和田玉", "蜜蜡", "祖母绿", "红蓝宝", "珍珠"};
+	String []mCategories = {"翡翠", "和田玉", "蜜蜡", "祖母绿", "红蓝宝", "珍珠", "全部"};
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_navigation, container, false);
@@ -176,8 +176,17 @@ public class NavigationFragment extends Fragment {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				List<String> ids = ActivityManager.getInstance().getIdsByType(fType);
-				List<ActivityData> datas = ActivityManager.getInstance().getActivityByIds(ids);
+				List<String> ids;
+				List<ActivityData> datas;
+				if(fType.equals("全部"))
+				{
+					datas = ActivityManager.getInstance().getRecentActivity();
+				}
+				else
+				{
+					ids = ActivityManager.getInstance().getIdsByType(fType);
+					datas = ActivityManager.getInstance().getActivityByIds(ids);
+				}
 				mRecentActivityAdapter.setData(datas);
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
