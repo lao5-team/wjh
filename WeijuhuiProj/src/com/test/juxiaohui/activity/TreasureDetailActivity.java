@@ -122,7 +122,7 @@ public class TreasureDetailActivity extends Activity implements ITreasureDetailM
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                BmobServerManager.getInstance().sendComment(comment);
+                BmobServerManager.getInstance().sendTreasureComment(comment);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

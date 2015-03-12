@@ -136,6 +136,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.TreasureDetailActivity"/>
+        <activity
+                android:name=".activity.TreasureCreateActivity"
+                android:label="test"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

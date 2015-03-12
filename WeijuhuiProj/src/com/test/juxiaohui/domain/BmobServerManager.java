@@ -179,4 +179,9 @@ public class BmobServerManager extends MyServerManager {
     {
         #return null;
     }
+
+    public void sendTreasureComment(TreasureComment comment)
+    {
+
+    }
 }
