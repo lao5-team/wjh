@@ -142,6 +142,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".mdxc.app.LoginActivity"/>
+        <activity android:name=".mdxc.app.FlightSearchActivity"/>
+        <activity android:name=".mdxc.app.FlightSearchResultActivity"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
