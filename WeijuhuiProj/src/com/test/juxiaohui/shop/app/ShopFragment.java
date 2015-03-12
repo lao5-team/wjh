@@ -35,7 +35,7 @@ public class ShopFragment extends Fragment implements IShopMediator {
 		public View getView(ShopCategory data, View convertView) {
 			// TODO Auto-generated method stub
 			View view = getActivity().getLayoutInflater().inflate(R.layout.item_category, null);
-			TextView tv = (TextView)view.findViewById(R.id.textView_name);
+			TextView tv = (TextView)view.findViewById(R.id.textView_treasure_name);
 			tv.setText(data.getName());	
 			return view;
 		}

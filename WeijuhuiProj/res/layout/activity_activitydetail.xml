@@ -15,7 +15,7 @@
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/textView_name"
+        android:id="@+id/textView_treasure_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView_title"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/textView_name" >
+        android:layout_below="@+id/textView_treasure_name" >
 
         <ImageView
             android:id="@+id/imageView_creator"

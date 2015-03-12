@@ -15,7 +15,7 @@
         android:src="@drawable/app_pref_bg" />
 
     <TextView
-        android:id="@+id/textView_name"
+        android:id="@+id/textView_treasure_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/imageView_avatar"

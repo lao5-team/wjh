@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-import junit.framework.Assert;
-
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.Constant;
 import com.test.juxiaohui.DemoApplication;
@@ -25,13 +23,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,7 +89,7 @@ public class UserinfoFragment extends Fragment {
 	
 	public void initUI()
 	{
-		mTvName = (TextView)getView().findViewById(R.id.textView_name);
+		mTvName = (TextView)getView().findViewById(R.id.textView_treasure_name);
 		mTvName.setText(mUser.mName);
 		mImgAvatar = (ImageView)getView().findViewById(R.id.imageView_avatar);
 		if(null!=mUser.mImgUrl&&mUser.mImgUrl.length()>0)

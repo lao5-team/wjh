@@ -7,6 +7,7 @@ import cn.bmob.v3.listener.UploadFileListener;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
+import com.test.juxiaohui.data.comment.TreasureComment;
 import com.test.juxiaohui.utils.SyncCallback;
 
 import java.io.File;
@@ -167,5 +168,15 @@ public class BmobServerManager extends MyServerManager {
 
         return callback.executeBegin();
 
+    }
+
+    public List<TreasureComment> getTreasureComments(List<String> ids)
+    {
+        #return null;
+    }
+
+    public List<TreasureComment> getTreasureProfComment(List<String> ids)
+    {
+        #return null;
     }
 }

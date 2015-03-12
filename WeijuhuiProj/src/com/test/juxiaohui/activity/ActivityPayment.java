@@ -44,7 +44,7 @@ public class ActivityPayment extends Activity {
 	private void initUI()
 	{
 		setContentView(R.layout.activity_payment);
-		mTvName = (TextView)findViewById(R.id.textView_name);
+		mTvName = (TextView)findViewById(R.id.textView_treasure_name);
 		mTvName.setText(mName);
 		
 		mImg = (ImageView)findViewById(R.id.imageView_payment);

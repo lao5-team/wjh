@@ -114,7 +114,7 @@ public class GoodsActivity extends Activity implements IGoodsMediator{
 	private void initUI()
 	{
 		setContentView(R.layout.activity_goods_layout);
-		mTvName = (TextView)findViewById(R.id.textView_name);
+		mTvName = (TextView)findViewById(R.id.textView_treasure_name);
 		mTvName.setText(mGoods.getName());
 		mTvPrize = (TextView)findViewById(R.id.textView_prize);
 		mTvPrize.setText(mGoods.getPrice() + " 元");

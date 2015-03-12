@@ -34,7 +34,7 @@ public class SimpleBusinessAdapter extends BaseAdapter {
 		public void createFromView(View view)
 		{
 			mImgView = (ImageView)view.findViewById(R.id.imageView_img);
-			mTvName = (TextView)view.findViewById(R.id.textView_name);
+			mTvName = (TextView)view.findViewById(R.id.textView_treasure_name);
 			mTvAddress = (TextView)view.findViewById(R.id.textView_address);
 		}
 		

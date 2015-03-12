@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.shop.app.GoodsActivity.IntentWrapper;
 import com.test.juxiaohui.shop.data.Goods;
 import com.test.juxiaohui.shop.data.ShopDataManager;
 import com.test.juxiaohui.widget.CommonAdapter;
@@ -61,7 +60,7 @@ public class GoodsListActivity extends Activity {
 				View view = getLayoutInflater().inflate(R.layout.item_goods, null);
 				ViewHolder holder = new ViewHolder();
 				holder.mIvPic = (ImageView)view.findViewById(R.id.imageView_goods);
-				holder.mTvName = (TextView)view.findViewById(R.id.textView_name);
+				holder.mTvName = (TextView)view.findViewById(R.id.textView_treasure_name);
 				holder.mTvPrize = (TextView)view.findViewById(R.id.textView_prize);
 				view.setTag(holder);
 				convertView = view;

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content" >
 
     <TextView
-        android:id="@+id/textView_name"
+        android:id="@+id/textView_treasure_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -17,8 +17,8 @@
         android:id="@+id/textView_prize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView_name"
-        android:layout_below="@+id/textView_name"
+        android:layout_alignLeft="@+id/textView_treasure_name"
+        android:layout_below="@+id/textView_treasure_name"
         android:layout_marginTop="10dip"
         android:text="TextView"
         android:textSize="@dimen/normal_font_size" />

@@ -17,7 +17,7 @@
         android:layout_below="@id/textView_title" >
 
         <TextView
-            android:id="@+id/textView_name"
+            android:id="@+id/textView_treasure_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -28,7 +28,7 @@
             android:id="@+id/imageView_payment"
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:layout_below="@id/textView_name"
+            android:layout_below="@id/textView_treasure_name"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
             android:src="@android:drawable/edit_text" />
