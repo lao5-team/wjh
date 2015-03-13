@@ -198,6 +198,52 @@
      <item name="android:height">10px</item>
      <item name="android:background">@color/color_c2c2c2</item>
  </style>
+
+    <style name="AnimLeft" parent="@android:style/Animation">
+        <item name="android:activityOpenEnterAnimation">@anim/in_from_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/out_to_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/in_from_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/out_to_right</item>
+    </style>
+    <style name="CTActivityStyleLeftPush">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/AnimLeft</item>
+    </style>
+
+    <style name="BaseInput" parent="@android:style/Widget.EditText">
+        <item name="android:textSize">@dimen/font_size_medium</item>
+        <item name="android:textColor">@color/color_333333</item>
+        <item name="android:textColorHint">@color/color_dddddd</item>
+        <item name="android:background">@color/color_ffffff</item>
+        <item name="android:paddingLeft">@dimen/margin_10</item>
+        <item name="android:paddingRight">@dimen/margin_10</item>
+        <item name="android:layout_height">@dimen/view_item_height</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+
+    <style name="line_h">
+        <item name="android:background">@color/color_c8c8c8</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">1.0px</item>
+    </style>
+
+    <style name="TitleView">
+        <item name="android:textSize">@dimen/font_size_36</item>
+        <item name="android:textColor">@color/color_333333</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="TipView">
+        <item name="android:textSize">@dimen/font_size_26</item>
+        <item name="android:textColor">@color/color_999999</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+    </style>
  
 
 

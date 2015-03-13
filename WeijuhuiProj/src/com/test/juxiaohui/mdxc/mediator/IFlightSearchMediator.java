@@ -11,13 +11,11 @@ public interface IFlightSearchMediator {
 
     public void addCityView();
 
-    public void addExchangeCityView();
-
     public void addDateView();
 
     public void addPassengersView();
 
-    public void addEconomyView();
+    public void addClassView();
 
     public void addSearchView();
 
@@ -35,12 +33,17 @@ public interface IFlightSearchMediator {
     /**
      * 设置出发城市
      * @param city
+     * @param code
      */
-    public void setFromCity(String city);
+    public void setDepart(String city, String code);
 
-    public void setToCity(String city);
+    /**
+     * 设置到达城市
+     * @param city
+     * @param code
+     */
+    public void setArrival(String city, String code);
 
-    public void setDate(Date date);
 
     /**
      * 设置乘客数量
@@ -55,6 +58,17 @@ public interface IFlightSearchMediator {
     public void setFlightClass(String class_type);
 
     public void search();
+
+    /**
+     * 打开城市列表
+     */
+    public void openCities();
+
+    public void openCalendar();
+
+    public void setDepartDate(Date date);
+
+    public void setArrivalDate(Date date);
 
 
 

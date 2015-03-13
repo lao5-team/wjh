@@ -131,9 +131,7 @@
                   android:theme="@style/horizontal_slide">
         </activity>
         
-        <activity android:name=".mdxc.app.RegisterActivity"
-                  android:theme="@style/horizontal_slide">
-        </activity>
+
         
         <activity android:name=".activity.EntryTest" android:theme="@style/horizontal_slide">
             <intent-filter>
@@ -141,7 +139,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".mdxc.app.LoginActivity"/>
+        <activity android:name=".mdxc.app.RegisterActivity"
+                  android:theme="@style/CTActivityStyleLeftPush">
+        </activity>
+        <activity android:name=".mdxc.app.LoginActivity" android:theme="@style/CTActivityStyleLeftPush"/>
         <activity android:name=".mdxc.app.FlightSearchActivity"/>
         <activity android:name=".mdxc.app.FlightSearchResultActivity"/>
     </application>

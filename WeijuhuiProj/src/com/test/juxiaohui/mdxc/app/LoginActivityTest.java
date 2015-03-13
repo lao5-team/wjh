@@ -44,7 +44,7 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
 
     public void testUI()
     {
-        Assert.assertEquals(mTvUsername.getText(), "Username");
+        //Assert.assertEquals(mTvUsername.getText(), "Username");
 
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
@@ -53,7 +53,7 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
             }
         });
         getInstrumentation().waitForIdleSync();
-        getInstrumentation().sendStringSync("yh");
+        getInstrumentation().sendStringSync("mdxc");
         getInstrumentation().waitForIdleSync();
 
         //填写一个错误的密码
@@ -88,7 +88,7 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
             }
         });
         getInstrumentation().waitForIdleSync();
-        getInstrumentation().sendStringSync("yh");
+        getInstrumentation().sendStringSync("mdxc");
         getInstrumentation().waitForIdleSync();
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
