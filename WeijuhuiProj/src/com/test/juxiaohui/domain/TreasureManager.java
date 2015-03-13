@@ -9,8 +9,20 @@ import java.util.List;
  * Created by yihao on 15/3/12.
  */
 public class TreasureManager {
+
+    public static TreasureManager mInstance = null;
+    public static TreasureManager getInstance()
+    {
+        if(null == mInstance)
+        {
+            mInstance = new TreasureManager();
+        }
+
+        return mInstance;
+    }
+
     public String uploadTreasure(Treasure treasure){
-        
+        return BmobServerManager.getInstance().uploadTreasure(treasure);
     }
 
     /**

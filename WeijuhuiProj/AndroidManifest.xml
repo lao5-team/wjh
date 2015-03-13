@@ -139,6 +139,7 @@
         <activity
                 android:name=".activity.TreasureCreateActivity"
                 android:label="test"/>
+        <activity android:name=".AllTreasureActivity"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

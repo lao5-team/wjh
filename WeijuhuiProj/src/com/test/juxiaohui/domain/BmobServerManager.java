@@ -3,10 +3,12 @@ package com.test.juxiaohui.domain;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadFileListener;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
+import com.test.juxiaohui.data.Treasure;
 import com.test.juxiaohui.data.comment.TreasureComment;
 import com.test.juxiaohui.utils.SyncCallback;
 
@@ -170,6 +172,117 @@ public class BmobServerManager extends MyServerManager {
 
     }
 
+
+    public String uploadTreasure(final Treasure treasure)
+    {
+        SyncCallback<String> callback = new SyncCallback<String>() {
+
+            @Override
+            public void executeImpl() {
+                treasure.save(DemoApplication.applicationContext, new SaveListener() {
+                    @Override
+                    public void onSuccess() {
+                        onResult("Success");
+                    }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+
+                    }
+                });
+            }
+        };
+        //
+        return callback.executeBegin();
+    }
+
+    public List<Treasure> getAllTreasure()
+    {
+        SyncCallback<List<Treasure>> callback = new SyncCallback<List<Treasure>>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<Treasure> query = new BmobQuery<Treasure>();
+                query.findObjects(DemoApplication.applicationContext, new FindListener<Treasure>() {
+                    @Override
+                    public void onSuccess(List<Treasure> object) {
+
+                        onResult(object);
+                    }
+
+                    @Override
+                    public void onError(int code, String msg) {
+                        onResult(null);
+                    }
+                });
+
+            }
+        };
+        return callback.executeBegin();
+    }
+
+    public List<Treasure> getTreasureIdsByOwner(String username)
+    {
+        final String name = username;
+        SyncCallback<List<Treasure>> callback = new SyncCallback<List<Treasure>>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<Treasure> query = new BmobQuery<Treasure>();
+                query.addWhereEqualTo("mOwnerName", name);
+                query.findObjects(DemoApplication.applicationContext, new FindListener<Treasure>() {
+                    @Override
+                    public void onSuccess(List<Treasure> object) {
+                        onResult(object);
+                    }
+
+                    @Override
+                    public void onError(int code, String msg) {
+                        onResult(null);
+                    }
+                });
+
+            }
+        };
+        return callback.executeBegin();
+    }
+
+    public List<Treasure> getUnindentifiedTreasureIds()
+    {
+        SyncCallback<List<Treasure>> callback = new SyncCallback<List<Treasure>>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<Treasure> query = new BmobQuery<Treasure>();
+                query.addWhereEqualTo("mIsIdentified", Boolean.FALSE);
+                query.findObjects(DemoApplication.applicationContext, new FindListener<Treasure>() {
+                    @Override
+                    public void onSuccess(List<Treasure> object) {
+                        onResult(object);
+                    }
+
+                    @Override
+                    public void onError(int code, String msg) {
+                        onResult(null);
+                    }
+                });
+
+            }
+        };
+        return callback.executeBegin();
+    }
+
+    /**
+     *发送评论，并且会发送消息
+     * 会给宝物的主人发送消息
+     * 如果评论replyTo对象不为空，则给reply对象发送消息
+     */
+
+    public void sendTreasureComment(TreasureComment comment)
+    {
+
+    }
+
     public List<TreasureComment> getTreasureComments(List<String> ids)
     {
         #return null;
@@ -178,10 +291,5 @@ public class BmobServerManager extends MyServerManager {
     public List<TreasureComment> getTreasureProfComment(List<String> ids)
     {
         #return null;
-    }
-
-    public void sendTreasureComment(TreasureComment comment)
-    {
-
     }
 }
