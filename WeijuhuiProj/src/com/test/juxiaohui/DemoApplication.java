@@ -344,7 +344,7 @@ public class DemoApplication extends Application {
 	
 	private void showInvitedNotification(String str)
 	{
-		Notification notification = new Notification(R.drawable.logo_uidemo,
+		Notification notification = new Notification(R.drawable.icon,
 				"新的好友邀请", System.currentTimeMillis());
 
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
@@ -365,7 +365,7 @@ public class DemoApplication extends Application {
          .setContentTitle(notifyString)
          .setContentText(notifyString)
          .setTicker(notifyString)
-         .setSmallIcon(R.drawable.logo_uidemo)
+         .setSmallIcon(R.drawable.icon)
          .build();
  
 

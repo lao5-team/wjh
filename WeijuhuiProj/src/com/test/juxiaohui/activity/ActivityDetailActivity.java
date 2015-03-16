@@ -27,7 +27,6 @@ import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.domain.activity.ActivityManager;
 import com.test.juxiaohui.mediator.IActivityDetailMediator;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.R.id;
 import com.test.juxiaohui.R.layout;
 
 import android.app.Activity;
@@ -109,7 +108,7 @@ public class ActivityDetailActivity extends FragmentActivity {
 		
 		@Override
 		public void showTime(Date date) {
-			mTvTime.setText( new SimpleDateFormat(ActivityData.dataPattern).format(date));
+			mBtnTime.setText( new SimpleDateFormat(ActivityData.dataPattern).format(date));
 		}
 		
 		@Override
@@ -130,7 +129,6 @@ public class ActivityDetailActivity extends FragmentActivity {
 				}				
 			}
 
-			mTvFriends.setText(result);
 		}
 		
 		@Override
@@ -139,28 +137,18 @@ public class ActivityDetailActivity extends FragmentActivity {
 		}
 		
 		@Override
-		public void setActivityData(ActivityData data) {
+		public void setActivityData(ActivityData data, MyUser creator) {
 			mData = data;
 			showTitle(data.mTitle);
 			showContent(data.mContent);
 			showTime(data.mBeginDate);
-			UserManager.getInstance().getUsers(data.mUsers);
-			//showPayType(data.mSpentType);
-			if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.CREATOR))
+			showCreator(creator);
+			if(data.mImgUrl!=null&&data.mImgUrl.length()>0)
 			{
-				mBtnConfirm.setText("完成");
-				mBtnCancel.setText("解散");
+				Picasso.with(ActivityDetailActivity.this).load(data.mImgUrl).into(mIvXuanchuan);
 			}
-			else if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.JOINER))
-			{
-				mBtnConfirm.setVisibility(View.GONE);
-				mBtnCancel.setText("退出");				
-			}
-			else if(UserManager.getInstance().getCurrentUser().getMyRoleType(mData).endsWith(MyUser.STRANGER))
-			{
-				mBtnConfirm.setText("报名");
-				mBtnCancel.setText("取消");				
-			}
+
+
 		}
 		
 		@Override
@@ -220,6 +208,15 @@ public class ActivityDetailActivity extends FragmentActivity {
 			mCommentAdapter.refresh();
 		}
 
+		@Override
+		public void showCreator(MyUser user) {
+			mTvUser.setText(user.mName);
+			if(null!=user.mImgUrl&&user.mImgUrl.length()>0)
+			{
+				Picasso.with(ActivityDetailActivity.this).load(user.mImgUrl).into(mIvUser);
+			}
+		}
+
 
 	};
 	//data
@@ -228,31 +225,22 @@ public class ActivityDetailActivity extends FragmentActivity {
 	private CommentAdapter mCommentAdapter;
 	
 	//UI
-	private RelativeLayout mView;
+
+	private ImageView mIvUser;
+	private TextView mTvUser;
 	private TextView mTvName;
-	private ImageView mImgContent;
-	private RelativeLayout mLayoutAddress;
-	private TextView mTvAddress;
-	private RelativeLayout mLayoutPhone;
-	private TextView mTvPhone;
-	private Button mBtnAddFriends;
-	private TextView mTvFriends;
-	private TextView mTvTime;
-	private Button mBtnConfirm;
-	private Button mBtnCancel;
-	private Button mBtnComment;
+	private TextView mTvDesc;
+	private ImageView mIvXuanchuan;
+	private Button mBtnTime;
+	private Button mBtnAddress;
+
+
 	private TextView mTvContent;
-	private CheckBox mCBPayMe;
-	private CheckBox mCBPayAA;
-	private CheckBox mCBPayOther;	
-	private ListView mListViewComment;
-	private RelativeLayout mLayoutComment;
-	private EditText mEtxComment;
-	private Button mBtnSend;
+
 	//Handler
 	private ArrayList<MyUser> mFriends = new ArrayList<MyUser>();
 	private ActivityData mData;
-	private String mTempReplyTo = null;
+
 	private void updateFriendsUI()
 	{
 
@@ -272,12 +260,30 @@ public class ActivityDetailActivity extends FragmentActivity {
 		/*test code begin*/
 		Intent intent = getIntent();
 		final IntentBuilder ib = new IntentBuilder(intent);
-		mData = MyServerManager.getInstance().getActivity(ib.getActivityID());
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				mData = ActivityManager.getInstance().getActivity(ib.getActivityID());
+				final MyUser user = MyServerManager.getInstance().getUserInfo(mData.mCreator);
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						if (mData == null) {
+							Toast.makeText(ActivityDetailActivity.this, "找不到活动内容", Toast.LENGTH_SHORT).show();
+							ActivityDetailActivity.this.finish();
+						} else {
+							mMediator.setActivityData(mData, user);
+						}
+					}
+				});
 
-		if (mData == null) {
-			Toast.makeText(this, "找不到活动内容", Toast.LENGTH_SHORT).show();
-			this.finish();
-		}
+
+			}
+		});
+		t.start();
+
+
+
 		
 		mCommentAdapter = new CommentAdapter(this, new IActivityCommentLoader() {
 			
@@ -300,101 +306,23 @@ public class ActivityDetailActivity extends FragmentActivity {
 				return commentList;				
 			}
 		});
-		mListViewComment.setAdapter(mCommentAdapter);
-		mListViewComment.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				ActivityComment comment = (ActivityComment)mCommentAdapter.getItem(position);
-				if(!comment.getUserName().equals(UserManager.getInstance().getCurrentUser().mName))
-				{
-					mTempReplyTo = comment.getUserName();
-					mEtxComment.setHint("回复 " + comment.getUserName());
-					mLayoutComment.setVisibility(View.VISIBLE);
-				}
-				else
-				{
-					mLayoutComment.setVisibility(View.INVISIBLE);
-				}
-			}
-				
-		});
-		mMediator.setActivityData(mData);
 		
 	}
 	
 	private void initUI()
 	{
 		RelativeLayout layout = (RelativeLayout) this.getLayoutInflater().inflate(R.layout.fragment_activity_detail, null);
-		mView = layout;
+
 		setContentView(layout);
 		
-		mTvName = (TextView) layout.findViewById(R.id.textView_title_sub);
+		mTvName = (TextView) layout.findViewById(R.id.textView_title);
 
-		mTvTime = (TextView)layout.findViewById(R.id.button_select_date);
-		
 		mTvContent = (TextView)layout.findViewById(R.id.editText_content_sub);
-		
-		mTvFriends = (TextView) layout.findViewById(R.id.button_select_friends);
-		
-		mCBPayMe = (CheckBox)findViewById(R.id.checkBox_pay_me);
-		mCBPayAA = (CheckBox)findViewById(R.id.checkBox_pay_aa);
-		mCBPayOther = (CheckBox)findViewById(R.id.checkBox_pay_other);
-		
-		mListViewComment = (ListView)findViewById(R.id.listView_comment);
-		
-		mBtnConfirm = (Button)findViewById(R.id.button_OK);
-		mBtnConfirm.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				mMediator.onOKClicked();
-				ActivityDetailActivity.this.finish();
-			}
-		});
-		
-		mBtnCancel = (Button)findViewById(R.id.button_Cancel);
-		mBtnCancel.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				mMediator.onCancelClicked();
-				ActivityDetailActivity.this.finish();				
-			}
-		});		
-		
-		mBtnComment = (Button)findViewById(R.id.button_comment);
-		mBtnComment.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				mTempReplyTo = null;
-				mLayoutComment.setVisibility(View.VISIBLE);
-			}
-		});
-		
-		mLayoutComment = (RelativeLayout)findViewById(R.id.layout_comment);
-		
-		mEtxComment = (EditText)findViewById(R.id.editText_comment);
-		
-		mBtnSend = (Button)findViewById(R.id.button_send);
-		mBtnSend.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				String content = mEtxComment.getEditableText().toString();
-				if(null!=content && content.length()>0)
-				{
-					ActivityComment comment = new ActivityComment(UserManager.getInstance().getCurrentUser().mName, content, mData.mID, mTempReplyTo);
-					mMediator.postComment(comment);
-				}
-				mTempReplyTo = null;
-				mLayoutComment.setVisibility(View.INVISIBLE);
-				
-				
-			}
-		});
+		mIvUser = (ImageView)findViewById(R.id.imageView_user);
+		mTvUser = (TextView)findViewById(R.id.textView_user);
+		mIvXuanchuan = (ImageView)findViewById(R.id.imageView_xuanchuan);
+		mBtnTime = (Button)findViewById(R.id.button_date);
+		mBtnAddress = (Button)findViewById(R.id.button_address);
 		
 	}
 	

@@ -26,7 +26,9 @@ public class MyUser implements Serializable {
 	private static final long serialVersionUID = 7204887748188714747L;
 	public static String CREATOR = "creator";
 	public static String JOINER = "joiner";
-	public static String STRANGER = "stranger"; 
+	public static String STRANGER = "stranger";
+	public static int NORMAL_USER = 0;
+	public static int PROFESSION_USER = 1;
 	public String mName;
 	public String mPassword;
 	public String mSex = "male";
@@ -34,6 +36,8 @@ public class MyUser implements Serializable {
 	public ArrayList<String> mDoingActivities = new ArrayList<String>();
 	public ArrayList<String> mFinishedActivities = new ArrayList<String>();
 	public String mID;
+	public int mType = 0;
+
 
 	public static MyServerManager SERVER_MANAGER = BmobServerManager.getInstance();
 	/**
@@ -60,6 +64,7 @@ public class MyUser implements Serializable {
 			obj.put("sex", user.mSex);
 			//obj.put("state", user.mActivityState);
 			obj.put("imgUrl", user.mImgUrl);
+			obj.put("type", user.mType);
 			if(user.mID != null)
 			{
 				obj.put("id", user.mID);
@@ -81,6 +86,10 @@ public class MyUser implements Serializable {
 			user.mSex = obj.getString("sex");
 			//user.mActivityState = obj.getInt("state");
 			user.mImgUrl = obj.getString("imgUrl");
+			if(obj.has("type"))
+			{
+				user.mType = obj.getInt("type");
+			}
 			if(obj.has("id"))
 			{
 				user.mID = obj.getString("id");

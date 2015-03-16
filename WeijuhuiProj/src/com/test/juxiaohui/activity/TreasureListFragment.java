@@ -1,16 +1,18 @@
 package com.test.juxiaohui.activity;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.data.Treasure;
+import com.test.juxiaohui.domain.TreasureManager;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;
 
@@ -50,10 +52,40 @@ public class TreasureListFragment extends Fragment {
                 ViewHolder holder = (ViewHolder) convertView.getTag();
                 holder.mTvName.setText(data.mName);
                 holder.mTvUsername.setText(data.mOwnerName);
-                Picasso.with(getActivity()).load(data.mImgs.get(0)).into(holder.mIvImage);
+                //Picasso.with(getActivity()).load(data.mImgs.get(0)).into(holder.mIvImage);
                 return convertView;
             }
         }));
+        mLvTreasure.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TreasureDetailActivity.startActivity(mListTreasure.get(position).getObjectId(), TreasureListFragment.this);
+            }
+        });
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                setTreasures(TreasureManager.getInstance().getAllTreasureIds());
+            }
+        });
+        t.start();
         return view;
     }
+
+    public void setTreasures(List<Treasure> treasures)
+    {
+        mListTreasure = treasures;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((CommonAdapter)mLvTreasure.getAdapter()).setData(mListTreasure);
+                ((CommonAdapter) mLvTreasure.getAdapter()).notifyDataSetChanged();
+            }
+        });
+
+    }
+
+
+
 }

@@ -8,7 +8,7 @@ import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.comment.ActivityComment;
 
 public interface IActivityDetailMediator {
-	public void setActivityData(ActivityData data);
+	public void setActivityData(ActivityData data, MyUser creator);
 	
 	/**
 	 * 显示活动标题
@@ -56,6 +56,8 @@ public interface IActivityDetailMediator {
 	public void onCancelClicked();
 	
 	public void postComment(ActivityComment comment);
+
+	public void showCreator(MyUser user);
 	
 	
 }

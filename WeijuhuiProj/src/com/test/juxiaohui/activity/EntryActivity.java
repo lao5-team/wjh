@@ -82,6 +82,7 @@ public class EntryActivity extends FragmentActivity {
 	private ContactlistFragment mContactListFragment;
 	private NavigationFragment mNaviFragment;
 	private UserinfoFragment mUserinfoFragment;
+	private TreasuresEntryFragment mTreasureFragment;
 	private Fragment[] fragments;
 	private int index;
 	// 当前fragment的index
@@ -103,10 +104,12 @@ public class EntryActivity extends FragmentActivity {
 		mContactListFragment = new ContactlistFragment();
 		//mSettingFragment = new SettingsFragment();
 		mNaviFragment = new NavigationFragment();
-		
+
+		mTreasureFragment = new TreasuresEntryFragment();
+
 		mUserinfoFragment = new UserinfoFragment(UserManager.getInstance().getCurrentUser());
 		
-		fragments = new Fragment[] { mNaviFragment, mContactListFragment, mUserinfoFragment };
+		fragments = new Fragment[] { mNaviFragment, mTreasureFragment, mContactListFragment , mUserinfoFragment };
 		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mNaviFragment)
 				.show(mNaviFragment).commit();
 
@@ -140,9 +143,6 @@ public class EntryActivity extends FragmentActivity {
 		intent = new Intent(this, MessageService.class);
 		startService(intent);		
 	}
-	
-	
-
 
 
 	/**
@@ -151,10 +151,11 @@ public class EntryActivity extends FragmentActivity {
 	private void initView() {
 		unreadLabel = (TextView) findViewById(R.id.unread_msg_number);
 		unreadAddressLable = (TextView) findViewById(R.id.unread_address_number);
-		mTabs = new Button[3];
+		mTabs = new Button[4];
 		mTabs[0] = (Button) findViewById(R.id.btn_conversation);
-		mTabs[1] = (Button) findViewById(R.id.btn_address_list);
-		mTabs[2] = (Button) findViewById(R.id.btn_setting);
+		mTabs[1] = (Button) findViewById(R.id.btn_treasures);
+		mTabs[2] = (Button) findViewById(R.id.btn_address_list);
+		mTabs[3] = (Button) findViewById(R.id.btn_setting);
 		// 把第一个tab设为选中状态
 		mTabs[0].setSelected(true);
 
@@ -170,11 +171,14 @@ public class EntryActivity extends FragmentActivity {
 		case R.id.btn_conversation:
 			index = 0;
 			break;
-		case R.id.btn_address_list:
+		case R.id.btn_treasures:
 			index = 1;
 			break;
-		case R.id.btn_setting:
+		case R.id.btn_address_list:
 			index = 2;
+			break;
+		case R.id.btn_setting:
+			index = 3;
 			break;
 		}
 		if (currentTabIndex != index) {

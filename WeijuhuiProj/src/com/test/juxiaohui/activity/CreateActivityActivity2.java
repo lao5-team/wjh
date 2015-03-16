@@ -334,9 +334,6 @@ public class CreateActivityActivity2 extends Activity {
 		setContentView(R.layout.activity_newactivity2);
 		mEtxTitle = (EditText)findViewById(R.id.editText_title);
 		mEtxContent = (EditText)findViewById(R.id.editText_content);
-		mCBPayMe = (CheckBox)findViewById(R.id.checkBox_pay_me);
-		mCBPayAA = (CheckBox)findViewById(R.id.checkBox_pay_aa);
-		mCBPayOther = (CheckBox)findViewById(R.id.checkBox_pay_other);
 		mBtnSelectBusiness = (Button)findViewById(R.id.button_select_business);
 		mBtnSelectBusiness.setOnClickListener(new OnClickListener() {
 			

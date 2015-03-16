@@ -15,7 +15,7 @@
     <application
         android:name="DemoApplication"
         android:allowBackup="true"
-        android:icon="@drawable/logo_uidemo"
+        android:icon="@drawable/icon"
         android:label="@string/app_name" >
         <activity
             android:name="com.test.juxiaohui.activity.MainActivity"
@@ -28,6 +28,7 @@
         <activity
             android:name="com.test.juxiaohui.activity.EntryActivity"
             android:theme="@style/horizontal_slide" >
+
         </activity>
         <activity
             android:name="com.test.juxiaohui.activity.RegisterActivity"
@@ -42,12 +43,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide" >
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
         </activity>
 
         <service android:name="com.test.juxiaohui.service.ContactChangeService" />
@@ -130,16 +129,18 @@
         </activity>
         
         <activity android:name=".activity.EntryTest" android:theme="@style/horizontal_slide">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN"/>-->
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+            <!--</intent-filter>-->
         </activity>
-        <activity android:name=".activity.TreasureDetailActivity"/>
+        <activity android:name=".activity.TreasureDetailActivity" android:theme="@style/horizontal_slide"/>
         <activity
                 android:name=".activity.TreasureCreateActivity"
-                android:label="test"/>
-        <activity android:name=".AllTreasureActivity"/>
+                android:label="test"
+                android:theme="@style/horizontal_slide"/>
+        <activity android:name=".AllTreasureActivity" android:theme="@style/horizontal_slide"/>
+        <activity android:name=".activity.TreasuresEntryActivity" android:theme="@style/horizontal_slide"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

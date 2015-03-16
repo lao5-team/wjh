@@ -101,6 +101,11 @@ public class ActivityManager {
 			mListeners.remove(listener);
 		}
 	}
+
+	public ActivityData getActivity(String id)
+	{
+		return BmobServerManager.getInstance().getActivity(id);
+	}
 	
 	/**
 	 * 返回最近的活动

@@ -207,7 +207,7 @@ public class ContactChangeService extends Service {
 	 * Show a notification while this service is running.
 	 */
 	private void showNotification(String activityName) {
-		Notification notification = new Notification(R.drawable.logo_uidemo,
+		Notification notification = new Notification(R.drawable.icon,
 				"有新的聚会邀请", System.currentTimeMillis());
 
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
@@ -221,7 +221,7 @@ public class ContactChangeService extends Service {
 	
 	private void showInvitedNotification(String str)
 	{
-		Notification notification = new Notification(R.drawable.logo_uidemo,
+		Notification notification = new Notification(R.drawable.icon,
 				"新的好友邀请", System.currentTimeMillis());
 
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,

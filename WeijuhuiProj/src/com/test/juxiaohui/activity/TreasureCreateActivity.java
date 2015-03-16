@@ -1,6 +1,8 @@
 package com.test.juxiaohui.activity;
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.Toast;
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.adapter.ActivityAdapter;
 import com.test.juxiaohui.data.Treasure;
 import com.test.juxiaohui.domain.BmobServerManager;
 import com.test.juxiaohui.domain.TreasureManager;
@@ -25,10 +28,18 @@ public class TreasureCreateActivity extends Activity implements ITreasureCreateM
     private EditText mEtxDesc;
     private ImageSwitcher mISImages;
 
+    public static void startActivity(Activity activity, Fragment fragment){
+        Intent intent = new Intent(activity, TreasureCreateActivity.class);
+        fragment.startActivityForResult(intent, TreasuresEntryFragment.REQUEST_CREATE_TREASURE);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_treasure_create);
+        addTitleView();
+        addDescView();
+        addImgsView();
         mBtnCreate = (Button)findViewById(R.id.button_create);
         mBtnCreate.setOnClickListener(new View.OnClickListener() {
             @Override

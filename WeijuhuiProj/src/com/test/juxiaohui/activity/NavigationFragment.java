@@ -140,7 +140,7 @@ public class NavigationFragment extends Fragment {
 				ActivityDetailActivity.IntentWrapper ib = new ActivityDetailActivity.IntentWrapper(
 						intent);
 				ib.setUseType(ActivityDetailActivity.USE_EDIT);
-				ib.setActivityID(((ActivityData)mRecentActivityAdapter.getItem(position)).mID);
+				ib.setActivityID(((ActivityData)mRecentActivityAdapter.getItem(position)).getObjectId());
 				intent.setClass(getActivity(), ActivityDetailActivity.class);
 				startActivityForResult(intent, 0);
 			}

@@ -70,7 +70,7 @@ public class MessageService extends Service {
 								 Notification noti = new Notification.Builder(MessageService.this)
 						         .setContentTitle("new Message")
 						         .setContentText(message.toString(MessageService.this))
-						         .setSmallIcon(R.drawable.ic_launcher)
+						         .setSmallIcon(R.drawable.icon)
 						         .setTicker("new Message")
 						         .setDefaults(Notification.DEFAULT_SOUND)
 						         .setContentIntent(pi)

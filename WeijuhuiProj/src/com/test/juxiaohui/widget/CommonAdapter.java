@@ -30,10 +30,6 @@ public class CommonAdapter<T> extends BaseAdapter {
 	 */
     public void setData(List<T> dataList)
     {
-    	if(null == dataList)
-    	{
-    		throw new IllegalArgumentException("dataList is null !");
-    	}
     	mDataList = dataList;
 		notifyDataSetChanged();
     }

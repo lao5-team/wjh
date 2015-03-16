@@ -35,7 +35,8 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="宝物名称"
-                    android:id="@+id/textView_treasure_name"/>
+                    android:id="@+id/textView_treasure_name"
+                    android:layout_marginTop="20dp"/>
 
             <EditText
                     android:layout_width="wrap_content"

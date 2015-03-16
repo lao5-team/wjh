@@ -8,6 +8,10 @@ import java.util.ArrayList;
  * Created by yihao on 15/3/12.
  */
 public class Treasure extends BmobObject {
+
+    public static Treasure NULL = new Treasure();
+
+
     public String mName = "";
     public String mDesc = "";
     public String mOwnerName = "";

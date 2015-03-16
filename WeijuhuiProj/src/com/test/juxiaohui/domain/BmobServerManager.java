@@ -2,9 +2,7 @@ package com.test.juxiaohui.domain;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobFile;
-import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UploadFileListener;
+import cn.bmob.v3.listener.*;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
@@ -247,6 +245,57 @@ public class BmobServerManager extends MyServerManager {
         return callback.executeBegin();
     }
 
+    public List<Treasure> getTreasuresByIds(List<String> ids)
+    {
+        final List<String> fids = ids;
+        SyncCallback<List<Treasure>> callback = new SyncCallback<List<Treasure>>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<Treasure> query = new BmobQuery<Treasure>();
+                query.addWhereContainsAll("objectId", fids);
+                query.findObjects(DemoApplication.applicationContext, new FindListener<Treasure>() {
+                    @Override
+                    public void onSuccess(List<Treasure> object) {
+
+                        onResult(object);
+                    }
+
+                    @Override
+                    public void onError(int code, String msg) {
+                        onResult(null);
+                    }
+                });
+
+            }
+        };
+        return callback.executeBegin();
+    }
+
+    public Treasure getTreasureById(final String id)
+    {
+        SyncCallback<Treasure> callback = new SyncCallback<Treasure>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<Treasure> query = new BmobQuery<Treasure>();
+                query.getObject(DemoApplication.applicationContext, id, new GetListener<Treasure>() {
+                    @Override
+                    public void onSuccess(Treasure treasure) {
+                        onResult(treasure);
+                    }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+                        onResult(Treasure.NULL);
+                    }
+                });
+
+            }
+        };
+        return callback.executeBegin();
+    }
+
     public List<Treasure> getUnindentifiedTreasureIds()
     {
         SyncCallback<List<Treasure>> callback = new SyncCallback<List<Treasure>>() {
@@ -278,18 +327,135 @@ public class BmobServerManager extends MyServerManager {
      * 如果评论replyTo对象不为空，则给reply对象发送消息
      */
 
-    public void sendTreasureComment(TreasureComment comment)
+    public void sendTreasureComment(final TreasureComment comment)
     {
+        SyncCallback<String> callback = new SyncCallback<String>() {
+
+            @Override
+            public void executeImpl() {
+                comment.save(DemoApplication.applicationContext, new SaveListener() {
+                    @Override
+                    public void onSuccess() {
+                        onResult(comment.getObjectId());
+                    }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+
+                    }
+                });
+
+            }
+        };
+        final String commentId = callback.executeBegin();
+
+        final Treasure treasure = getTreasureById(comment.mTreasureId);
+        if(treasure!=Treasure.NULL)
+        {
+            SyncCallback<String> callback2 = new SyncCallback<String>() {
+
+                @Override
+                public void executeImpl() {
+                    if(comment.mType == TreasureComment.TYPE_COMMENT)
+                    {
+                        treasure.mCommentIds.add(commentId);
+                    }
+                    else if(comment.mType == TreasureComment.TYPE_IDENTIFY)
+                    {
+                        treasure.mIdentifies.add(commentId);
+                    }
+                    treasure.update(DemoApplication.applicationContext, new UpdateListener() {
+                        @Override
+                        public void onSuccess() {
+                            onResult("Success");
+                        }
+
+                        @Override
+                        public void onFailure(int i, String s) {
+                            onResult("Failure");
+                        }
+                    });
+
+                }
+            };
+            callback2.executeBegin();
+        }
 
     }
 
-    public List<TreasureComment> getTreasureComments(List<String> ids)
+    public List<TreasureComment> getTreasureComments(final List<String> ids)
     {
-        #return null;
+        SyncCallback<List<TreasureComment>> callback = new SyncCallback<List<TreasureComment>>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<TreasureComment> query = new BmobQuery<TreasureComment>();
+                query.addWhereContainedIn("objectId", ids);
+                query.findObjects(DemoApplication.applicationContext, new FindListener<TreasureComment>() {
+                    @Override
+                    public void onSuccess(List<TreasureComment> object) {
+
+                        onResult(object);
+                    }
+
+                    @Override
+                    public void onError(int code, String msg) {
+                        onResult(null);
+                    }
+                });
+
+            }
+        };
+        return callback.executeBegin();
     }
 
-    public List<TreasureComment> getTreasureProfComment(List<String> ids)
+    public List<TreasureComment> getTreasureProfComment(final List<String> ids)
     {
-        #return null;
+        SyncCallback<List<TreasureComment>> callback = new SyncCallback<List<TreasureComment>>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<TreasureComment> query = new BmobQuery<TreasureComment>();
+                query.addWhereContainedIn("objectId", ids);
+                query.findObjects(DemoApplication.applicationContext, new FindListener<TreasureComment>() {
+                    @Override
+                    public void onSuccess(List<TreasureComment> object) {
+
+                        onResult(object);
+                    }
+
+                    @Override
+                    public void onError(int code, String msg) {
+                        onResult(null);
+                    }
+                });
+
+            }
+        };
+        return callback.executeBegin();
+    }
+
+    @Override
+    public ActivityData getActivity(final String id) {
+        SyncCallback<ActivityData> callback = new SyncCallback<ActivityData>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<ActivityData> query = new BmobQuery<ActivityData>();
+                query.getObject(DemoApplication.applicationContext, id, new GetListener<ActivityData>() {
+                    @Override
+                    public void onSuccess(ActivityData data) {
+                        onResult(data);
+                    }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+                        onResult(ActivityData.NULL);
+                    }
+                });
+
+            }
+        };
+        return callback.executeBegin();
     }
 }

@@ -3,6 +3,7 @@ package com.test.juxiaohui.domain;
 import com.test.juxiaohui.data.Treasure;
 import com.test.juxiaohui.data.comment.TreasureComment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,16 +33,24 @@ public class TreasureManager {
      */
     public List<Treasure> getTreasuresByIds(List<String> ids)
     {
+        return BmobServerManager.getInstance().getTreasuresByIds(ids);
+    }
 
+    public Treasure getTreasureById(String id)
+    {
+        ArrayList<String> ids = new ArrayList<String>();
+        ids.add(id);
+        List<Treasure> treasures = BmobServerManager.getInstance().getTreasuresByIds(ids);
+        return treasures.get(0);
     }
 
     /**
      * 返回所有宝物id
      * @return
      */
-    public List<String> getAllTreasureIds()
+    public List<Treasure> getAllTreasureIds()
     {
-
+        return BmobServerManager.getInstance().getAllTreasure();
     }
 
     /**
@@ -51,7 +60,7 @@ public class TreasureManager {
      */
     public List<String> getUserTreasureIds(String username)
     {
-
+        return null;
     }
 
     /**
@@ -60,7 +69,7 @@ public class TreasureManager {
      */
     public List<String> getUnidentifiedIds()
     {
-
+        return null;
     }
 
     /**
@@ -76,9 +85,9 @@ public class TreasureManager {
      * 队伍宝物进行评价
      * @param comment 评论信息
      */
-    public void comment(TreasureComment comment)
+    public void sendComment(TreasureComment comment)
     {
-
+        BmobServerManager.getInstance().sendTreasureComment(comment);
     }
 
 
