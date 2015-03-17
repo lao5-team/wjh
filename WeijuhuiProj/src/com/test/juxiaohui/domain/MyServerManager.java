@@ -308,7 +308,7 @@ public class MyServerManager {
 		Callable<MyUser> callable = new Callable<MyUser>() {
 			@Override
 			public MyUser call() throws Exception {
-				MyUser user = null;
+				MyUser user = MyUser.NULL;
 				String url = String.format(
 						"%s/db?action=get_user&table=user&username=%s",
 						IP_ADDRESS, fUserName);

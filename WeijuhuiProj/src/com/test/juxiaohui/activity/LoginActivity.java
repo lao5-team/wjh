@@ -49,6 +49,9 @@ import com.easemob.util.HanziToPinyin;
  * 
  */
 public class LoginActivity extends BaseActivity {
+	
+
+	
 	private EditText usernameEditText;
 	private EditText passwordEditText;
 

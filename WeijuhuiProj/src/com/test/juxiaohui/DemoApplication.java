@@ -60,6 +60,7 @@ import com.test.juxiaohui.data.message.MyMessage;
 import com.test.juxiaohui.domain.MessageManager;
 import com.test.juxiaohui.domain.User;
 import com.test.juxiaohui.domain.UserManager;
+import com.test.juxiaohui.service.StateMonitorService;
 import com.test.juxiaohui.utils.PreferenceUtils;
 import com.test.juxiaohui.R;
 //import com.easemob.chatuidemo.activity.ChatActivity;
@@ -178,6 +179,9 @@ public class DemoApplication extends Application {
 		EMChat.getInstance().setAppInited();
 
 		Bmob.initialize(this, "2bcee996bebe106a29ac7c8cde15078a");
+		
+		Intent intent = new Intent(this, StateMonitorService.class);
+		startService(intent);	
 
 	}
 

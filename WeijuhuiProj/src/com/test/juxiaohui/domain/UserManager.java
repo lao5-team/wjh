@@ -11,7 +11,18 @@ import java.util.List;
 
 public class UserManager {
 	private static UserManager mInstance = null;
-	private MyUser mCurrentUser = null;
+	private MyUser mCurrentUser = MyUser.NULL;
+	
+	private LoginStateListener mLoginStateListener = null;
+	
+	
+	
+	public static interface LoginStateListener
+	{	
+		public void onDisconnected();
+		
+	}
+	
 	public static UserManager getInstance()
 	{
 		if(null == mInstance)
@@ -71,6 +82,13 @@ public class UserManager {
 	 */
 	public MyUser getCurrentUser()
 	{
+		if(mCurrentUser == MyUser.NULL)
+		{
+			if(null!=mLoginStateListener)
+			{
+				mLoginStateListener.onDisconnected();	
+			}
+		}
 		return mCurrentUser;
 	}
 	
@@ -98,5 +116,11 @@ public class UserManager {
 	{
 		return new ArrayList<MyUser>();
 	}
+	
+	public void registerStateListener(LoginStateListener listener)
+	{
+		mLoginStateListener = listener;
+	}
+	
 	
 }

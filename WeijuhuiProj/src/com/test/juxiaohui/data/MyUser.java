@@ -29,15 +29,16 @@ public class MyUser implements Serializable {
 	public static String STRANGER = "stranger";
 	public static int NORMAL_USER = 0;
 	public static int PROFESSION_USER = 1;
-	public String mName;
-	public String mPassword;
+	public String mName = "";
+	public String mPassword = "";
 	public String mSex = "male";
 	public String mImgUrl = "";
 	public ArrayList<String> mDoingActivities = new ArrayList<String>();
 	public ArrayList<String> mFinishedActivities = new ArrayList<String>();
-	public String mID;
+	public String mID = "";
 	public int mType = 0;
 
+	public static MyUser NULL = new MyUser();
 
 	public static MyServerManager SERVER_MANAGER = BmobServerManager.getInstance();
 	/**

@@ -51,6 +51,7 @@
 
         <service android:name="com.test.juxiaohui.service.ContactChangeService" />
         <service android:name="com.test.juxiaohui.service.MessageService" />
+        <service android:name="com.test.juxiaohui.service.StateMonitorService"/>
         <!-- 设置环信应用的appkey -->
         <meta-data
             android:name="EASEMOB_APPKEY"
