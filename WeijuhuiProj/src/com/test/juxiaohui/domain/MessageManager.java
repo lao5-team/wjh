@@ -16,6 +16,7 @@ import com.easemob.exceptions.EaseMobException;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.message.MyMessage;
+import com.test.juxiaohui.data.message.TreasureMessage;
 
 /**
  * @author yh
@@ -111,4 +112,10 @@ public class MessageManager {
 	{
 		mMsgListeners.remove(listener);
 	}
+	
+	public String sendTreasureMessage(TreasureMessage message)
+	{
+		return BmobServerManager.getInstance().sendMessage(message);
+	}
+	
 }

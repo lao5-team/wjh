@@ -7,11 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.*;
+
 import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.Treasure;
 import com.test.juxiaohui.data.comment.TreasureComment;
+import com.test.juxiaohui.data.message.TreasureMessage;
 import com.test.juxiaohui.domain.BmobServerManager;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.domain.TreasureManager;
@@ -19,6 +21,7 @@ import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.mediator.ITreasureDetailMediator;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;
+
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -106,6 +109,10 @@ public class TreasureDetailActivity extends Activity implements ITreasureDetailM
             public void run() {
                 Intent intent = getIntent();
                 String treasureID = intent.getStringExtra(INTENT_TREASURE_ID);
+                if(true == intent.getBooleanExtra("fromNotification", false))
+                {
+                	TreasureManager.getInstance().clearUserMessage(UserManager.getInstance().getCurrentUser().mName);
+                }
                 List<String> ids = new ArrayList<String>();
                 ids.add(treasureID);
                 final List<Treasure> treasures = TreasureManager.getInstance().getTreasuresByIds(ids);

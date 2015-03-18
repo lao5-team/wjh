@@ -829,9 +829,9 @@ public class MyServerManager {
 	 * @param user
 	 * @param message
 	 */
-	public boolean sendMessage(String userId, MyMessage message)
+	public boolean sendMessage(String user, MyMessage message)
 	{
-		if (null == userId || null == message) {
+		if (null == user || null == message) {
 			throw new IllegalArgumentException(
 					"userId or message can not be null");
 		}
@@ -840,7 +840,7 @@ public class MyServerManager {
 		{
 			throw new ServerException(EXCEPTION_NOT_LOGIN);
 		}
-		final String fUserId = userId;
+		final String fUserId = user;
 		final MyMessage fMessage = message;
 		
 		Callable<Boolean> callable = new Callable<Boolean>() {

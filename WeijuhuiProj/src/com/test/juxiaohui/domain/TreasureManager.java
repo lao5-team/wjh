@@ -2,6 +2,7 @@ package com.test.juxiaohui.domain;
 
 import com.test.juxiaohui.data.Treasure;
 import com.test.juxiaohui.data.comment.TreasureComment;
+import com.test.juxiaohui.data.message.TreasureMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,13 +83,43 @@ public class TreasureManager {
     }
 
     /**
-     * 队伍宝物进行评价
+     * 对宝物进行评价
      * @param comment 评论信息
      */
     public void sendComment(TreasureComment comment)
     {
         BmobServerManager.getInstance().sendTreasureComment(comment);
+        Treasure treasure = getTreasureById(comment.mTreasureId);
+        TreasureMessage messageToOwner, messageToOther;
+        
+        if(!treasure.mOwnerName.equals(UserManager.getInstance().getCurrentUser().mName))
+        {
+        	messageToOwner = BmobServerManager.getInstance().getTreasureMessage(treasure.mOwnerName);
+        	messageToOwner.addMessage(TreasureMessage.TYPE_COMMENT, comment.getObjectId());
+        	BmobServerManager.getInstance().sendMessage(messageToOwner);
+        }
+        if(comment.mReplayTo.length()>0)
+        {
+        	messageToOther = BmobServerManager.getInstance().getTreasureMessage(comment.mReplayTo);
+        	messageToOther.addMessage(TreasureMessage.TYPE_COMMENT, comment.getObjectId());
+        	BmobServerManager.getInstance().sendMessage(messageToOther);
+        }
+                
     }
+    
+    public TreasureMessage getUserMessage(String username)
+    {
+    	return BmobServerManager.getInstance().getTreasureMessage(username);
+    }
+    
+    public void clearUserMessage(String username)
+    {
+    	TreasureMessage message = BmobServerManager.getInstance().getTreasureMessage(username);
+    	message.clearMessage();
+    	BmobServerManager.getInstance().sendMessage(message);
+    }
+    
+    
 
 
 }

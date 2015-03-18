@@ -14,6 +14,8 @@ public class TreasureComment extends BmobObject {
     public String mReplayTo = ""; //评论的用户名字
     public String mTreasureId = ""; //评论的宝物id
     public Boolean mIdentifyResult = false;
+    
+    public static TreasureComment NULL = new TreasureComment();
 
     public static TreasureComment createUserComment()
     {

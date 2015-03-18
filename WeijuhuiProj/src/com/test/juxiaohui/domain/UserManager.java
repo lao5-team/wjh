@@ -5,6 +5,7 @@ import com.easemob.exceptions.EaseMobException;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.DbOpenHelper;
 import com.test.juxiaohui.data.MyUser;
+import com.test.juxiaohui.data.message.TreasureMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,16 @@ public class UserManager {
 	{
 		MyServerManager.getInstance().login(userName);
 		mCurrentUser = MyServerManager.getInstance().getUserInfo(userName);
+		//如果用户缺少消息表，则建立一个
+		if(mCurrentUser!=MyUser.NULL)
+		{
+			TreasureMessage message = BmobServerManager.getInstance().getTreasureMessage(mCurrentUser.mName);
+			if(message == TreasureMessage.NULL)
+			{
+				message = new TreasureMessage(mCurrentUser.mName);
+				BmobServerManager.getInstance().createMessage(message);
+			}
+		}
 		return mCurrentUser;
 	}
 	
@@ -121,6 +132,8 @@ public class UserManager {
 	{
 		mLoginStateListener = listener;
 	}
+	
+	
 	
 	
 }

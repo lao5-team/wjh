@@ -3,16 +3,20 @@ package com.test.juxiaohui.domain;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.*;
+
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.data.ActivityData;
 import com.test.juxiaohui.data.MyUser;
 import com.test.juxiaohui.data.Treasure;
 import com.test.juxiaohui.data.comment.TreasureComment;
+import com.test.juxiaohui.data.message.TreasureMessage;
 import com.test.juxiaohui.utils.SyncCallback;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONArray;
 
 /**
  * Created by yihao on 15/3/9.
@@ -435,6 +439,29 @@ public class BmobServerManager extends MyServerManager {
         return callback.executeBegin();
     }
 
+    public TreasureComment getTreasureComment(final String id) {
+        SyncCallback<TreasureComment> callback = new SyncCallback<TreasureComment>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<TreasureComment> query = new BmobQuery<TreasureComment>();
+                query.getObject(DemoApplication.applicationContext, id, new GetListener<TreasureComment>() {
+                    @Override
+                    public void onSuccess(TreasureComment data) {
+                        onResult(data);
+                    }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+                        onResult(TreasureComment.NULL);
+                    }
+                });
+
+            }
+        };
+        return callback.executeBegin();
+    }
+    
     @Override
     public ActivityData getActivity(final String id) {
         SyncCallback<ActivityData> callback = new SyncCallback<ActivityData>() {
@@ -458,4 +485,95 @@ public class BmobServerManager extends MyServerManager {
         };
         return callback.executeBegin();
     }
+    
+    /**
+     * 向用户消息表中加入一条数据
+     * @param message
+     * @return
+     */
+	public String sendMessage(final TreasureMessage message) {
+		SyncCallback<String> callback = new SyncCallback<String>() {
+
+			@Override
+			public void executeImpl() {
+				message.update(DemoApplication.applicationContext,
+						new UpdateListener() {
+							@Override
+							public void onSuccess() {
+								onResult("Success");
+							}
+
+							@Override
+							public void onFailure(int i, String s) {
+								onResult("Failure");
+							}
+						});
+
+			}
+		};
+		return callback.executeBegin();
+	}
+
+	public String createMessage(final TreasureMessage message) {
+		SyncCallback<String> callback = new SyncCallback<String>() {
+
+			@Override
+			public void executeImpl() {
+				message.save(DemoApplication.applicationContext,
+						new SaveListener() {
+							@Override
+							public void onSuccess() {
+								onResult("Success");
+							}
+
+							@Override
+							public void onFailure(int i, String s) {
+								onResult("Failure");
+							}
+						});
+
+			}
+		};
+		return callback.executeBegin();
+	}	
+	/**
+	 * 获取用户的所有消息
+	 * @param username
+	 * @return
+	 */
+	public TreasureMessage getTreasureMessage(final String username)
+	{
+        SyncCallback<TreasureMessage> callback = new SyncCallback<TreasureMessage>() {
+
+            @Override
+            public void executeImpl() {
+                BmobQuery<TreasureMessage> query = new BmobQuery<TreasureMessage>();
+                query.addWhereEqualTo("mUsername", username);
+                query.findObjects(DemoApplication.applicationContext, new FindListener<TreasureMessage>() {
+					
+					@Override
+					public void onSuccess(List<TreasureMessage> arg0) {
+						// TODO Auto-generated method stub
+						if(arg0.size()>0)
+						{
+							onResult(arg0.get(0));
+						}
+						else
+						{
+							onResult(TreasureMessage.NULL);
+						}
+						
+					}
+					
+					@Override
+					public void onError(int arg0, String arg1) {
+						// TODO Auto-generated method stub
+						onResult(TreasureMessage.NULL);
+					}
+				});
+
+            }
+        };
+        return callback.executeBegin();		
+	}
 }

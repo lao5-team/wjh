@@ -66,11 +66,33 @@ public class LoginActivity extends BaseActivity {
 		passwordEditText = (EditText) findViewById(R.id.password);
 		// 如果用户名密码都有，直接进入主页面
 		if (DemoApplication.getInstance().getUserName() != null && DemoApplication.getInstance().getPassword() != null) {
-			String userName = DemoApplication.getInstance().getUserName();
-			String password = DemoApplication.getInstance().getPassword();
-			UserManager.getInstance().login(userName, password);
-			startActivity(new Intent(this, EntryActivity.class));
-			finish();
+			
+			final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+			pd.setCanceledOnTouchOutside(false);
+			pd.setOnCancelListener(new OnCancelListener() {
+
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					progressShow = false;
+				}
+			});
+			pd.setMessage("正在登陆...");
+			pd.show();
+			
+			Thread t = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					String userName = DemoApplication.getInstance().getUserName();
+					String password = DemoApplication.getInstance().getPassword();
+					UserManager.getInstance().login(userName, password);
+					startActivity(new Intent(LoginActivity.this, EntryActivity.class));
+					finish();
+				}
+			});
+			t.start();
+
+
 			
 		}
 		// 如果用户名改变，清空密码
@@ -126,7 +148,15 @@ public class LoginActivity extends BaseActivity {
 					if (!progressShow) {
 						return;
 					}
-					UserManager.getInstance().login(username, password);
+					Thread t = new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							UserManager.getInstance().login(username, password);					
+						}
+					});
+					t.start();
+					
 					// 登陆成功，保存用户名密码
 					DemoApplication.getInstance().setUserName(username);
 					DemoApplication.getInstance().setPassword(password);
