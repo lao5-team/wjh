@@ -451,10 +451,7 @@ public class ServerTest extends AndroidTestCase {
 	
 	public void testComment()
 	{
-		ActivityComment comment = new ActivityComment();
-		comment.mUserName = UserManager.getInstance().getCurrentUser().mName;
-		comment.mActivityID = "547b49162d3a8c110032669a";
-		comment.mContent = "What a good party!";
+		ActivityComment comment = new ActivityComment(UserManager.getInstance().getCurrentUser().mName, "547b49162d3a8c110032669a", "What a good party!", null);
 		//对一个Activity进行评论
 		String commentID = UserManager.getInstance().getCurrentUser().postComment(comment);
 		ActivityComment getComment = MyServerManager.getInstance().getComment(commentID);
