@@ -52,7 +52,15 @@ public class TreasureListFragment extends Fragment {
                 ViewHolder holder = (ViewHolder) convertView.getTag();
                 holder.mTvName.setText(data.mName);
                 holder.mTvUsername.setText(data.mOwnerName);
-                //Picasso.with(getActivity()).load(data.mImgs.get(0)).into(holder.mIvImage);
+                if(data.mImgs.size()>0)
+                {
+                    Picasso.with(getActivity()).load(data.mImgs.get(0)).into(holder.mIvImage);
+                }
+                else
+                {
+                    holder.mIvImage.setImageResource(R.drawable.camera);
+                }
+                //
                 return convertView;
             }
         }));

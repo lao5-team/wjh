@@ -37,10 +37,10 @@
             android:layout_alignStart="@+id/textView_owner_name"/>
 
     <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
             android:id="@+id/imageView_treasure"
-            android:layout_below="@+id/textView_treasure_name"
-            android:layout_alignLeft="@+id/imageView_user"
-            android:layout_alignStart="@+id/imageView_user"/>
+            android:layout_alignBottom="@+id/textView_treasure_name"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
 </RelativeLayout>

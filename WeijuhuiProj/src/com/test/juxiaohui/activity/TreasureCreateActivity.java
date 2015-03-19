@@ -1,37 +1,42 @@
 package com.test.juxiaohui.activity;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageSwitcher;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.*;
 
-import com.example.logic.ImgFileListActivity;
-import com.example.logic.ImgsActivity;
-import com.test.juxiaohui.R;
-import com.test.juxiaohui.adapter.ActivityAdapter;
-import com.test.juxiaohui.data.Treasure;
+import com.squareup.picasso.Picasso;
 import com.test.juxiaohui.domain.BmobServerManager;
+import com.test.juxiaohui.util.logic.ImgFileListActivity;
+import com.test.juxiaohui.util.logic.ImgsActivity;
+import com.test.juxiaohui.R;
+import com.test.juxiaohui.data.Treasure;
 import com.test.juxiaohui.domain.TreasureManager;
 import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.mediator.ITreasureCreateMediator;
+
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by yihao on 15/3/12.
  */
 public class TreasureCreateActivity extends Activity implements ITreasureCreateMediator {
 
+    public static int REQUEST_CODE_IMGS = 0;
     private Button mBtnCreate;
     private Button mBtnCancel;
     private EditText mEtxTitle;
     private EditText mEtxDesc;
     private ImageSwitcher mISImages;
-
+    private GridView mGvImages;
+    private ArrayList<String> mImgFiles = new ArrayList<String>();
     public static void startActivity(Activity activity, Fragment fragment){
         Intent intent = new Intent(activity, TreasureCreateActivity.class);
         fragment.startActivityForResult(intent, TreasuresEntryFragment.REQUEST_CREATE_TREASURE);
@@ -83,9 +88,38 @@ public class TreasureCreateActivity extends Activity implements ITreasureCreateM
 				// TODO Auto-generated method stub
 				Intent intent = new Intent();
 				intent.setClass(TreasureCreateActivity.this,ImgFileListActivity.class);
-				startActivity(intent);				
+				startActivityForResult(intent, REQUEST_CODE_IMGS);
 			}
 		});
+
+        mGvImages = (GridView)findViewById(R.id.gridView_image);
+        mGvImages.setAdapter(new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return mImgFiles.size();
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return null;
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return 0;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                ImageView iv = new ImageView(TreasureCreateActivity.this);
+                iv.setLayoutParams(new AbsListView.LayoutParams(128,128));
+                iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                //iv.setImageBitmap(BitmapFactory.decodeFile(mImgFiles.get(position)));
+                Picasso.with(TreasureCreateActivity.this).load(new File(mImgFiles.get(position))).into(iv);
+                //Picasso.with(TreasureCreateActivity.this).load(mImgFiles.get(position)).into(iv);
+                return iv;
+            }
+        });
     }
 
     @Override
@@ -107,22 +141,36 @@ public class TreasureCreateActivity extends Activity implements ITreasureCreateM
                     });
                 }
                 treasure.mOwnerName = UserManager.getInstance().getCurrentUser().mName;
+
+                for(String str:mImgFiles)
+                {
+                    treasure.mImgs.add(BmobServerManager.getInstance().uploadImage(new File(str)));
+                }
                 TreasureManager.getInstance().uploadTreasure(treasure);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                });
 
             }
         });
         t.start();
+        finish();
 
     }
 
     @Override
     public void cancel() {
         finish();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_IMGS)
+        {
+            Bundle bundle = data.getExtras();
+            mImgFiles = bundle.getStringArrayList("files");
+            BaseAdapter adapter = (BaseAdapter)mGvImages.getAdapter();
+            adapter.notifyDataSetChanged();
+
+        }
     }
 }
