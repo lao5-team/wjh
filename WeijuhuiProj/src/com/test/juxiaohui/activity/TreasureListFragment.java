@@ -1,5 +1,6 @@
 package com.test.juxiaohui.activity;
 
+import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.test.juxiaohui.domain.TreasureManager;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -55,6 +57,11 @@ public class TreasureListFragment extends Fragment {
                 if(data.mImgs.size()>0)
                 {
                     Picasso.with(getActivity()).load(data.mImgs.get(0)).into(holder.mIvImage);
+                    try {
+                        Bitmap bmp= Picasso.with(getActivity()).load(data.mImgs.get(0)).get();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 else
                 {
