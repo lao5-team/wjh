@@ -1,6 +1,7 @@
 package com.test.juxiaohui.activity;
 
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.mdxc.app.FlightDetailActivity;
 import com.test.juxiaohui.mdxc.app.RegisterActivity;
 import com.test.juxiaohui.shop.app.ShopMainActivity;
 
@@ -44,7 +45,9 @@ public class EntryTest extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				RegisterActivity.startActivity(EntryTest.this);
+				Intent intent = new Intent(EntryTest.this,FlightDetailActivity.class);
+				startActivity(intent);
+				//RegisterActivity.startActivity(EntryTest.this);
 			}
 		});
 	}

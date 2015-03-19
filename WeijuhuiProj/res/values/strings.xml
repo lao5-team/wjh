@@ -125,6 +125,9 @@
     <string name="sign_in">Sign in</string>
     <string name="skip_sign_in">Skip sign-in</string>
     <string name="passenger_count">Number of passengers</string>
+    <string name="ticket_policy">Ticket policy</string>
+    <string name="duration">Duration</string>
+    <string name="restrictions">Restrictions</string>
     <!--  register about -->
     <string name="register_text">Register</string>
     <string name="telephone_number">PhoneNumber</string>
