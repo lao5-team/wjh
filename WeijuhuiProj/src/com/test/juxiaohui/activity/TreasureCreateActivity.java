@@ -5,10 +5,14 @@ import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.Toast;
+
+import com.example.logic.ImgFileListActivity;
+import com.example.logic.ImgsActivity;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.adapter.ActivityAdapter;
 import com.test.juxiaohui.data.Treasure;
@@ -36,6 +40,7 @@ public class TreasureCreateActivity extends Activity implements ITreasureCreateM
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ImgsActivity.ImagesReceiver = TreasureCreateActivity.class;
         setContentView(R.layout.activity_treasure_create);
         addTitleView();
         addDescView();
@@ -69,7 +74,18 @@ public class TreasureCreateActivity extends Activity implements ITreasureCreateM
 
     @Override
     public void addImgsView() {
-
+    	mISImages = (ImageSwitcher)findViewById(R.id.imageSwitcher);
+    	mISImages.setClickable(true);
+    	mISImages.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				intent.setClass(TreasureCreateActivity.this,ImgFileListActivity.class);
+				startActivity(intent);				
+			}
+		});
     }
 
     @Override

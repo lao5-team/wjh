@@ -3,6 +3,7 @@
 	<name>Juxiaohui</name>
 	<comment></comment>
 	<projects>
+		<project>ChoiseMorePictures</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
