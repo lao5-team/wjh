@@ -2,8 +2,10 @@ package com.test.juxiaohui.widget;
 
 import java.util.List;
 
+import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.shop.data.ShopCategory;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -59,7 +61,8 @@ public class CommonAdapter<T> extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
+		Log.v(DemoApplication.TAG, "pregetView() " + position);
+		
 		return mItem.getView(mDataList.get(position), convertView);
 	}
 

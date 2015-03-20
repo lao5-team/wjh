@@ -104,7 +104,7 @@ public class ActivityAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		
+		Log.v(DemoApplication.TAG, "getView()");
 		SBItemViewHolder holder;
 		if(null == convertView)
 		{
