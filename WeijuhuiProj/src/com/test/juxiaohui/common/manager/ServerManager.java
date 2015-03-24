@@ -1,8 +1,16 @@
 package com.test.juxiaohui.common.manager;
 
+import java.util.List;
+
+import com.test.juxiaohui.common.dal.IFlightManager;
 import com.test.juxiaohui.common.dal.IUserServer;
+import com.test.juxiaohui.mdxc.data.FlightData;
+import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
+import com.test.juxiaohui.mdxc.data.FlightData.BEHAVIOR_TYPE;
+import com.test.juxiaohui.mdxc.server.TestFlightServer;
 import com.test.juxiaohui.mdxc.server.TestUserServer;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,12 +21,13 @@ public class ServerManager {
 
     private static ServerManager mInstance = null;
     private IUserServer mUserServer;
-
+    private IFlightManager mFlightManager;
 
 
     private ServerManager()
     {
         mUserServer = new TestUserServer();
+        mFlightManager = new TestFlightServer();
     }
 
     public String register(String username ,String password)
@@ -50,7 +59,17 @@ public class ServerManager {
         }
         return mInstance;
     }
+    
+	public List<FlightData> flightSearch(FlightSearchRequest request,
+			BEHAVIOR_TYPE type) {
+		return mFlightManager.flightSearch(request, type);
 
+	}
+	
+	public FlightData getFlightData(String id)
+	{
+		return mFlightManager.getFlightData(id);
+	}
 
 
 }

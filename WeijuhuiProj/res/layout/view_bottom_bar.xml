@@ -67,9 +67,11 @@
             android:onClick="onClickNext"
             android:paddingLeft="15.0dip"
             android:paddingRight="15.0dip"
+            android:text="Submit"
             android:textColor="@drawable/selector_btn_text_color"
             android:textSize="@dimen/font_size_large"
             android:textStyle="bold" />
+
     </LinearLayout>
 
 </LinearLayout>

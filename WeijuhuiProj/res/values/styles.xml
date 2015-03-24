@@ -245,6 +245,8 @@
         <item name="android:singleLine">true</item>
     </style>
  
-
+    <style name="line_h_margin_left_10" parent="@style/line_h">
+        <item name="android:layout_marginLeft">@dimen/margin_10</item>
+    </style>
 
 </resources>

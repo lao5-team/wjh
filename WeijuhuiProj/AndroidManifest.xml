@@ -18,7 +18,7 @@
         android:allowBackup="true"
         android:icon="@drawable/logo_uidemo"
         android:label="@string/app_name" 
-        android:debuggable="true" >
+         >
         <activity
             android:name="com.test.juxiaohui.activity.MainActivity"
             android:label="@string/app_name" >
@@ -134,18 +134,21 @@
 
         
         <activity android:name=".activity.EntryTest" android:theme="@style/horizontal_slide">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+
         </activity>
         <activity android:name=".mdxc.app.RegisterActivity"
                   android:theme="@style/CTActivityStyleLeftPush">
         </activity>
-        <activity android:name=".mdxc.app.LoginActivity" android:theme="@style/CTActivityStyleLeftPush"/>
+        <activity android:name=".mdxc.app.LoginActivity" android:theme="@style/CTActivityStyleLeftPush">
+           	<intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".mdxc.app.FlightSearchActivity"/>
         <activity android:name=".mdxc.app.FlightSearchResultActivity"/>
         <activity android:name=".mdxc.app.FlightDetailActivity"/>
+        <activity android:name=".mdxc.app.EntryActivity"/>
 
     </application>
 

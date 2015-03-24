@@ -7,9 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.common.manager.ServerManager;
+import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.mdxc.mediator.ILoginMediator;
 
 /**
@@ -27,6 +29,9 @@ public class LoginActivity extends Activity implements ILoginMediator{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mdxc_activity_login);
+        //temp code
+        UserManager.getInstance().logout();
+        login();
         addUsernameView();
         addPasswordView();
 
@@ -74,10 +79,20 @@ public class LoginActivity extends Activity implements ILoginMediator{
 
         if(isValid)
         {
-            mLoginResult = ServerManager.getInstance().login(mEtxUsername.getEditableText().toString(), mEtxPassword.getEditableText().toString());
+        	String username = mEtxUsername.getEditableText().toString();
+        	String password = mEtxPassword.getEditableText().toString();
+    		DemoApplication.getInstance().setUserName(username);
+    		DemoApplication.getInstance().setPassword(password);
+            mLoginResult = ServerManager.getInstance().login(username, password);
             if(mLoginResult.contains("Success"))
             {
                 showErrorMessage("Login Success");
+                EntryActivity.startActivity(LoginActivity.this);
+                finish();
+            }
+            else
+            {
+            	showErrorMessage(mLoginResult);
             }
         }
 
@@ -102,5 +117,21 @@ public class LoginActivity extends Activity implements ILoginMediator{
     {
         Log.v(DemoApplication.TAG, "Login Result = " + mLoginResult);
         return mLoginResult;
+    }
+    
+    public void login()
+    {
+    	String username = DemoApplication.getInstance().getUserName();
+    	String password = DemoApplication.getInstance().getPassword();
+    	if(null!=username && null!=password)
+    	{
+            mLoginResult = ServerManager.getInstance().login(username, password);
+            if(mLoginResult.contains("Success"))
+            {
+                EntryActivity.startActivity(LoginActivity.this);
+                finish();
+            }  	   		
+    	}
+
     }
 }

@@ -1,7 +1,12 @@
 package com.test.juxiaohui.common.dal;
 
-import com.test.juxiaohui.common.data.FlightData;
-import com.test.juxiaohui.common.data.FlightData.BEHAVIOR_TYPE;
+import java.util.List;
+
+import com.test.juxiaohui.mdxc.data.FlightData;
+import com.test.juxiaohui.mdxc.data.FlightData.BEHAVIOR_TYPE;
+import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
+
+
 
 /**
  * 
@@ -16,7 +21,7 @@ public interface IFlightManager
 	 * @param type BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
 	 * @return 
 	 */
-	public FlightData flightSearch(FlightData data, BEHAVIOR_TYPE type);
+	public List<FlightData> flightSearch(FlightSearchRequest request, BEHAVIOR_TYPE type);
 
 	/**
 	 *    仓位验证
@@ -74,5 +79,10 @@ public interface IFlightManager
 	 */
 	public FlightData queryOrderDetail(FlightData data, BEHAVIOR_TYPE type);
 	
-	
+	/**
+	 *  获取某一条航班数据
+	 * @param id
+	 * @return
+	 */
+	public FlightData getFlightData(String id);
 }

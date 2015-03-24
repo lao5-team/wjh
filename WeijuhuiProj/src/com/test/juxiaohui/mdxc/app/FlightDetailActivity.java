@@ -4,6 +4,7 @@ import org.w3c.dom.Text;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.common.manager.ServerManager;
 import com.test.juxiaohui.mdxc.app.view.FlightDetailListAdapter;
+import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.mediator.IFlightDetailMediator;
 
 public class FlightDetailActivity extends Activity implements
@@ -25,20 +28,28 @@ public class FlightDetailActivity extends Activity implements
 	LinearLayout mMainLayout;
 	LayoutInflater mInflater;	
 	ListView mDetailListView;
-	LinearLayout mBottomBar;
-	
+	LinearLayout mBottomBar;	
 	FlightDetailListAdapter mAdapter;
-	
+	FlightData mData;
+	public static void startActivity(String id, Context context)
+	{
+		Intent intent = new Intent();
+		intent.putExtra("id", id);
+		context.startActivity(intent);
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
 		initData();
 		initView();
 	}
 	
 	private void initData()
 	{
+		String id = getIntent().getStringExtra("id");
+		mData = ServerManager.getInstance().getFlightData(id);		
 		mAdapter = new FlightDetailListAdapter(this,null);
 	}
 	
