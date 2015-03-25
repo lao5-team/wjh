@@ -72,19 +72,21 @@ public class FlightData {
     	holder.mTvAirlineName.setText(data.mAirlineName);
     	if(data.mAirlineLogoUrl.length()>0)
     	{
-    		Picasso.with(context).load(data.mAirlineLogoUrl).into(holder.mIvAirlineLogo);
+    		//Picasso.with(context).load(data.mAirlineLogoUrl).into(holder.mIvAirlineLogo);
+    		holder.mIvAirlineLogo.setImageResource(new Integer(data.mAirlineLogoUrl));
     	}
     	if(data.mRoutes.size()>0)
     	{
-    		holder.mTvDepartTime.setText(data.mRoutes.get(0).mDepartDate);
-    		holder.mTvDepartCity.setText(data.mRoutes.get(0).mDepartAirport);
-    		holder.mTvArrivalTime.setText(data.mRoutes.get(data.mRoutes.size()-1).mArrivalDate);
-    		holder.mTvArrivalCity.setText(data.mRoutes.get(data.mRoutes.size()-1).mArrivalAirport);
+    		holder.mTvDepartTime.setText(data.mRoutes.get(0).mDepartTime);
+    		holder.mTvDepartCity.setText(data.mRoutes.get(0).mDepartCity);
+    		holder.mTvArrivalTime.setText(data.mRoutes.get(data.mRoutes.size()-1).mArrivalTime);
+    		holder.mTvArrivalCity.setText(data.mRoutes.get(data.mRoutes.size()-1).mArrivalCity);
     	}
     	
     	holder.mTvDistance.setText("unknown km");
     	holder.mTvCurrency.setText("CNY");
     	holder.mTvPrize.setText(data.mPrize.mTicketPrize + data.mPrize.mTax + "");
+    	
     	return convertView;
     }
 }

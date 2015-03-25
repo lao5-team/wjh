@@ -3,10 +3,13 @@ package com.test.juxiaohui.mdxc.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.test.juxiaohui.DemoApplication;
+import com.test.juxiaohui.R;
 import com.test.juxiaohui.common.dal.IFlightManager;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.FlightData.BEHAVIOR_TYPE;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
+import com.test.juxiaohui.mdxc.data.PrizeData;
 import com.test.juxiaohui.mdxc.data.RouteData;
 
 public class TestFlightServer implements IFlightManager{
@@ -68,7 +71,7 @@ public class TestFlightServer implements IFlightManager{
 	public List<FlightData> flightSearch(FlightSearchRequest request,
 			BEHAVIOR_TYPE type) {
 		// test mode
-		
+		mDatas.clear();
 
 		FlightData data = FlightData.createTestData();
 		data.mAirlineName = "Jixiang";
@@ -82,11 +85,12 @@ public class TestFlightServer implements IFlightManager{
 		route.mDepartAirport = "T3";
 		route.mArrivalAirport = "hongqiao";
 		data.mRoutes.add(route);
-		// data.mAirlineLogoUrl =
+		data.mAirlineLogoUrl = String.valueOf(R.drawable.icon_airline_ho);
+		data.mPrize = new PrizeData(800.0f, 100.0f);
 		mDatas.add(data);
 
 		data = FlightData.createTestData();
-		data.mAirlineName = "nanfang";
+		data.mAirlineName = "Nanfang";
 		route = new RouteData();
 		route.mDepartCity = request.mDepartCity;
 		route.mArrivalCity = request.mArrivalCity;
@@ -96,7 +100,9 @@ public class TestFlightServer implements IFlightManager{
 		route.mArrivalTime = "11:00";
 		route.mDepartAirport = "T3";
 		route.mArrivalAirport = "hongqiao";
+		data.mAirlineLogoUrl = String.valueOf(R.drawable.icon_airline_ca);
 		data.mRoutes.add(route);
+		data.mPrize = new PrizeData(700.0f, 80.0f);
 		mDatas.add(data);
 		return mDatas;
 	}

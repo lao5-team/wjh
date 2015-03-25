@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:background="@color/bright_foreground_inverse_material_light" >
 
     <ImageView
         android:id="@+id/imageView_airline_logo"
@@ -21,6 +22,7 @@
         android:layout_marginLeft="14dp"
         android:layout_toRightOf="@+id/imageView_airline_logo"
         android:text="TextView"
+        android:textColor="@color/color_000000"
         android:textSize="15dp" />
 
     <TextView
@@ -31,6 +33,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
         android:text="TextView"
+        android:textColor="@color/color_000000"
         android:textSize="15sp" />
 
     <ImageView
@@ -41,35 +44,9 @@
         android:layout_toRightOf="@+id/textView_depart_time"
         android:src="@drawable/right_arrow_icon" />
 
-    <TextView
-        android:id="@+id/textView_arrival_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView_depart_time"
-        android:layout_alignBottom="@+id/textView_depart_time"
-        android:layout_marginLeft="30dp"
-        android:layout_toRightOf="@+id/imageView_arrow"
-        android:text="TextView"
-        android:textSize="15sp" />
-    
-        <TextView
-            android:id="@+id/textView_prize"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/textView_arrival_time"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:text="TextView"
-            android:textSize="15dp" />
 
-    <TextView
-        android:id="@+id/textView_currency"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView_arrival_time"
-        android:layout_toLeftOf="@+id/textView_prize"
-        android:text="TextView"
-        android:textSize="10sp" />
+    
+
 
     <TextView
         android:id="@+id/textView_distance"
@@ -78,6 +55,7 @@
         android:layout_above="@+id/imageView_arrow"
         android:layout_toRightOf="@+id/imageView_arrow"
         android:text="TextView"
+        android:textColor="@color/color_000000"
         android:textSize="10sp" />
 
     <TextView
@@ -86,18 +64,55 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/textView_depart_time"
         android:layout_below="@+id/textView_depart_time"
+        android:layout_marginBottom="10dp"
         android:layout_marginStart="10dp"
         android:text="TextView"
+        android:textColor="@color/color_000000"
         android:textSize="12dp" />
 
     <TextView
         android:id="@+id/textView_arrival_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView_arrival_time"
+        android:layout_toRightOf="@+id/textView_distance"
         android:layout_below="@+id/textView_arrival_time"
         android:layout_marginLeft="10dp"
         android:text="TextView"
+        android:textColor="@color/color_000000"
         android:textSize="12dp" />
+    
+        <TextView
+        android:id="@+id/textView_arrival_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView_depart_time"
+        android:layout_alignBottom="@+id/textView_depart_time"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/textView_distance"
+        android:text="TextView"
+        android:textColor="@color/color_000000"
+        android:textSize="15sp" />
+        
+                <TextView
+            android:id="@+id/textView_prize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/textView_arrival_city"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:text="TextView"
+            android:textColor="@color/color_000000"
+            android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/textView_currency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView_arrival_city"
+        android:layout_marginRight="5dp"
+        android:layout_toLeftOf="@+id/textView_prize"
+        android:text="TextView"
+        android:textColor="@color/color_000000"
+        android:textSize="10sp" />
 
 </RelativeLayout>

@@ -651,4 +651,5 @@
     <string name="wish_remove_success">Successfully deleted from Wishlist!</string>
     <string name="year">Year</string>
     <string name="yes">Yes</string>   
+    <string name="airline_details">Airline details</string>
 </resources>

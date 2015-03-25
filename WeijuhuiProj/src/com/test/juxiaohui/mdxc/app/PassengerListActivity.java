@@ -7,6 +7,7 @@ import com.test.juxiaohui.mdxc.data.Passenger;
 import com.test.juxiaohui.mdxc.mediator.IPassengerListMediator;
 
 import android.app.Activity;
+import android.os.Bundle;
 
 /**
  * @author yh 
@@ -22,6 +23,12 @@ public class PassengerListActivity extends Activity implements IPassengerListMed
 	}
 	private List<Passenger> mPassengers = new ArrayList<Passenger>();
 	private List<PassengerSelector> mSelectors = new ArrayList<PassengerSelector>();
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+	}
 	
 	@Override
 	public void addPassenger(Passenger passenger) {

@@ -76,7 +76,7 @@ public class FlightSearchResultActivity extends Activity implements ISearchResul
 
     @Override
     public void selectOneFlight(FlightData data) {
-    	 	
+    	 FlightOrderActivity.startActivity(data.mId, this);	
     }
 
 	@Override

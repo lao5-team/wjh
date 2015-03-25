@@ -3,11 +3,14 @@ package com.test.juxiaohui.common.manager;
 import java.util.List;
 
 import com.test.juxiaohui.common.dal.IFlightManager;
+import com.test.juxiaohui.common.dal.IPassengerServer;
 import com.test.juxiaohui.common.dal.IUserServer;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
 import com.test.juxiaohui.mdxc.data.FlightData.BEHAVIOR_TYPE;
+import com.test.juxiaohui.mdxc.data.Passenger;
 import com.test.juxiaohui.mdxc.server.TestFlightServer;
+import com.test.juxiaohui.mdxc.server.TestPassengerServer;
 import com.test.juxiaohui.mdxc.server.TestUserServer;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
 
@@ -22,12 +25,13 @@ public class ServerManager {
     private static ServerManager mInstance = null;
     private IUserServer mUserServer;
     private IFlightManager mFlightManager;
-
+    private IPassengerServer mPassengerServer;
 
     private ServerManager()
     {
         mUserServer = new TestUserServer();
         mFlightManager = new TestFlightServer();
+        mPassengerServer = new TestPassengerServer();
     }
 
     public String register(String username ,String password)
@@ -69,6 +73,20 @@ public class ServerManager {
 	public FlightData getFlightData(String id)
 	{
 		return mFlightManager.getFlightData(id);
+	}
+	
+	public void addPassenger(Passenger passenger)
+	{
+		mPassengerServer.addPassenger(passenger);
+	}
+	
+	public Passenger getPassenger(String id)
+	{
+		return mPassengerServer.getPassenger(id);
+	}
+	
+	public List<Passenger> getAllPassengers() {
+		return mPassengerServer.getAllPassengers();
 	}
 
 

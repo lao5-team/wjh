@@ -212,6 +212,7 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 				JSONObject item = new JSONObject(value);
 				keyList.add(key);
 				valueList.add(item);
+				mMap.put(key, item);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -417,6 +418,11 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 		List<JSONObject> listJSON = new ArrayList<JSONObject>();
 		listJSON.add(object);
 		putItems(listIds, listJSON);
+	}
+	
+	public int getSize()
+	{
+		return mMap.size();
 	}
 	
 	private void put(String key, JSONObject value) {
