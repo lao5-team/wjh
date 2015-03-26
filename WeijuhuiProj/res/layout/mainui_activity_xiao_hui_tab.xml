@@ -5,7 +5,7 @@
   
     <fragment  
         android:id="@+id/fragment_title"  
-        android:name="com.pineapple.juxiaohui.mainui.fragement.FragementFirst"  
+        android:name="com.pineapple.mobilecraft.mainui.fragement.FragementFirst"  
         android:layout_width="fill_parent"  
         android:layout_height="match_parent"
         android:layout_above="@+id/bottombar"></fragment>"
