@@ -76,6 +76,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				confirm();
+				finish();
 			}
 		});
 	}

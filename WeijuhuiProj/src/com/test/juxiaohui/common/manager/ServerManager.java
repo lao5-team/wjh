@@ -12,6 +12,7 @@ import com.test.juxiaohui.mdxc.data.Passenger;
 import com.test.juxiaohui.mdxc.server.TestFlightServer;
 import com.test.juxiaohui.mdxc.server.TestPassengerServer;
 import com.test.juxiaohui.mdxc.server.TestUserServer;
+import com.test.juxiaohui.mdxc.server.UserServer;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
 
 import org.json.JSONException;
@@ -29,7 +30,7 @@ public class ServerManager {
 
     private ServerManager()
     {
-        mUserServer = new TestUserServer();
+        mUserServer = new UserServer();
         mFlightManager = new TestFlightServer();
         mPassengerServer = new TestPassengerServer();
     }

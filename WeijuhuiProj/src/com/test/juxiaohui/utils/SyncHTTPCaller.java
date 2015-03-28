@@ -1,6 +1,7 @@
 package com.test.juxiaohui.utils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -24,7 +25,8 @@ public abstract class SyncHTTPCaller<T> {
 	
 	String mURL;
 	String mCookie = "";
-	String mEntity = null;
+	//String mEntity = null;
+	UrlEncodedFormEntity mEntity = null;
 	public SyncHTTPCaller(String URL)
 	{
 		mURL = URL;
@@ -39,8 +41,28 @@ public abstract class SyncHTTPCaller<T> {
 	{
 		mURL = URL;
 		mCookie = cookie;
+		//mEntity = entity;
+	}
+	
+	public SyncHTTPCaller(String URL, String cookie, UrlEncodedFormEntity entity)
+	{
+		mURL = URL;
+		mCookie = cookie;
 		mEntity = entity;
 	}
+	
+	public SyncHTTPCaller(String URL, String cookie, List entity)
+	{
+		mURL = URL;
+		mCookie = cookie;
+		try {
+			mEntity = new UrlEncodedFormEntity(entity, HTTP.UTF_8);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public T execute()
 	{
 		Callable<T> callable = new Callable<T>() {
@@ -51,7 +73,7 @@ public abstract class SyncHTTPCaller<T> {
 
 				if(mEntity!=null)
 				{
-					post.setEntity(new StringEntity(mEntity, "utf-8"));
+					post.setEntity(mEntity);
 				}
 
 				HttpResponse httpResponse;

@@ -1,6 +1,7 @@
 package com.test.juxiaohui.mdxc.app;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,7 @@ public class LoginActivity extends Activity implements ILoginMediator{
     EditText mEtxPassword;
     Button mBtnOK;
     Button mBtnCancel;
+    Button mBtnRegister;
     String mLoginResult = "";
 
     @Override
@@ -50,6 +52,7 @@ public class LoginActivity extends Activity implements ILoginMediator{
                 cancel();
             }
         });
+        
     }
 
     @Override
@@ -133,5 +136,11 @@ public class LoginActivity extends Activity implements ILoginMediator{
             }  	   		
     	}
 
+    }
+    
+    public void onClickRegister(View view)
+    {
+    	Intent intent = new Intent(this, RegisterActivity.class);
+    	startActivity(intent);
     }
 }
