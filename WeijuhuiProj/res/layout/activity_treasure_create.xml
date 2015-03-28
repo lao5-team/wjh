@@ -81,7 +81,7 @@
                     android:background="@drawable/camera"
                     android:layout_alignParentLeft="true"/>
 
-                <com.test.juxiaohui.widget.ExpandGridView
+                <com.pineapple.mobilecraft.widget.ExpandGridView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/gridView_image"

@@ -89,7 +89,7 @@
 
                 </EditText>
 
-                <com.test.juxiaohui.widget.ExpandGridView
+                <com.pineapple.mobilecraft.widget.ExpandGridView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/editText_content"

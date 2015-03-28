@@ -5,9 +5,9 @@
     android:background="#ff112233"
     android:orientation="vertical" >
     
-<com.test.juxiaohui.mainui.fragement.FragementFirstViewList
+<com.pineapple.mobilecraft.mainui.fragement.FragementFirstViewList
         android:id="@+id/firstListView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" android:cacheColorHint="#00000000">
-    </com.test.juxiaohui.mainui.fragement.FragementFirstViewList>
+    </com.pineapple.mobilecraft.mainui.fragement.FragementFirstViewList>
 </RelativeLayout >
