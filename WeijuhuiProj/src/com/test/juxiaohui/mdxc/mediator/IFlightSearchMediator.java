@@ -61,8 +61,9 @@ public interface IFlightSearchMediator {
 
     /**
      * 打开城市列表
+     * @param witchCity 出发城市还是目的城市，出发城市传0 目的城市传1
      */
-    public void openCities();
+    public void openCities(int witchCity);
 
     public void openCalendar();
 
