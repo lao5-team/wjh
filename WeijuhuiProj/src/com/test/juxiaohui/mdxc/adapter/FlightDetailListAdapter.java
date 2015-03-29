@@ -1,4 +1,4 @@
-package com.test.juxiaohui.mdxc.app.view;
+package com.test.juxiaohui.mdxc.adapter;
 
 import java.util.List;
 import com.test.juxiaohui.R;

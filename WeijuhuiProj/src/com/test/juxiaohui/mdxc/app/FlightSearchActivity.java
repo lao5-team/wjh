@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.mdxc.data.CityData;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
 import com.test.juxiaohui.mdxc.mediator.IFlightSearchMediator;
 
@@ -94,7 +95,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mLlDepart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCities();
+                openCities(0);
             }
         });
         mTvDepartCity = (TextView) findViewById(R.id.tv_depart_city);
@@ -119,7 +120,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mLlArrival.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCities();
+                openCities(1);
             }
         });
         mTvArrivalCity = (TextView) findViewById(R.id.tv_arrival_city);
@@ -284,8 +285,9 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
      * 打开可选城市列表
      */
     @Override
-    public void openCities() {
-
+    public void openCities(int i) {
+    	Intent intent = new Intent(this,CitySearchActivity.class);
+    	startActivityForResult(intent, i);
     }
 
     @Override
@@ -302,4 +304,19 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     public void setArrivalDate(Date date) {
 
     }
+    
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		CityData _d = (CityData)data.getSerializableExtra("city");
+		switch(requestCode)
+		{
+		case 0:
+			mTvDepartCity.setText(_d.cityName);
+			break;
+		case 1:
+			mTvArrivalCity.setText(_d.cityName);
+		}		
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 }
