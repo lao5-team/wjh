@@ -115,4 +115,5 @@
     <dimen name="slidingmenu_offset">60.0dip</dimen>
     <dimen name="switch_view_height">50.0dip</dimen>
     <dimen name="view_item_height">50.0dip</dimen>
+        <dimen name="historyscore_tb">10dp</dimen>
 </resources>

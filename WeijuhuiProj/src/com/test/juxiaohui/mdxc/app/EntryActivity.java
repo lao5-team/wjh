@@ -32,7 +32,8 @@ public class EntryActivity extends FragmentActivity {
 	RelativeLayout mHomeLayout;
 
 	AnimationSet mAnimationSet = new AnimationSet(true);
-	
+	private TextView mTvHotel;
+	private TextView mTvFlights;
 	public static void startActivity(Context context)
 	{
 		Intent intent = new Intent(context, EntryActivity.class);
@@ -53,12 +54,27 @@ public class EntryActivity extends FragmentActivity {
 		mHomeLayout = new FragmentHomeView(this);
 		mRootLayout.addView(mHomeLayout);
 		setContentView(mRootLayout);
+		addFlightView();
 	}
 	
 	 @Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
 		// TODO Auto-generated method stub
 		return super.dispatchTouchEvent(ev);
+	}
+	 
+	public void addFlightView()
+	{
+		mTvFlights = (TextView)findViewById(R.id.tv_flight_button);
+		mTvFlights.setClickable(true);
+		mTvFlights.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				FlightSearchActivity.startActivity(EntryActivity.this);
+				
+			}
+		});
 	}
 	 
 	

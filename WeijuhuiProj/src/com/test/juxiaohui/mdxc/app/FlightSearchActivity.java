@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
 import com.test.juxiaohui.mdxc.mediator.IFlightSearchMediator;
+import com.test.juxiaohui.widget.CalendarActivity;
+import com.test.juxiaohui.widget.CalendarActivity.onDataSelectedListener;
 
 import java.util.Date;
 
@@ -34,7 +37,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     LinearLayout mLlDepart;
     LinearLayout mLlArrival;
     LinearLayout mLlDepartDate;
-    LinearLayout mLlArrivalDate;
+    LinearLayout mLlReturnlDate;
     TextView mTvDepartTime;
     TextView mTvReturnTime;
     TextView mTvPassengerNumber;
@@ -143,8 +146,26 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     @Override
     public void addDateView() {
         mLlDepartDate = (LinearLayout) findViewById(R.id.ll_departDate_container);
-        mLlArrivalDate = (LinearLayout) findViewById(R.id.flight_search_returnDate_container);
+        mLlReturnlDate = (LinearLayout) findViewById(R.id.flight_search_returnDate_container);
         mTvDepartTime = (TextView) findViewById(R.id.tv_depart_date);
+        
+        mLlDepartDate.setClickable(true);
+        mLlDepartDate.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				openCalendar();
+			}
+		});
+        
+        mLlReturnlDate.setClickable(true);
+        mLlReturnlDate.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				openCalendar();
+			}
+		});
         if(IS_TEST_MODE)
         {
             Date date = new Date();
@@ -290,7 +311,25 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 
     @Override
     public void openCalendar() {
-
+    	//Intent intent = new Intent(this, CalendarActivity.class);
+    	//startActivity(intent);
+    	CalendarActivity.PopupWindows popwindow = new CalendarActivity.PopupWindows(this, getWindow().getDecorView());
+    	//mTvDepartTime.setText(popwindow.getDate());
+    	popwindow.setDateSelectedListener(new onDataSelectedListener() {
+			
+			@Override
+			public void onDateSelected(final String date) {
+				// TODO Auto-generated method stub
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						mTvDepartTime.setText(date);
+					}
+				});
+				
+			}
+		});
     }
 
     @Override
