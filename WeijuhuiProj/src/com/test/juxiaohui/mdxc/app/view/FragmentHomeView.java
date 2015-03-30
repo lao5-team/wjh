@@ -37,8 +37,8 @@ public class FragmentHomeView extends RelativeLayout {
 	RelativeLayout mSelf;
 	private Context mContext;
 	
-	private TextView mTvHotel;
-	private TextView mTvFlights;
+	//private TextView mTvHotel;
+	//private TextView mTvFlights;
 	private ImageView mLeftDrawer;
 	
 	private float maxDistanceX;
@@ -78,8 +78,8 @@ public class FragmentHomeView extends RelativeLayout {
         maxShrinkY = orginHeight/6;
         MAXSHRINKSCALE = (2f/3f);
         moveScale = maxDistanceX/maxShrinkY;
-        mTextViewOriginWidth = mTvHotel.getWidth();
-        mTextViewOriginHeight = mTvHotel.getHeight();
+        //mTextViewOriginWidth = mTvHotel.getWidth();
+        //mTextViewOriginHeight = mTvHotel.getHeight();
         
         mContentView.setDrawingCacheEnabled(true);
         mContentView.buildDrawingCache();
@@ -93,8 +93,8 @@ public class FragmentHomeView extends RelativeLayout {
 	{
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mContentView = (RelativeLayout) mInflater.inflate(R.layout.fragment_home, null);
-		mTvHotel = (TextView) mContentView.findViewById(R.id.tv_hotel_button);
-		mTvFlights = (TextView) mContentView.findViewById(R.id.tv_flight_button);
+		//mTvHotel = (TextView) mContentView.findViewById(R.id.tv_hotel_button);
+		//mTvFlights = (TextView) mContentView.findViewById(R.id.tv_flight_button);
 		mLeftDrawer = (ImageView) mContentView.findViewById(R.id.rl_left_drawer);
 		mLeftDrawer.setOnClickListener(new OnClickListener() {
 			
@@ -110,8 +110,6 @@ public class FragmentHomeView extends RelativeLayout {
 				transformToMiniView(mContentView.getLeft(),mContentView.getTop(),orginWidth,orginHeight);
 			}
 		});
-		addFlightView();
-
 		mTempContentView = new ImageView(mContext);
 		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		mTempContentView.setLayoutParams(params);
@@ -222,16 +220,16 @@ public class FragmentHomeView extends RelativeLayout {
 	
 	private void addFlightView()
 	{
-		mTvFlights = (TextView)mContentView.findViewById(R.id.tv_flight_button);
-		mTvFlights.setClickable(true);
-		mTvFlights.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				FlightSearchActivity.startActivity(mContext);
-				
-			}
-		});
+//		mTvFlights = (TextView)mContentView.findViewById(R.id.tv_flight_button);
+//		mTvFlights.setClickable(true);
+//		mTvFlights.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				FlightSearchActivity.startActivity(mContext);
+//				
+//			}
+//		});
 	}
 	
 	 @Override
