@@ -13,33 +13,33 @@
         android:targetSdkVersion="19" />
 
     <application
-        android:name="com.test.com.pineapple.mobilecraft.DemoApplication"
+        android:name="com.pineapple.mobilecraft.DemoApplication"
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.MainActivity"
+            android:name="com.pineapple.mobilecraft.app.MainActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.CreateActivityActivity"
+            android:name="com.pineapple.mobilecraft.app.CreateActivityActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.EntryActivity"
+            android:name="com.pineapple.mobilecraft.app.EntryActivity"
             android:theme="@style/horizontal_slide" >
 
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.RegisterActivity"
+            android:name="com.pineapple.mobilecraft.app.RegisterActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.AlertDialog"
+            android:name="com.pineapple.mobilecraft.app.AlertDialog"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.LoginActivity"
+            android:name="com.pineapple.mobilecraft.app.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide" >
 
@@ -49,9 +49,9 @@
              </intent-filter>
         </activity>
 
-        <service android:name="com.test.com.pineapple.mobilecraft.service.ContactChangeService" />
-        <service android:name="com.test.com.pineapple.mobilecraft.service.MessageService" />
-        <service android:name="com.test.com.pineapple.mobilecraft.service.StateMonitorService"/>
+        <service android:name="com.pineapple.mobilecraft.service.ContactChangeService" />
+        <service android:name="com.pineapple.mobilecraft.service.MessageService" />
+        <service android:name="com.pineapple.mobilecraft.service.StateMonitorService"/>
         <!-- 设置环信应用的appkey -->
         <meta-data
             android:name="EASEMOB_APPKEY"
@@ -60,95 +60,95 @@
         <service android:name="com.easemob.chat.EMChatService" />
 
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.ActivityDetailActivity"
+            android:name="com.pineapple.mobilecraft.app.ActivityDetailActivity"
             android:configChanges="orientation|keyboardHidden"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.AddContactActivity"
+            android:name="com.pineapple.mobilecraft.app.AddContactActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
-        <activity android:name="com.test.com.pineapple.mobilecraft.activity.NewFriendsMsgActivity" >
+        <activity android:name="com.pineapple.mobilecraft.app.NewFriendsMsgActivity" >
         </activity>
 
         <uses-library android:name="android.test.runner" />
 
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.ActivityMembersActivity"
+            android:name="com.pineapple.mobilecraft.app.ActivityMembersActivity"
             android:configChanges="orientation|keyboardHidden"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.CreateActivityActivity2"
+            android:name="com.pineapple.mobilecraft.app.CreateActivityActivity2"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.CustomActivityActivity"
+            android:name="com.pineapple.mobilecraft.app.CustomActivityActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.DateActivity"
+            android:name="com.pineapple.mobilecraft.app.DateActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.PhotoSelectActivity"
+            android:name="com.pineapple.mobilecraft.app.PhotoSelectActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
-        <activity android:name="com.test.com.pineapple.mobilecraft.activity.ActivityPayment" >
+        <activity android:name="com.pineapple.mobilecraft.app.ActivityPayment" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.activity.MessagesActivity"
+            android:name="com.pineapple.mobilecraft.app.MessagesActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
-        <activity android:name="com.test.com.pineapple.mobilecraft.activity.ActivityListActivity" >
+        <activity android:name="com.pineapple.mobilecraft.app.ActivityListActivity" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.shop.app.GoodsListActivity"
+            android:name="com.pineapple.mobilecraft.shop.app.GoodsListActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.shop.app.GoodsActivity"
+            android:name="com.pineapple.mobilecraft.shop.app.GoodsActivity"
             android:theme="@style/horizontal_slide" >
         </activity>
-        <activity android:name="com.test.com.pineapple.mobilecraft.shop.app.ChartActivity"
+        <activity android:name="com.pineapple.mobilecraft.shop.app.ChartActivity"
                   android:theme="@style/horizontal_slide">
         </activity>
 
-        <activity android:name="com.test.com.pineapple.mobilecraft.shop.app.OrderListActivity"
+        <activity android:name="com.pineapple.mobilecraft.shop.app.OrderListActivity"
                   android:theme="@style/horizontal_slide">
         </activity>
 
-        <activity android:name="com.test.com.pineapple.mobilecraft.shop.app.OrderActivity"
+        <activity android:name="com.pineapple.mobilecraft.shop.app.OrderActivity"
                   android:theme="@style/horizontal_slide">
         </activity>
 
-        <activity android:name="com.test.com.pineapple.mobilecraft.shop.app.PayActivity"
+        <activity android:name="com.pineapple.mobilecraft.shop.app.PayActivity"
                   android:theme="@style/horizontal_slide">
         </activity>
-        <activity android:name="com.test.com.pineapple.mobilecraft.shop.app.ShopMainActivity"
+        <activity android:name="com.pineapple.mobilecraft.shop.app.ShopMainActivity"
                   android:theme="@style/horizontal_slide">
         </activity>
         
-        <activity android:name="com.test.com.pineapple.mobilecraft.activity.EntryTest" android:theme="@style/horizontal_slide">
+        <activity android:name="com.pineapple.mobilecraft.app.EntryTest" android:theme="@style/horizontal_slide">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN"/>-->
                 <!--<category android:name="android.intent.category.LAUNCHER"/>-->
             <!--</intent-filter>-->
         </activity>
-        <activity android:name="com.test.com.pineapple.mobilecraft.activity.TreasureDetailActivity" android:theme="@style/horizontal_slide"/>
+        <activity android:name="com.pineapple.mobilecraft.app.TreasureDetailActivity" android:theme="@style/horizontal_slide"/>
         <activity
-                android:name="com.test.com.pineapple.mobilecraft.activity.TreasureCreateActivity"
+                android:name="com.pineapple.mobilecraft.app.TreasureCreateActivity"
                 android:label="test"
                 android:theme="@style/horizontal_slide"/>
         <activity android:name=".AllTreasureActivity" android:theme="@style/horizontal_slide"/>
         <activity android:name=".app.TreasuresEntryActivity" android:theme="@style/horizontal_slide"/>
                 <activity
-            android:name="com.test.com.pineapple.mobilecraft.util.logic.ImgFileListActivity"
+            android:name="com.pineapple.mobilecraft.util.logic.ImgFileListActivity"
             android:label="@string/app_name" > 
         </activity>
         
         <activity
-            android:name="com.test.com.pineapple.mobilecraft.util.logic.ImgsActivity"
+            android:name="com.pineapple.mobilecraft.util.logic.ImgsActivity"
             android:label="@string/app_name" > 
         </activity>
     </application>
