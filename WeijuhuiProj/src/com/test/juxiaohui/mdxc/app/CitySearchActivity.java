@@ -145,6 +145,12 @@ public class CitySearchActivity extends Activity implements ICitySearchActivityM
 		l.add(c);
 		return l;
 	}
+
+	@Override
+	public ArrayList<CityData> getSearchResult(String condition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 
 	

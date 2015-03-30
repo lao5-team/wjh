@@ -155,10 +155,13 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 		if (convertView == null) {
 			convertView = new TextView(mContext);
 			//holder.description = new TextView(mContext);
-			LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,Math.round(mContext.getResources().getDimension(R.dimen.font_size_medium)));
+			LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,Math.round(mContext.getResources().getDimension(R.dimen.margin_36)));
 			convertView.setLayoutParams(params);
 			convertView.setBackgroundColor(mContext.getResources().getColor(R.color.color_gray_9));
+			
 			((TextView)convertView).setTextColor(mContext.getResources().getColor(R.color.color_333333));
+			((TextView)convertView).setTextSize(mContext.getResources().getDimension(R.dimen.font_size_small));
+			convertView.setPadding(Math.round(mContext.getResources().getDimension(R.dimen.margin_10)), 0, 0, 0);
 			//convertView.setTag(holder);
 			
 		} /*else {

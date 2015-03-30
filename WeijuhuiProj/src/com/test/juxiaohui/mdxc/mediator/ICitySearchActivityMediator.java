@@ -31,4 +31,11 @@ public interface ICitySearchActivityMediator
 	
 	public ArrayList<CityData> getHostCities();
 	
+	/**
+	 * 
+	 * @param condition
+	 * @return
+	 */
+	public ArrayList<CityData> getSearchResult(String condition);
+	
 }

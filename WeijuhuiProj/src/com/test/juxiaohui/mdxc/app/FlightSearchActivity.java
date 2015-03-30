@@ -313,9 +313,11 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 		{
 		case 0:
 			mTvDepartCity.setText(_d.cityName);
+			mSearchRequest.mDepartCity = _d.cityName;
 			break;
 		case 1:
 			mTvArrivalCity.setText(_d.cityName);
+			mSearchRequest.mArrivalCity = _d.cityName;
 		}		
 		super.onActivityResult(requestCode, resultCode, data);
 	}
