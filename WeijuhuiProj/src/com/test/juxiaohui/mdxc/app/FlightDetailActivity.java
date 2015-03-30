@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.common.manager.ServerManager;
-import com.test.juxiaohui.mdxc.app.view.FlightDetailListAdapter;
+import com.test.juxiaohui.mdxc.adapter.FlightDetailListAdapter;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.mediator.IFlightDetailMediator;
 

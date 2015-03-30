@@ -222,6 +222,14 @@
         <item name="android:singleLine">true</item>
         <item name="android:textCursorDrawable">@null</item>
     </style>
+    
+    <style name="CTProgressBar">
+        <item name="android:background">@drawable/icon_loading</item>
+        <item name="android:indeterminateOnly">true</item>
+        <item name="android:indeterminateDrawable">@drawable/bg_loading</item>
+        <item name="android:indeterminateDuration">1000</item>
+        <item name="android:indeterminateBehavior">repeat</item>
+    </style>
 
     <style name="line_h">
         <item name="android:background">@color/color_c8c8c8</item>
