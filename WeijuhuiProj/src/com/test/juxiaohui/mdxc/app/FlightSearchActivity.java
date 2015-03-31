@@ -135,11 +135,13 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         	mTvDepartCity.setText("Beijing");
         	mTvDepartTip.setVisibility(View.GONE);
         	mSearchRequest.mDepartCity = mTvDepartCity.getText().toString();
-        	
+            mSearchRequest.mDepartCode = "LAX";
+
         	mLlArrival.setVisibility(View.VISIBLE);
         	mTvArrivalCity.setText("Shanghai");
         	mTvArrivalTip.setVisibility(View.GONE);
         	mSearchRequest.mArrivalCity = mTvArrivalCity.getText().toString();
+            mSearchRequest.mArrivalCode = "SHA";
         }
     }
 
@@ -171,7 +173,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         {
             Date date = new Date();
             mTvDepartTime.setText(date.getMonth() + "/" + date.getDate()); 
-            mSearchRequest.mDepartDate = mTvDepartTime.getText().toString();
+            mSearchRequest.mDepartDate = "2015/04/14";//= mTvDepartTime.getText().toString();
         }
 
     }
@@ -203,7 +205,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     	if(IS_TEST_MODE)
     	{
         	mTvClass.setText("ECONOMY");
-        	mSearchRequest.mClassType = "ECONOMY";   		
+        	mSearchRequest.mClassType = FlightSearchRequest.CLASS_ECONOMY;
     	}
 
     }
