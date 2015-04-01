@@ -51,11 +51,15 @@ public class CitySearchServer implements ICitySearchServer {
 
 	@Override
 	public ArrayList<CityData> getSearchResult(String condition) {
-		// TODO Auto-generated method stub
+		if(condition==null||condition.length()==0)
+		{
+			return mCities;
+		}
 		return null;
 	}
 
-	private List<CityData> mCities = new ArrayList<CityData>();
+
+	private ArrayList<CityData> mCities = new ArrayList<CityData>();
 	private void createFromFile()
 	{	
 		
