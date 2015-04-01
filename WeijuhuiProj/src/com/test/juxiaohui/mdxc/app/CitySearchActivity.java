@@ -8,6 +8,7 @@ import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.adapter.CityStickyListHeadersListAdapter;
 import com.test.juxiaohui.mdxc.data.CityData;
 import com.test.juxiaohui.mdxc.mediator.ICitySearchActivityMediator;
+import com.test.juxiaohui.mdxc.server.CitySearchServer;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -44,7 +45,7 @@ public class CitySearchActivity extends Activity implements ICitySearchActivityM
 	
 	private void initData()
 	{
-		
+		CitySearchServer.getInstance();
 	}
 	
 	private void initView()
