@@ -99,9 +99,9 @@ public class CalendarActivity extends Activity {
 			if (null != date) {
 
 				int years = Integer.parseInt(date.substring(0,
-						date.indexOf("-")));
+						date.indexOf("/")));
 				int month = Integer.parseInt(date.substring(
-						date.indexOf("-") + 1, date.lastIndexOf("-")));
+						date.indexOf("/") + 1, date.lastIndexOf("-")));
 				popupwindow_calendar_month.setText(years + "/" + month);
 
 				calendar.showCalendar(years, month);
@@ -119,8 +119,8 @@ public class CalendarActivity extends Activity {
 
 				public void onCalendarClick(int row, int col, String dateFormat) {
 					int month = Integer.parseInt(dateFormat.substring(
-							dateFormat.indexOf("-") + 1,
-							dateFormat.lastIndexOf("-")));
+							dateFormat.indexOf("/") + 1,
+							dateFormat.lastIndexOf("/")));
 					
 					if (calendar.getCalendarMonth() - month == 1//������ת
 							|| calendar.getCalendarMonth() - month == -11) {

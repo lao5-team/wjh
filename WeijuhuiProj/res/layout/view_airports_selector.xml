@@ -17,7 +17,6 @@
                 android:gravity="center|left"
                 android:orientation="vertical"
                 android:id="@+id/ll_departCity_container"
-                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 

@@ -151,13 +151,13 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mLlDepartDate = (LinearLayout) findViewById(R.id.ll_departDate_container);
         mLlReturnlDate = (LinearLayout) findViewById(R.id.flight_search_returnDate_container);
         mTvDepartTime = (TextView) findViewById(R.id.tv_depart_date);
-        
+        mTvReturnTime = (TextView)findViewById(R.id.tv_return_date);
         mLlDepartDate.setClickable(true);
         mLlDepartDate.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				openCalendar();
+				openCalendar(true);
 			}
 		});
         
@@ -166,14 +166,16 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 			
 			@Override
 			public void onClick(View v) {
-				openCalendar();
+				openCalendar(false);
 			}
 		});
+        
         if(IS_TEST_MODE)
         {
             Date date = new Date();
             mTvDepartTime.setText(date.getMonth() + "/" + date.getDate()); 
             mSearchRequest.mDepartDate = "2015/04/14";//= mTvDepartTime.getText().toString();
+            mSearchRequest.mReturnDate = "2015/04/15";
         }
 
     }
@@ -207,7 +209,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         	mTvClass.setText("ECONOMY");
         	mSearchRequest.mClassType = FlightSearchRequest.CLASS_ECONOMY;
     	}
-
+    	mSearchRequest.mClassType = FlightSearchRequest.CLASS_ECONOMY;
     }
 
     @Override
@@ -314,7 +316,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     }
 
     @Override
-    public void openCalendar() {
+    public void openCalendar(final boolean isDepart) {
     	//Intent intent = new Intent(this, CalendarActivity.class);
     	//startActivity(intent);
     	CalendarActivity.PopupWindows popwindow = new CalendarActivity.PopupWindows(this, getWindow().getDecorView());
@@ -328,7 +330,17 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 					
 					@Override
 					public void run() {
-						mTvDepartTime.setText(date);
+						if(isDepart)
+						{
+							mTvDepartTime.setText(date);
+							mSearchRequest.mDepartDate = date;
+						}
+						else
+						{
+							mTvReturnTime.setText(date);
+							mSearchRequest.mReturnDate = date;
+						}
+						
 					}
 				});
 				
@@ -355,10 +367,12 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 		case 0:
 			mTvDepartCity.setText(_d.cityName);
 			mSearchRequest.mDepartCity = _d.cityName;
+			mSearchRequest.mDepartCode = _d.portCode;
 			break;
 		case 1:
 			mTvArrivalCity.setText(_d.cityName);
 			mSearchRequest.mArrivalCity = _d.cityName;
+			mSearchRequest.mArrivalCode = _d.portCode;
 		}		
 		super.onActivityResult(requestCode, resultCode, data);
 	}

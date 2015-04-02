@@ -1,9 +1,13 @@
 package com.test.juxiaohui.mdxc.server;
 
+import android.util.Log;
+
+import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.common.dal.IFlightManager;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +43,17 @@ public class FlightServer implements IFlightManager {
                 try {
                     JSONObject json = new JSONObject(result);
                     JSONArray prices = json.getJSONArray("prices");
+                    for(int i=0; i<prices.length(); i++)
+                    {
+                    	JSONObject priceObj = prices.getJSONObject(i);
+                    	List<String> numbers = (List<String>) priceObj.get("fromNumbers");
+                    	for(String number:numbers)
+                    	{
+                    		JSONObject flights = json.getJSONObject("flights").getJSONObject(number);
+                    		Log.v(DemoApplication.TAG, flights.toString());
+                    	}
+                    	
+                    }
                     JSONArray flights = json.getJSONArray("flights");
                     for(int i=0; i<flights.length(); i++)
                     {
@@ -53,6 +68,7 @@ public class FlightServer implements IFlightManager {
                         flightData.mToTime = jsonObject.getString("toTime");
                         resultObjects.add(flightData);
                     }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();

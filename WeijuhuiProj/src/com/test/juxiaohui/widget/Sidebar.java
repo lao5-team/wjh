@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.easemob.util.DensityUtil;
@@ -87,7 +88,7 @@ public class Sidebar extends View{
 		    }
 		String headerString = sections[sectionForPoint(event.getY())];
 		header.setText(headerString);
-		ContactAdapter adapter = (ContactAdapter) mListView.getAdapter();
+		SectionIndexer adapter = (SectionIndexer) mListView.getAdapter();
 		String[] adapterSections = (String[]) adapter.getSections();
 		try {
 			for (int i = adapterSections.length - 1; i > -1; i--) {

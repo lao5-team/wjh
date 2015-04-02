@@ -9,6 +9,7 @@ import com.test.juxiaohui.mdxc.adapter.CityStickyListHeadersListAdapter;
 import com.test.juxiaohui.mdxc.data.CityData;
 import com.test.juxiaohui.mdxc.mediator.ICitySearchActivityMediator;
 import com.test.juxiaohui.mdxc.server.CitySearchServer;
+import com.test.juxiaohui.widget.Sidebar;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -67,6 +68,9 @@ public class CitySearchActivity extends Activity implements ICitySearchActivityM
 	public void addCityList() {
 		// TODO Auto-generated method stub
 		mCityListView = (StickyListHeadersListView) findViewById(R.id.slv_content);
+		Sidebar sidebar = (Sidebar)findViewById(R.id.sidebar);
+		sidebar.setListView(mCityListView.getWrappedList());
+		mCityListView.getWrappedList().setFastScrollEnabled(true);
 		mCityAdapter = new CityStickyListHeadersListAdapter(getNearbyPort(), getLastSearchCities(), getHostCities(), this);
 		mCityListView.setAdapter(mCityAdapter);
 		mCityListView.setOnItemClickListener(new OnItemClickListener() {

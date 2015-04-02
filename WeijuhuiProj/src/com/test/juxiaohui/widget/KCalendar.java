@@ -700,8 +700,8 @@ public class KCalendar extends ViewFlipper implements
 	 * 将Date转化成字符串->2013-3-3
 	 */
 	private String format(Date d) {
-		return addZero(d.getYear() + 1900, 4) + "-"
-				+ addZero(d.getMonth() + 1, 2) + "-" + addZero(d.getDate(), 2);
+		return addZero(d.getYear() + 1900, 4) + "/"
+				+ addZero(d.getMonth() + 1, 2) + "/" + addZero(d.getDate(), 2);
 	}
 
 	// 2�?4

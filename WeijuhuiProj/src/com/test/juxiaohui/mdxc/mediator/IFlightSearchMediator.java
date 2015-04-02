@@ -65,7 +65,11 @@ public interface IFlightSearchMediator {
      */
     public void openCities(int witchCity);
 
-    public void openCalendar();
+    /**
+     * 打开日期选择
+     * @param isDepart true为出发时间，false为返回时间
+     */
+    public void openCalendar(boolean isDepart);
 
     public void setDepartDate(Date date);
 

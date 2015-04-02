@@ -2,28 +2,32 @@ package com.test.juxiaohui.mdxc.adapter;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.Inflater;
 
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.data.CityData;
-
 import com.test.juxiaohui.mdxc.server.CitySearchServer;
+
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import android.content.Context;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-public class CityStickyListHeadersListAdapter extends BaseAdapter implements StickyListHeadersAdapter {
+public class CityStickyListHeadersListAdapter extends BaseAdapter implements StickyListHeadersAdapter, SectionIndexer {
 
 	private ArrayList<CityData> mResultCities;
 	private ArrayList<CityData> mNearbyPorts;
 	private ArrayList<CityData> mLastSearchCities;
 	private ArrayList<CityData> mHotCities;
-	
+	private SparseIntArray mPositionOfSection;
+	private SparseIntArray mSectionOfPosition;
 	private boolean isShowResult = true;
 	
 	private LayoutInflater mInflater;
@@ -57,7 +61,7 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 	}
 
 	@Override
-	public Object getItem(int arg0) {
+	public CityData getItem(int arg0) {
 		// TODO Auto-generated method stub
 		if(isShowResult && mResultCities != null)
 			return mResultCities.get(arg0);
@@ -130,22 +134,23 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 	@Override
 	public long getHeaderId(int position) {
 		// TODO Auto-generated method stub
-		int a = mNearbyPorts == null ? 0 : mNearbyPorts.size();
-		int b = mLastSearchCities == null ? 0 : mLastSearchCities.size();
-		int c = mHotCities == null ? 0 : mHotCities.size();
-		if(position >= 0 && position < a)
-		{
-			return 0;
-		}
-		if(position >= a && position < a + b)
-		{
-			return 1;
-		}
-		if(position >= a + b && position < a + b + c)
-		{
-			return 2;
-		}
-		return position;
+//		int a = mNearbyPorts == null ? 0 : mNearbyPorts.size();
+//		int b = mLastSearchCities == null ? 0 : mLastSearchCities.size();
+//		int c = mHotCities == null ? 0 : mHotCities.size();
+//		if(position >= 0 && position < a)
+//		{
+//			return 0;
+//		}
+//		if(position >= a && position < a + b)
+//		{
+//			return 1;
+//		}
+//		if(position >= a + b && position < a + b + c)
+//		{
+//			return 2;
+//		}
+//		return position;
+		return -1;
 	}
 
 	@Override
@@ -203,6 +208,37 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 	public CityData getDataByPosition(int position)
 	{
 		return (CityData)getItem(position);
+	}
+
+	public int getPositionForSection(int section) {
+		return mPositionOfSection.get(section);
+	}
+
+	public int getSectionForPosition(int position) {
+		return mSectionOfPosition.get(position);
+	}
+
+	@Override
+	public Object[] getSections() {
+		mPositionOfSection = new SparseIntArray();
+		mSectionOfPosition = new SparseIntArray();
+		int count = getCount();
+		List<String> list = new ArrayList<String>();
+		list.add(mContext.getString(R.string.search_header));
+		mPositionOfSection.put(0, 0);
+		mSectionOfPosition.put(0, 0);
+		for (int i = 0; i < count; i++) {
+
+			String letter = getItem(i).cityName.substring(0, 1);
+			int section = list.size()-1;
+			if (list.get(section) != null && !list.get(section).equals(letter)) {
+				list.add(letter);
+				section++;
+				mPositionOfSection.put(section, i);
+			}
+			mSectionOfPosition.put(i, section);
+		}
+		return list.toArray(new String[list.size()]);
 	}
 
 
