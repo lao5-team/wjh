@@ -7,6 +7,7 @@ import java.util.zip.Inflater;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.data.CityData;
 
+import com.test.juxiaohui.mdxc.server.CitySearchServer;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -23,7 +24,7 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 	private ArrayList<CityData> mLastSearchCities;
 	private ArrayList<CityData> mHotCities;
 	
-	private boolean isShowResult = false;
+	private boolean isShowResult = true;
 	
 	private LayoutInflater mInflater;
 	
@@ -34,6 +35,7 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 		mHotCities = hotCitys;
 		mNearbyPorts = nearbyPorts;
 		mLastSearchCities = lastSearchCitys;
+		mResultCities = CitySearchServer.getInstance().getSearchResult("");
 		mInflater = LayoutInflater.from(context);
 		mContext = context;
 	}

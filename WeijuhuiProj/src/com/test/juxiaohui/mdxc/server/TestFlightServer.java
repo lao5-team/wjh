@@ -79,7 +79,7 @@ public class TestFlightServer implements IFlightManager{
 		route.mDepartCity = request.mDepartCity;
 		route.mArrivalCity = request.mArrivalCity;
 		route.mDepartDate = request.mDepartDate;
-		route.mArrivalDate = request.mArrivalDate;
+		route.mArrivalDate = request.mReturnDate;
 		route.mDepartTime = "8:00";
 		route.mArrivalTime = "10:00";
 		route.mDepartAirport = "T3";
@@ -95,7 +95,7 @@ public class TestFlightServer implements IFlightManager{
 		route.mDepartCity = request.mDepartCity;
 		route.mArrivalCity = request.mArrivalCity;
 		route.mDepartDate = request.mDepartDate;
-		route.mArrivalDate = request.mArrivalDate;
+		route.mArrivalDate = request.mReturnDate;
 		route.mDepartTime = "9:00";
 		route.mArrivalTime = "11:00";
 		route.mDepartAirport = "T3";

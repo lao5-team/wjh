@@ -28,7 +28,15 @@ public class FlightData {
     public String mAirlineName = "unknown airline";
     public String mAirlineLogoUrl = "";
     public PrizeData mPrize = PrizeData.NULL;
-    
+    public String mFromCity;
+	public String mToCity;
+	public String mFromCode;
+	public String mToCode;
+	public String mFromTime;
+	public String mToTime;
+	public String mAirLine;
+
+
     public static FlightData NULL = new FlightData();
     public static FlightData createTestData()
     {

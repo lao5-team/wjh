@@ -12,11 +12,7 @@ import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
 import com.test.juxiaohui.mdxc.data.FlightData.BEHAVIOR_TYPE;
 import com.test.juxiaohui.mdxc.data.Passenger;
-import com.test.juxiaohui.mdxc.server.CitySearchServer;
-import com.test.juxiaohui.mdxc.server.TestFlightServer;
-import com.test.juxiaohui.mdxc.server.TestPassengerServer;
-import com.test.juxiaohui.mdxc.server.TestUserServer;
-import com.test.juxiaohui.mdxc.server.UserServer;
+import com.test.juxiaohui.mdxc.server.*;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
 
 import org.json.JSONException;
@@ -36,7 +32,7 @@ public class ServerManager {
     private ServerManager()
     {
         mUserServer = new UserServer();
-        mFlightManager = new TestFlightServer();
+        mFlightManager = new FlightServer();
         mPassengerServer = new TestPassengerServer();
         mCitySearch = new CitySearchServer();
     }

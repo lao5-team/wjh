@@ -9,18 +9,19 @@ import org.json.JSONObject;
 public class FlightSearchRequest {
     public static final String TYPE_ROUNDTRIP = "round_trip";
     public static final String TYPE_ONEWAY = "round_oneway";
-    public String mTripType;
-    public String mDepartCity;
-    public String mArrivalCity;
-    public String mDepartCode;
-    public String mArrivalCode;
-    public String mDepartDate;
-    public String mArrivalDate;
+	public static final String CLASS_ECONOMY = "Economy";
+    public String mTripType = TYPE_ONEWAY;
+    public String mDepartCity = "";
+    public String mArrivalCity = "";
+    public String mDepartCode = "";
+    public String mArrivalCode = "";
+    public String mDepartDate = ""; //格式2015/04/14
+    public String mReturnDate = ""; //返航时间
     public int mPassengerNumber = 0;
     /**
      * 座舱类型，经济，商务，头等。。。
      */
-    public String mClassType;
+    public String mClassType = ""; //Economy
     
     public static FlightSearchRequest NULL = new FlightSearchRequest();
 
@@ -30,9 +31,11 @@ public class FlightSearchRequest {
     	try {
     		JSONObject json = new JSONObject();
 			json.put("departCity", request.mDepartCity);
+			json.put("departCode", request.mDepartCode);
 			json.put("arrivalCity", request.mArrivalCity);
+			json.put("arrivalCode", request.mArrivalCode);
 			json.put("departDate", request.mDepartDate);
-			//json.put("arrivalDate", request.mArrivalDate);
+			json.put("returnDate", request.mReturnDate);
 			json.put("passengetNumber", request.mPassengerNumber);
 			json.put("classType", request.mClassType);
 			return json;
@@ -48,9 +51,11 @@ public class FlightSearchRequest {
     	FlightSearchRequest request = new FlightSearchRequest();
     	try {
 			request.mDepartCity = json.getString("departCity");
+			request.mDepartCode = json.getString("departCode");
 			request.mArrivalCity = json.getString("arrivalCity");
+			request.mArrivalCode = json.getString("arrivalCode");
 			request.mDepartDate = json.getString("departDate");
-			//request.mArrivalDate = json.getString("arrivalDate");
+			request.mReturnDate = json.getString("returnDate");
 			request.mPassengerNumber = json.getInt("passengetNumber");
 			request.mClassType = json.getString("classType");
 			return request;
