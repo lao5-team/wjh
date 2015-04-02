@@ -117,4 +117,22 @@
     <dimen name="view_item_height">50.0dip</dimen>
     <dimen name="historyscore_tb">10dp</dimen>
     <dimen name="list_header_height">30.0dp</dimen>
+    
+    <!-- channel navigation about -->
+    <dimen name="channel_navigation_item_height">40dip</dimen>
+    <dimen name="channel_navigation_imageview_width">25dip</dimen>
+    <dimen name="channel_navigation_item_imageview_marginleft">5dip</dimen>
+    <dimen name="channel_navigator_name_marginleft">8dip</dimen>
+    <dimen name="BookAbstract_Latest_TEXT_SIZEX">275dip</dimen>
+    <dimen name="channel_navigation_margintop">80dp</dimen>
+    <dimen name="channel_navigation_marginleft">10dp</dimen>
+    
+    <!-- setting view about -->
+    <dimen name="setting_custom_item_height">45dip</dimen>
+    <dimen name="setting_custom_image_size">25dip</dimen>
+    <dimen name="setting_customer_item_margin">17dip</dimen>
+    <dimen name="setting_custom_arrow_width">10dip</dimen>
+    <dimen name="setting_custom_arrow_height">13dip</dimen>
+    
+
 </resources>

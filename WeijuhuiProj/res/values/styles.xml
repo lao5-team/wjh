@@ -256,5 +256,20 @@
     <style name="line_h_margin_left_10" parent="@style/line_h">
         <item name="android:layout_marginLeft">@dimen/margin_10</item>
     </style>
+        
+    <style name="NextButton">
+        <item name="android:textSize">@dimen/font_size_26</item>
+        <item name="android:textColor">@color/color_333333</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">@dimen/margin_10</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_height">@dimen/view_item_height</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:drawableRight">@drawable/icon_right_arrow</item>
+    </style>
+        
+    <style name="NextButtonWithBackground" parent="@style/NextButton">
+        <item name="android:background">@drawable/selector_btn_4</item>
+    </style>
 
 </resources>

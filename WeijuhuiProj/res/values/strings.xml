@@ -141,5 +141,12 @@
     <string name="arrival_city">To</string>
     <string name="one_way">One way</string>
     <string name="round_trip">Round trip</string>
-
+    
+    <!-- Channel navigation view about -->
+    <string name="my_orders">My Orders</string>
+	<string name="viewed_hotels">Viewed Hotels</string>
+	<string name="flight_status">Flight Status</string>
+	<string name="search_history">Search History</string>
+	<string name="setting">Setting</string>
+	<string name="feed_back">Feedback</string>
 </resources>
