@@ -4,14 +4,20 @@ import android.util.Log;
 
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.common.dal.IFlightManager;
+import com.test.juxiaohui.mdxc.data.CityData;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
+import com.test.juxiaohui.mdxc.data.PrizeData;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,31 +47,51 @@ public class FlightServer implements IFlightManager {
             public List<FlightData> postExcute(String result) {
                 List<FlightData> resultObjects = new ArrayList<FlightData>();
                 try {
+                	result = createFromFile();
                     JSONObject json = new JSONObject(result);
+                    
                     JSONArray prices = json.getJSONArray("prices");
+                    JSONObject flights = json.getJSONObject("flights");
                     for(int i=0; i<prices.length(); i++)
                     {
                     	JSONObject priceObj = prices.getJSONObject(i);
-                    	List<String> numbers = (List<String>) priceObj.get("fromNumbers");
-                    	for(String number:numbers)
+                    	JSONArray numbers = priceObj.getJSONArray("fromNumbers");
+                    	for(int j=0; j<numbers.length(); j++)
                     	{
-                    		JSONObject flights = json.getJSONObject("flights").getJSONObject(number);
-                    		Log.v(DemoApplication.TAG, flights.toString());
+                    		String fromNumber = numbers.getString(j);
+                        	
+                        	JSONObject flight = flights.getJSONObject(fromNumber);
+                        	if(null!=flight)
+                        	{
+                        		flight.put("price", priceObj.getString("price"));
+                        		flight.put("currency", priceObj.get("currency"));
+                        	}
                     	}
-                    	
+//                    	for(String number:numbers)
+//                    	{
+//                    		JSONObject flights = json.getJSONObject("flights").getJSONObject(number);
+//                    		Log.v(DemoApplication.TAG, flights.toString());
+//                    	}
+                    	//Log.v(DemoApplication.TAG, nunmbers.toString());
+
                     }
-                    JSONArray flights = json.getJSONArray("flights");
                     for(int i=0; i<flights.length(); i++)
                     {
-                        JSONObject jsonObject = flights.getJSONObject(i);
+                        JSONObject jsonObject = flights.getJSONObject(flights.names().getString(i));
                         FlightData flightData = new FlightData();
                         flightData.mId = jsonObject.getString("number");
+                        flightData.mAirlineName = jsonObject.getString("airline");
                         flightData.mFromCity = jsonObject.getString("fromCity");
                         flightData.mToCity = jsonObject.getString("toCity");
                         flightData.mFromCode = jsonObject.getString("fromAirport");
                         flightData.mToCode = jsonObject.getString("toAirport");
                         flightData.mFromTime = jsonObject.getString("fromTime");
                         flightData.mToTime = jsonObject.getString("toTime");
+                        if(jsonObject.has("price"))
+                        {
+                        	flightData.mPrize = new PrizeData();
+                        	flightData.mPrize.mTicketPrize = Float.valueOf(jsonObject.getString("price"));
+                        }
                         resultObjects.add(flightData);
                     }
 
@@ -172,4 +198,25 @@ public class FlightServer implements IFlightManager {
     public FlightData getFlightData(String id) {
         return null;
     }
+    
+    private String createFromFile()
+	{	
+		
+		try {
+			InputStream is = DemoApplication.applicationContext.getAssets().open("testflight.txt");
+	        InputStreamReader isr=new InputStreamReader(is, "UTF-8");
+	        BufferedReader br = new BufferedReader(isr);
+	        char buffer[] = new char[is.available()];
+	        br.read(buffer);
+	        String result = new String(buffer);
+	        is.close();
+	        br.close();
+	        isr.close();
+	        return result;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "";
+		} 
+	}
 }

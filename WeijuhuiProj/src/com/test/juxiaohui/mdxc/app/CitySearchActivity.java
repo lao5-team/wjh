@@ -14,6 +14,8 @@ import com.test.juxiaohui.widget.Sidebar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -61,6 +63,27 @@ public class CitySearchActivity extends Activity implements ICitySearchActivityM
 		// TODO Auto-generated method stub
 		mSearchView = (RelativeLayout) findViewById(R.id.view_search_bar);
 		mEdtCity = (EditText) mSearchView.findViewById(R.id.et_keyword);
+		mEdtCity.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub
+				mCityAdapter.setFilter(s.toString());
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		mImgClear = (ImageView) mSearchView.findViewById(R.id.iv_clear);
 	}
 

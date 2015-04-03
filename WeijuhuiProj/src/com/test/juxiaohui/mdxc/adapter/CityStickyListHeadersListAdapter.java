@@ -240,6 +240,12 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 		}
 		return list.toArray(new String[list.size()]);
 	}
+	
+	public void setFilter(String filter)
+	{
+		mResultCities = CitySearchServer.getInstance().getSearchResult(filter);
+		this.notifyDataSetChanged();
+	}
 
 
 }

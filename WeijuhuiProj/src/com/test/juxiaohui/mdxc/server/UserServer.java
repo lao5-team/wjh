@@ -76,7 +76,7 @@ public class UserServer implements IUserServer {
 				return resultObj;
 			}
 		};
-		caller.execute();
+		//caller.execute();
 		return "Success";
 	}
 

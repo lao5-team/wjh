@@ -82,16 +82,17 @@
         android:textSize="12dp" />
     
         <TextView
-        android:id="@+id/textView_arrival_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView_depart_time"
-        android:layout_alignBottom="@+id/textView_depart_time"
-        android:layout_marginLeft="5dp"
-        android:layout_toRightOf="@+id/textView_distance"
-        android:text="TextView"
-        android:textColor="@color/color_000000"
-        android:textSize="15sp" />
+            android:id="@+id/textView_arrival_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textView_depart_time"
+            android:layout_alignBottom="@+id/textView_depart_time"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/textView_distance"
+            android:maxLines="1"
+            android:text="TextView"
+            android:textColor="@color/color_000000"
+            android:textSize="15sp" />
         
                 <TextView
             android:id="@+id/textView_prize"

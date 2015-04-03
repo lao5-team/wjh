@@ -361,19 +361,23 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
-		CityData _d = (CityData)data.getSerializableExtra("city");
-		switch(requestCode)
+		if(null!=data)
 		{
-		case 0:
-			mTvDepartCity.setText(_d.cityName);
-			mSearchRequest.mDepartCity = _d.cityName;
-			mSearchRequest.mDepartCode = _d.portCode;
-			break;
-		case 1:
-			mTvArrivalCity.setText(_d.cityName);
-			mSearchRequest.mArrivalCity = _d.cityName;
-			mSearchRequest.mArrivalCode = _d.portCode;
-		}		
+			CityData _d = (CityData)data.getSerializableExtra("city");
+			switch(requestCode)
+			{
+			case 0:
+				mTvDepartCity.setText(_d.cityName);
+				mSearchRequest.mDepartCity = _d.cityName;
+				mSearchRequest.mDepartCode = _d.portCode;
+				break;
+			case 1:
+				mTvArrivalCity.setText(_d.cityName);
+				mSearchRequest.mArrivalCity = _d.cityName;
+				mSearchRequest.mArrivalCode = _d.portCode;
+			}		
+		}
+		
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

@@ -55,7 +55,24 @@ public class CitySearchServer implements ICitySearchServer {
 		{
 			return mCities;
 		}
-		return null;
+		else
+		{
+			ArrayList<CityData> results = (ArrayList<CityData>) mCities.clone();
+			ArrayList<CityData> temp = new ArrayList<CityData>();
+			for(int i=0; i<condition.length(); i++)
+			{
+				for(int j=0; j<results.size(); j++)
+				{
+					if(results.get(j).cityName.substring(i, i+1).equalsIgnoreCase(condition.substring(i, i+1)))
+					{
+						temp.add(results.get(j));
+					}
+				}
+				results = (ArrayList<CityData>) temp.clone();
+				temp.clear();
+			}
+			return results;
+		}
 	}
 
 

@@ -90,7 +90,10 @@ public class FlightData {
     		holder.mTvArrivalTime.setText(data.mRoutes.get(data.mRoutes.size()-1).mArrivalTime);
     		holder.mTvArrivalCity.setText(data.mRoutes.get(data.mRoutes.size()-1).mArrivalCity);
     	}
-    	
+		holder.mTvDepartTime.setText(data.mFromTime);
+		holder.mTvDepartCity.setText(data.mFromCode);
+		holder.mTvArrivalTime.setText(data.mToTime);
+		holder.mTvArrivalCity.setText(data.mToCode);
     	holder.mTvDistance.setText("unknown km");
     	holder.mTvCurrency.setText("CNY");
     	holder.mTvPrize.setText(data.mPrize.mTicketPrize + data.mPrize.mTax + "");
