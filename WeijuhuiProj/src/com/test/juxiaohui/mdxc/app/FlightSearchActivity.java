@@ -19,13 +19,16 @@ import com.test.juxiaohui.mdxc.mediator.IFlightSearchMediator;
 import com.test.juxiaohui.widget.CalendarActivity;
 import com.test.juxiaohui.widget.CalendarActivity.onDataSelectedListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by yihao on 15/3/13.
  */
 public class FlightSearchActivity extends Activity implements IFlightSearchMediator{
-	public static boolean IS_TEST_MODE = true;
+	public static boolean IS_TEST_MODE = false;
     Button mBtnRoundTrip;
     Button mBtnOneWay;
     TextView mTvDepartCity;
@@ -46,14 +49,11 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     ImageView mIvPlus;
     LinearLayout mLlSearch;
     TextView mTvClass;
-    //tv_depart_city
-    //tv_depart_code
-    //iv_airport_exchange
-    //tv_arrival_city
-    //tv_arrival_code
 
     /*Data*/
     FlightSearchRequest mSearchRequest = new FlightSearchRequest();
+    
+    SimpleDateFormat mDataFormat = new SimpleDateFormat("yyyy/MM/dd");
     
     public static void startActivity(Context context)
     {
@@ -98,12 +98,13 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mLlDepart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCities(0);
+                openCities(IFlightSearchMediator.CITY_DEPART);
             }
         });
         mTvDepartCity = (TextView) findViewById(R.id.tv_depart_city);
         mTvDepartCode = (TextView) findViewById(R.id.tv_depart_code);
         mTvDepartTip = (TextView) findViewById(R.id.tv_depart_tip);
+        
         mIvExchange = (ImageView) findViewById(R.id.iv_airport_exchange);
         mIvExchange.setClickable(true);
         mIvExchange.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +117,9 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
                 mSearchRequest.mArrivalCode = mSearchRequest.mDepartCode;
                 mSearchRequest.mDepartCity = tempCity;
                 mSearchRequest.mDepartCode = tempCode;
+                
+                mTvDepartCity.setText(mSearchRequest.mDepartCity);
+                mTvArrivalCity.setText(mSearchRequest.mArrivalCity);
             }
         });
         mLlArrival = (LinearLayout) findViewById(R.id.ll_arrivalCity_container);
@@ -123,7 +127,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mLlArrival.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCities(1);
+                openCities(IFlightSearchMediator.CITY_ARRIVAL);
             }
         });
         mTvArrivalCity = (TextView) findViewById(R.id.tv_arrival_city);
@@ -151,7 +155,9 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mLlDepartDate = (LinearLayout) findViewById(R.id.ll_departDate_container);
         mLlReturnlDate = (LinearLayout) findViewById(R.id.flight_search_returnDate_container);
         mTvDepartTime = (TextView) findViewById(R.id.tv_depart_date);
+        mTvDepartTime.setText("Depart Time");
         mTvReturnTime = (TextView)findViewById(R.id.tv_return_date);
+        mTvReturnTime.setText("Return Time");
         mLlDepartDate.setClickable(true);
         mLlDepartDate.setOnClickListener(new OnClickListener() {
 			
@@ -305,42 +311,43 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     	intent.putExtra("request", FlightSearchRequest.toJSON(mSearchRequest).toString());
     	startActivity(intent);
     }
-
     /**
      * 打开可选城市列表
+     * @param cityType 0
      */
     @Override
-    public void openCities(int i) {
+    public void openCities(int cityType) {
     	Intent intent = new Intent(this,CitySearchActivity.class);
-    	startActivityForResult(intent, i);
+    	startActivityForResult(intent, cityType);
     }
 
     @Override
     public void openCalendar(final boolean isDepart) {
-    	//Intent intent = new Intent(this, CalendarActivity.class);
-    	//startActivity(intent);
     	CalendarActivity.PopupWindows popwindow = new CalendarActivity.PopupWindows(this, getWindow().getDecorView());
-    	//mTvDepartTime.setText(popwindow.getDate());
     	popwindow.setDateSelectedListener(new onDataSelectedListener() {
 			
 			@Override
-			public void onDateSelected(final String date) {
+			public void onDateSelected(final String str_date) {
 				// TODO Auto-generated method stub
+				
 				runOnUiThread(new Runnable() {
 					
 					@Override
 					public void run() {
-						if(isDepart)
-						{
-							mTvDepartTime.setText(date);
-							mSearchRequest.mDepartDate = date;
+						try {
+							final Date date = mDataFormat.parse(str_date);
+							if(isDepart)
+							{
+								setDepartDate(date);
+							}
+							else
+							{
+								setArrivalDate(date);
+							}
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-						else
-						{
-							mTvReturnTime.setText(date);
-							mSearchRequest.mReturnDate = date;
-						}
-						
 					}
 				});
 				
@@ -350,12 +357,18 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 
     @Override
     public void setDepartDate(Date date) {
-
+    	String str = mDataFormat.format(date);
+		mTvDepartTime.setText(str);
+		mSearchRequest.mDepartDate = str;
+		mTvReturnTime.setText(getDayafter(str));
+		mSearchRequest.mReturnDate = mTvReturnTime.getText().toString();
     }
 
     @Override
     public void setArrivalDate(Date date) {
-
+    	String str = mDataFormat.format(date);
+		mTvReturnTime.setText(str);
+		mSearchRequest.mReturnDate = str;
     }
     
 	@Override
@@ -363,21 +376,37 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 		// TODO Auto-generated method stub
 		if(null!=data)
 		{
-			CityData _d = (CityData)data.getSerializableExtra("city");
+			CityData citydata = (CityData)data.getSerializableExtra("city");
 			switch(requestCode)
 			{
-			case 0:
-				mTvDepartCity.setText(_d.cityName);
-				mSearchRequest.mDepartCity = _d.cityName;
-				mSearchRequest.mDepartCode = _d.portCode;
+			case IFlightSearchMediator.CITY_DEPART:
+				mTvDepartCity.setText(citydata.cityName);
+				mSearchRequest.mDepartCity = citydata.cityName;
+				mSearchRequest.mDepartCode = citydata.portCode;
 				break;
-			case 1:
-				mTvArrivalCity.setText(_d.cityName);
-				mSearchRequest.mArrivalCity = _d.cityName;
-				mSearchRequest.mArrivalCode = _d.portCode;
+			case IFlightSearchMediator.CITY_ARRIVAL:
+				mTvArrivalCity.setText(citydata.cityName);
+				mSearchRequest.mArrivalCity = citydata.cityName;
+				mSearchRequest.mArrivalCode = citydata.portCode;
 			}		
 		}
 		
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	private String getDayafter(String str_date)
+	{
+		try {
+			Date date = mDataFormat.parse(str_date);
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			int day = calendar.get(Calendar.DATE);
+			calendar.set(Calendar.DATE, day + 1);
+			return mDataFormat.format(calendar.getTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "";
+		}
 	}
 }
