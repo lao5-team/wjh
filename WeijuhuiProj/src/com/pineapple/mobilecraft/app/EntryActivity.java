@@ -36,7 +36,9 @@ import android.os.Bundle;
 import android.os.Messenger;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -71,7 +73,7 @@ public class EntryActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.entry_activity);
-		initView();
+		
 		inviteMessgeDao = new InviteMessgeDao(this);
 		userDao = new UserDao(this);
 		//mActivityListFragment = new ActivityListFragment();
@@ -84,8 +86,8 @@ public class EntryActivity extends FragmentActivity {
 		mUserinfoFragment = new UserinfoFragment(UserManager.getInstance().getCurrentUser());
 		
 		fragments = new Fragment[] { mNaviFragment, mTreasureFragment, mContactListFragment , mUserinfoFragment };
-		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mNaviFragment)
-				.show(mNaviFragment).commit();
+		//getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mNaviFragment)
+		//		.show(mNaviFragment).commit();
 
 		// 注册一个接收消息的BroadcastReceiver
 		msgReceiver = new NewMessageBroadcastReceiver();
@@ -116,7 +118,7 @@ public class EntryActivity extends FragmentActivity {
 		
 		intent = new Intent(this, MessageService.class);
 		startService(intent);		
-		
+		initView();
 	
 	}
 
@@ -134,6 +136,21 @@ public class EntryActivity extends FragmentActivity {
 		mTabs[3] = (Button) findViewById(R.id.btn_setting);
 		// 把第一个tab设为选中状态
 		mTabs[0].setSelected(true);
+		
+		ViewPager vp = (ViewPager)findViewById(R.id.viewPager);
+		vp.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+			
+			@Override
+			public int getCount() {
+				// TODO Auto-generated method stub
+				return 4;
+			}
+			
+			@Override
+			public Fragment getItem(int arg0) {
+				return fragments[arg0];
+			}
+		});
 
 	}
 
@@ -162,7 +179,7 @@ public class EntryActivity extends FragmentActivity {
 			//getSupportFragmentManager().getFragments().clear();
 			trx.hide(fragments[currentTabIndex]);
 			if (!fragments[index].isAdded()) {
-				trx.add(R.id.fragment_container, fragments[index]);
+				trx.add(R.id.viewPager, fragments[index]);
 			}
 			trx.show(fragments[index]).commit();
 		}
