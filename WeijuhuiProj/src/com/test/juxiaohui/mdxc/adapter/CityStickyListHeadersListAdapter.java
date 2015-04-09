@@ -7,6 +7,7 @@ import java.util.zip.Inflater;
 
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.data.CityData;
+import com.test.juxiaohui.mdxc.manager.CityManager;
 import com.test.juxiaohui.mdxc.server.CitySearchServer;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
@@ -39,7 +40,7 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 		mHotCities = hotCitys;
 		mNearbyPorts = nearbyPorts;
 		mLastSearchCities = lastSearchCitys;
-		mResultCities = CitySearchServer.getInstance().getSearchResult("");
+		mResultCities = CityManager.getInstance().getSearchResult("");//CitySearchServer.getInstance().getSearchResult("");
 		mInflater = LayoutInflater.from(context);
 		mContext = context;
 	}
@@ -123,10 +124,9 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 		}
 		
 		holder.title.setText(data.cityName);
-		holder.subTitle.setText(data.countryName + " - " + data.portName + "(" + data.portCode + ")");
-		
+		holder.subTitle.setText(data.countryName + " - " + data.portName + "(" + data.cityCode + ")");
 		if(mNearbyPorts != null && position < mNearbyPorts.size())
-			holder.distance.setText("" + Float.valueOf(data.distanceFromme/1000) + "km");
+			holder.distance.setText("" + Float.valueOf(data.distanceFromMe/1000) + "km");
 
 		return convertView;
 	}
@@ -243,7 +243,7 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 	
 	public void setFilter(String filter)
 	{
-		mResultCities = CitySearchServer.getInstance().getSearchResult(filter);
+		mResultCities = CityManager.getInstance().getSearchResult(filter);
 		this.notifyDataSetChanged();
 	}
 
