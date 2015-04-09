@@ -47,7 +47,7 @@ public class FlightServer implements IFlightManager {
             public List<FlightData> postExcute(String result) {
                 List<FlightData> resultObjects = new ArrayList<FlightData>();
                 try {
-                	result = createFromFile();
+                	//result = createFromFile();
                     JSONObject json = new JSONObject(result);
                     
                     JSONArray prices = json.getJSONArray("prices");
@@ -59,7 +59,6 @@ public class FlightServer implements IFlightManager {
                     	for(int j=0; j<numbers.length(); j++)
                     	{
                     		String fromNumber = numbers.getString(j);
-                        	
                         	JSONObject flight = flights.getJSONObject(fromNumber);
                         	if(null!=flight)
                         	{

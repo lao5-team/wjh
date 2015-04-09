@@ -130,7 +130,7 @@ public class CitySearchActivity extends Activity implements ICitySearchActivityM
 		c.countryName = "CHINA";
 		c.cityName = "SHEN YANG";
 		c.portName = "桃仙机场";
-		c.distanceFromme = 18000;
+		c.distanceFromMe = 18000;
 		c.portCode = "SHE";
 		l.add(c);
 		l.add(c);
@@ -145,7 +145,7 @@ public class CitySearchActivity extends Activity implements ICitySearchActivityM
 		c.countryName = "CHINA";
 		c.cityName = "SHEN YANG";
 		c.portName = "桃仙机场";
-		c.distanceFromme = 18000;
+		c.distanceFromMe = 18000;
 		c.portCode = "SHE";
 		l.add(c);
 		l.add(c);
@@ -163,7 +163,7 @@ public class CitySearchActivity extends Activity implements ICitySearchActivityM
 		c.countryName = "CHINA";
 		c.cityName = "SHEN YANG";
 		c.portName = "桃仙机场";
-		c.distanceFromme = 18000;
+		c.distanceFromMe = 18000;
 		c.portCode = "SHE";
 		l.add(c);
 		l.add(c);

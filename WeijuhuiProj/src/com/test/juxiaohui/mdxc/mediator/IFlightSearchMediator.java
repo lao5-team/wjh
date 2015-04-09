@@ -7,6 +7,9 @@ import java.util.Date;
  */
 public interface IFlightSearchMediator {
 
+	public static int CITY_DEPART = 0;
+	public static int CITY_ARRIVAL = 1;
+	
     public void addFlightTypeView();
 
     public void addCityView();
@@ -61,7 +64,7 @@ public interface IFlightSearchMediator {
 
     /**
      * 打开城市列表
-     * @param witchCity 出发城市还是目的城市，出发城市传0 目的城市传1
+     * @param witchCity 出发城市还是到达城市，出发城市传CITY_DEPART 到达城市传CITY_DEPART
      */
     public void openCities(int witchCity);
 

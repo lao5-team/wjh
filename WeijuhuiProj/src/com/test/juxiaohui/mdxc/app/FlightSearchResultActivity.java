@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.common.manager.ServerManager;
@@ -30,10 +32,12 @@ public class FlightSearchResultActivity extends Activity implements ISearchResul
 	ListView mListView;
 	List<FlightData> mFlightsList = new ArrayList<FlightData>();
 	FlightSearchRequest mRequest = FlightSearchRequest.NULL;
+	RelativeLayout mRlprogress;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flightsearchresult);
+        mRlprogress = (RelativeLayout)findViewById(R.id.progressLayout);
         //setRequest(request);        
         try {
         	Intent intent = getIntent();
@@ -97,6 +101,7 @@ public class FlightSearchResultActivity extends Activity implements ISearchResul
 						
 						@Override
 						public void run() {
+							mRlprogress.setVisibility(View.GONE);
 							setResult(mFlightsList);
 						}
 					});
