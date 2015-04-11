@@ -1,10 +1,7 @@
 package com.test.juxiaohui.mdxc.server;
 
-import android.util.Log;
-
 import com.test.juxiaohui.DemoApplication;
-import com.test.juxiaohui.common.dal.IFlightManager;
-import com.test.juxiaohui.mdxc.data.CityData;
+import com.test.juxiaohui.common.dal.IFlightServer;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
 import com.test.juxiaohui.mdxc.data.PrizeData;
@@ -24,7 +21,7 @@ import java.util.List;
 /**
  * Created by yihao on 15/3/31.
  */
-public class FlightServer implements IFlightManager {
+public class FlightServer implements IFlightServer {
     /**
      * 查询航班信息，区分国内航班与国际航班
      * 请求示例 http://64.251.7.148/flight/list?from=LAX&to=SHA&departDate=2015/04/14&returnDate=2015/04/24&cabin=Economy

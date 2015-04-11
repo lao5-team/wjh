@@ -3,16 +3,15 @@ package com.test.juxiaohui.mdxc.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.common.dal.IFlightManager;
+import com.test.juxiaohui.common.dal.IFlightServer;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.FlightData.BEHAVIOR_TYPE;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
 import com.test.juxiaohui.mdxc.data.PrizeData;
 import com.test.juxiaohui.mdxc.data.RouteData;
 
-public class TestFlightServer implements IFlightManager{
+public class TestFlightServer implements IFlightServer {
 	private static TestFlightServer mInstance = null;
 	private List<FlightData> mDatas = new ArrayList<FlightData>();
 	public static TestFlightServer getInstance()

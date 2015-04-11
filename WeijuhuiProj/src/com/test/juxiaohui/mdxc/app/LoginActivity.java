@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.common.manager.ServerManager;
+import com.test.juxiaohui.mdxc.manager.ServerManager;
 import com.test.juxiaohui.domain.UserManager;
 import com.test.juxiaohui.mdxc.mediator.ILoginMediator;
 

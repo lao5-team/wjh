@@ -1,7 +1,6 @@
 package com.test.juxiaohui.mdxc.app;
 
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.common.manager.ServerManager;
+import com.test.juxiaohui.mdxc.manager.ServerManager;
 import com.test.juxiaohui.mdxc.mediator.IRegisterMediator;
 
 public class RegisterActivity extends Activity implements IRegisterMediator {

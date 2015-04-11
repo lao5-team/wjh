@@ -1,13 +1,12 @@
 package com.test.juxiaohui.mdxc.app;
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.easemob.chat.EMChat;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.common.manager.ServerManager;
+import com.test.juxiaohui.mdxc.manager.ServerManager;
 import junit.framework.Assert;
 
 /**

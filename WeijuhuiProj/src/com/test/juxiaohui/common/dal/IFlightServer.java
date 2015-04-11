@@ -13,7 +13,7 @@ import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
  * Create by qinyy on 2015/03/11
  *
  */
-public interface IFlightManager 
+public interface IFlightServer
 {
 	/**
 	 *    查询航班信息，区分国内航班与国际航班

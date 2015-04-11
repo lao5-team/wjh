@@ -1,7 +1,5 @@
 package com.test.juxiaohui.mdxc.app;
 
-import org.w3c.dom.Text;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,15 +7,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.common.manager.ServerManager;
+import com.test.juxiaohui.mdxc.manager.ServerManager;
 import com.test.juxiaohui.mdxc.adapter.FlightDetailListAdapter;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.mediator.IFlightDetailMediator;
