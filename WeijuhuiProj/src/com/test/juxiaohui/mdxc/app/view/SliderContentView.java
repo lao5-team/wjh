@@ -7,6 +7,7 @@ import com.test.juxiaohui.mdxc.app.FlightSearchActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -41,6 +42,8 @@ public class SliderContentView extends RelativeLayout {
 	private FragmentHomeView mFragmentHomeView;
 	private SettingsView mSettingsView;
 	
+	private final int MINI_SCREEN = 0;
+	private final int FULL_SCREEN = 1;
 	
 	
 	private Context mContext;
@@ -54,8 +57,8 @@ public class SliderContentView extends RelativeLayout {
 	private float orginHeight = 0;
 	private float orginWidth = 0;
 	private float moveScale;
-	private float viewScale;
-	private float MAXSHRINKSCALE;
+	private float widthScale;
+	private float heightScale;
 	private float mTextViewOriginHeight;
 	private float mTextViewOriginWidth;
 	private float screenHeight;
@@ -83,9 +86,10 @@ public class SliderContentView extends RelativeLayout {
 		orginWidth = this.getWidth();	
         orginHeight = this.getHeight();
         startY = this.getY();
-        maxDistanceX = (orginWidth*4)/5;
-        maxShrinkY = orginHeight/6;
-        MAXSHRINKSCALE = (2f/3f);
+        widthScale = (2.0f/3.0f);
+        heightScale = (2.0f/3.0f);
+        maxDistanceX = orginWidth * 0.8f;
+        maxShrinkY = (orginHeight * (1 -heightScale))/2;
         moveScale = maxDistanceX/maxShrinkY;
         //mTextViewOriginWidth = mTvHotel.getWidth();
         //mTextViewOriginHeight = mTvHotel.getHeight();
@@ -133,13 +137,11 @@ public class SliderContentView extends RelativeLayout {
 					initScrollData();
 					init = true;
 				}
-				
-				//transformToFullView(mSelf.getLeft(),mSelf.getTop(),mSelf.getRight() - mSelf.getLeft(),mSelf.getBottom() - mSelf.getTop());
-				mSelf.layout(0, 0, Math.round(orginWidth), Math.round(orginHeight));
-				/*mSelf.layout(0, 0 , Math.round(orginWidth),  Math.round(orginHeight));
-				mTempContentView.layout(0, 0,Math.round(orginWidth), Math.round(orginHeight));*/
+				transformToFullView(mSelf.getLeft(),mSelf.getTop(),mSelf.getRight() - mSelf.getLeft(),mSelf.getBottom() - mSelf.getTop());
 				mTempContentView.setClickable(false);
-				mTempContentView.setVisibility(View.GONE);
+				//mSelf.layout(0, 0 , Math.round(orginWidth),  Math.round(orginHeight));
+				//mTempContentView.layout(0, 0,Math.round(orginWidth), Math.round(orginHeight));
+
 				
 			}
 		});
@@ -154,15 +156,15 @@ public class SliderContentView extends RelativeLayout {
 	{
 
 		
-		AnimationSet mAnimationSet = new AnimationSet(true);
+		final AnimationSet mAnimationSet = new AnimationSet(true);
 
-		TranslateAnimation translateAnimation = new TranslateAnimation(0, -(0.5f*cw -( orginWidth -cx) + orginWidth/2), 0, 0);
-		ScaleAnimation scaleAnimation =new ScaleAnimation(1f, orginWidth / cw, 1f, orginHeight / ch,   
-				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f); 
-		
-		mAnimationSet.addAnimation(scaleAnimation);
+		TranslateAnimation translateAnimation = new TranslateAnimation(0, -cx, 0, 0);
+		ScaleAnimation scaleAnimation =new ScaleAnimation(1f, orginWidth/cw, 1f, orginHeight/ch,   
+				Animation.ABSOLUTE, -cx, Animation.RELATIVE_TO_SELF, 0.5f); 
+
 		mAnimationSet.addAnimation(translateAnimation);
-		mAnimationSet.setFillAfter(true);
+		mAnimationSet.addAnimation(scaleAnimation);
+		mAnimationSet.setFillAfter(false);
 		mAnimationSet.setDuration(200);
 		mAnimationSet.setAnimationListener(new AnimationListener() {	
 			@Override
@@ -171,36 +173,71 @@ public class SliderContentView extends RelativeLayout {
 			}		
 			@Override
 			public void onAnimationRepeat(Animation arg0) {
-				// TODO Auto-generated method stub			
+				// TODO Auto-generated method stub		
 			}
 			@Override
 			public void onAnimationEnd(Animation arg0) {
 				// TODO Auto-generated method stub	
 				
+				//mSelf.layout(0, 0, Math.round(orginWidth), Math.round(orginHeight));
 				
-		//		mContentView.layout(0, 0,Math.round(orginWidth), Math.round(orginHeight));
-			//	mTempContentView.layout(0, 0,Math.round(orginWidth), Math.round(orginHeight));
-			
+				
+/*				mFragmentHomeView.layout(Math.round(-cx), 0,Math.round(orginWidth-cx), Math.round(orginHeight));
+				mTempContentView.layout(Math.round(-cx), 0,Math.round(orginWidth-cx), Math.round(orginHeight));
 				mTempContentView.setClickable(false);
-				//mContentView.setVisibility(View.VISIBLE);
+				mFragmentHomeView.setVisibility(View.VISIBLE);
+				mTempContentView.setVisibility(View.GONE);*/
+				Message msg = new Message();
+				msg.what = FULL_SCREEN;
+				mHandler.sendMessageDelayed(msg, 10);				
+				mTempContentView.setClickable(false);
+
 				//mTempContentView.setVisibility(View.GONE);
-				requestLayout();
+				
 			}
 		});
-		this.startAnimation(mAnimationSet);
+		mSelf.startAnimation(mAnimationSet);
 		
 	}
 
+	Handler mHandler = new Handler(){
+		public void handleMessage(android.os.Message msg) 
+		{
+			if(msg.what == MINI_SCREEN)
+			{
+				
+				mSelf.layout(Math.round(maxDistanceX), Math.round(maxShrinkY + 0.5f) , Math.round(maxDistanceX + orginWidth * widthScale), Math.round( maxShrinkY + 0.5f + orginHeight*heightScale));
+				mTempContentView.layout(0, 0,Math.round(orginWidth * widthScale), Math.round(orginHeight*heightScale));
+				mFragmentHomeView.layout(0, 0,Math.round(orginWidth * widthScale), Math.round(orginHeight*heightScale));
+				mTempContentView.setClickable(true);
+				//mSelf.layout(0, 0, mSelf.getRight(), mSelf.getBottom());
+				
+				
+				
+				
+			}
+			else if(msg.what == FULL_SCREEN)
+			{
+				mSelf.layout(0, 0, Math.round(orginWidth), Math.round(orginHeight));
+				mTempContentView.layout(0, 0,Math.round(orginWidth), Math.round(orginHeight));
+				mFragmentHomeView.layout(0, 0,Math.round(orginWidth), Math.round(orginHeight));
+
+			}
+				
+		};
+	};
+	
 	private void transformToMiniView(float cx, float cy,float cw, float ch)
 	{
 
 		
-		AnimationSet mAnimationSet = new AnimationSet(true);
+		final AnimationSet mAnimationSet = new AnimationSet(true);
 		mTempContentView.setVisibility(VISIBLE);
 	//	mContentView.setVisibility(View.GONE);
-		TranslateAnimation translateAnimation = new TranslateAnimation(cx, maxDistanceX, cy, cy);
-		ScaleAnimation scaleAnimation =new ScaleAnimation(1f, (orginWidth * MAXSHRINKSCALE)/cw, 1f, (orginHeight * MAXSHRINKSCALE)/ch,   
-				Animation.RELATIVE_TO_SELF, MAXSHRINKSCALE, Animation.RELATIVE_TO_SELF, 0.5f); 
+		TranslateAnimation translateAnimation = new TranslateAnimation(0,(maxDistanceX - cx) , 0,0);
+		final ScaleAnimation scaleAnimation =new ScaleAnimation(1f, (orginWidth * widthScale)/cw, 1f, (orginHeight * heightScale)/ch,   
+				Animation.ABSOLUTE, (maxDistanceX - cx), Animation.RELATIVE_TO_SELF, 0.5f); 
+		
 		mAnimationSet.addAnimation(translateAnimation);
 		mAnimationSet.addAnimation(scaleAnimation);
 		
@@ -223,11 +260,9 @@ public class SliderContentView extends RelativeLayout {
 			@Override
 			public void onAnimationEnd(Animation arg0) {
 				// TODO Auto-generated method stub
-				
-				mSelf.layout(Math.round(maxDistanceX), Math.round(maxShrinkY) , Math.round(maxDistanceX + orginWidth * MAXSHRINKSCALE), Math.round( maxShrinkY + orginHeight*MAXSHRINKSCALE));
-				mTempContentView.layout(0, 0,Math.round(orginWidth * MAXSHRINKSCALE), Math.round(orginHeight*MAXSHRINKSCALE));
-				//mContentView.layout(0, 0,Math.round(orginWidth * MAXSHRINKSCALE), Math.round(orginHeight*MAXSHRINKSCALE));
-				mTempContentView.setClickable(true);
+				Message msg = new Message();
+				msg.what = MINI_SCREEN;
+				mHandler.sendMessageDelayed(msg, 10);	
 				
 			}
 		});
@@ -271,7 +306,7 @@ public class SliderContentView extends RelativeLayout {
 			initScrollData();
 			init = true;
 		}
-		Log.d("qinyy", "action:" + ev.getAction() + "   x: " + x + "  lastX: " + lastX);
+		Log.d("qinyy", "lastTop : " + this.getTop() + "     lastLeft :" +  this.getLeft());
      //   orginHeight = ((View)this.getParent()).getHeight();
       //  orginWidth = ((View)this.getParent()).getWidth();
 		//float y = ev.getY();
@@ -281,7 +316,7 @@ public class SliderContentView extends RelativeLayout {
 			mDownActionTime = System.currentTimeMillis();
 			mDownActionX = x;	
 			mTempContentView.setVisibility(VISIBLE);
-		//	mContentView.setVisibility(View.GONE);
+		//	mFragmentHomeView.setVisibility(View.GONE);
 			/*
 			if(mTempContentView.getParent() != null && !mTempContentView.getParent().equals(this))
 				((ViewGroup)(mTempContentView.getParent())).removeView(mTempContentView);
@@ -293,11 +328,11 @@ public class SliderContentView extends RelativeLayout {
 			break;
 		case MotionEvent.ACTION_MOVE:
 			float distanceX = x - lastX;
-/*			if(Math.abs(distanceX) < 20)
-				return true;*/
-			float leftbound = this.getLeft() + Math.round(distanceX);
+			if(Math.abs(distanceX) < 3)
+				return true;
+			float leftbound = this.getLeft() + distanceX;
 
-			float topbound = Math.round(this.getTop() + (distanceX/moveScale));
+			float topbound = this.getTop() + (distanceX/moveScale);
 			if((leftbound/maxDistanceX) > 1 && distanceX > 0)
 			{
 				lastX = x;
@@ -311,17 +346,28 @@ public class SliderContentView extends RelativeLayout {
 			}
 			else
 			{
-				float currentScale = (1 - (leftbound/maxDistanceX)*(1 - MAXSHRINKSCALE));
-				this.layout(Math.round(leftbound), Math.round(topbound), Math.round(leftbound + orginWidth * currentScale), Math.round( topbound + orginHeight*currentScale));
-				mTempContentView.layout(0, 0, Math.round(orginWidth * currentScale), Math.round(orginHeight*currentScale));
-			//	mContentView.layout(0,0,Math.round(orginWidth), Math.round(orginHeight));
-				Log.d("qinyy", "distanceX: " + distanceX +"  l:" + leftbound + " t:" + topbound + " r:" +Math.round(leftbound + orginWidth * currentScale) + " b" + Math.round( topbound + orginHeight*currentScale));
+				float currentWidthScale = (1 - (leftbound/maxDistanceX)*(1 - widthScale));
+				float currentHeightScale = (1 - (topbound/maxShrinkY)*(1 - heightScale));
+				this.layout(Math.round(leftbound), Math.round(topbound), Math.round(leftbound + orginWidth * currentWidthScale), Math.round( topbound + orginHeight*currentHeightScale));
+				/*mTempContentView.layout(Math.round(distanceX), Math.round(distanceX/moveScale), Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));
+				mFragmentHomeView.layout(Math.round(distanceX), Math.round(distanceX/moveScale), Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));*/
+				mTempContentView.layout(0, 0, Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));
+				mFragmentHomeView.layout(0, 0, Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));
+				Log.d("qinyy", "distanceX: " + distanceX + " distanceY:  " + (distanceX/moveScale) +"   l:" + leftbound + " t:" + topbound + " r:" +Math.round(leftbound + orginWidth * currentWidthScale) + " b" + Math.round( topbound + orginHeight*currentHeightScale));
 			}
 				
 			//float distanceYthis
 			break;
 		case MotionEvent.ACTION_UP:
-		
+			Log.e("qinyy", "x - mDownActionX: " + (x - mDownActionX) + " time  " + (System.currentTimeMillis() - mDownActionTime) );
+			if(x - mDownActionX > 50 && (System.currentTimeMillis() - mDownActionTime) < 100)
+				transformToMiniView(mSelf.getLeft(), mSelf.getTop(), (mSelf.getRight() - mSelf.getLeft()), (mSelf.getBottom() - mSelf.getTop()));
+			else if(mSelf.getLeft() <= (orginWidth/2))
+				transformToFullView(mSelf.getLeft(), mSelf.getTop(), (mSelf.getRight() - mSelf.getLeft()), (mSelf.getBottom() - mSelf.getTop()));
+			else 
+				transformToMiniView(mSelf.getLeft(), mSelf.getTop(), (mSelf.getRight() - mSelf.getLeft()), (mSelf.getBottom() - mSelf.getTop()));
+			//transformToFullView(mSelf.getLeft(), mSelf.getTop(), (mSelf.getRight() - mSelf.getLeft()), (mSelf.getBottom() - mSelf.getTop()));
+			
 			break;
 		default:
 			break;
