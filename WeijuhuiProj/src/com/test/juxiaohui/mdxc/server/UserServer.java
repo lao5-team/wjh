@@ -45,14 +45,22 @@ public class UserServer implements IUserServer {
 				try {
 					JSONObject json = new JSONObject(result);
 					resultObj = json.getString("status");
+					if(resultObj.equals("200"))
+					{
+						return "Success";
+					}
+					else
+					{
+						return "Fail";
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
+					return "Fail";
 				}
-				return resultObj;
+
 			}
 		};
-		caller.execute();
-		return "Success";
+		return caller.execute();
 	}
 
 	@Override
@@ -70,14 +78,22 @@ public class UserServer implements IUserServer {
 				try {
 					JSONObject json = new JSONObject(result);
 					resultObj = json.getString("status");
+					if(resultObj.equals("200"))
+					{
+						return "Success";
+					}
+					else
+					{
+						return "Fail";
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
+					return "Fail";
 				}
-				return resultObj;
+
 			}
 		};
-		//caller.execute();
-		return "Success";
+		return caller.execute();
 	}
 
 	@Override

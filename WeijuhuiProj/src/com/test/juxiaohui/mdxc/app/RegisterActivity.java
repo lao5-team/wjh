@@ -77,7 +77,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				confirm();
-				finish();
+
 			}
 		});
 	}
@@ -138,6 +138,16 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 		protected void onPostExecute(String result)
 		{
 			mRegisterResult = result;
+			if(result.equals("Success"))
+			{
+				showErrorMessage("Register Success!");
+				finish();
+			}
+			else
+			{
+				showErrorMessage("Register Fail!");
+			}
+
 			super.onPostExecute(result);
 		}
 		
@@ -146,6 +156,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 	@Override
 	public void cancel() {
 		// TODO Auto-generated method stub
+		finish();
 
 	}
 	

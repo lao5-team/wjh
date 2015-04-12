@@ -31,12 +31,10 @@ public class LoginActivity extends Activity implements ILoginMediator{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mdxc_activity_login);
-        //temp code
-        
         Thread t= new Thread(new Runnable() {
 			@Override
 			public void run() {
-				UserManager.getInstance().logout();
+				//UserManager.getInstance().logout();
 				login();
 				
 			}
@@ -90,21 +88,35 @@ public class LoginActivity extends Activity implements ILoginMediator{
 
         if(isValid)
         {
-        	String username = mEtxUsername.getEditableText().toString();
-        	String password = mEtxPassword.getEditableText().toString();
+            showErrorMessage("Waiting for login...");
+            final String username = mEtxUsername.getEditableText().toString();
+            final String password = mEtxPassword.getEditableText().toString();
     		DemoApplication.getInstance().setUserName(username);
     		DemoApplication.getInstance().setPassword(password);
-            mLoginResult = UserManager.getInstance().login(username, password);
-            if(mLoginResult.contains("Success"))
-            {
-                showErrorMessage("Login Success");
-                EntryActivity.startActivity(LoginActivity.this);
-                finish();
-            }
-            else
-            {
-            	showErrorMessage(mLoginResult);
-            }
+            Thread t = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    mLoginResult = UserManager.getInstance().login(username, password);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(mLoginResult.contains("Success"))
+                            {
+                                showErrorMessage("Login Success");
+                                EntryActivity.startActivity(LoginActivity.this);
+                                finish();
+                            }
+                            else
+                            {
+                                showErrorMessage(mLoginResult);
+                            }
+                        }
+                    });
+                }
+            });
+            t.start();
+
         }
 
     }
