@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.manager.ServerManager;
-import com.test.juxiaohui.domain.UserManager;
+import com.test.juxiaohui.mdxc.manager.UserManager;
 import com.test.juxiaohui.mdxc.mediator.ILoginMediator;
 
 /**
@@ -32,8 +32,16 @@ public class LoginActivity extends Activity implements ILoginMediator{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mdxc_activity_login);
         //temp code
-        UserManager.getInstance().logout();
-        login();
+        
+        Thread t= new Thread(new Runnable() {
+			@Override
+			public void run() {
+				UserManager.getInstance().logout();
+				login();
+				
+			}
+		});
+        t.start();
         addUsernameView();
         addPasswordView();
 
@@ -86,7 +94,7 @@ public class LoginActivity extends Activity implements ILoginMediator{
         	String password = mEtxPassword.getEditableText().toString();
     		DemoApplication.getInstance().setUserName(username);
     		DemoApplication.getInstance().setPassword(password);
-            mLoginResult = ServerManager.getInstance().login(username, password);
+            mLoginResult = UserManager.getInstance().login(username, password);
             if(mLoginResult.contains("Success"))
             {
                 showErrorMessage("Login Success");
@@ -128,7 +136,7 @@ public class LoginActivity extends Activity implements ILoginMediator{
     	String password = DemoApplication.getInstance().getPassword();
     	if(null!=username && null!=password)
     	{
-            mLoginResult = ServerManager.getInstance().login(username, password);
+            mLoginResult = UserManager.getInstance().login(username, password);
             if(mLoginResult.contains("Success"))
             {
                 EntryActivity.startActivity(LoginActivity.this);
@@ -143,4 +151,10 @@ public class LoginActivity extends Activity implements ILoginMediator{
     	Intent intent = new Intent(this, RegisterActivity.class);
     	startActivity(intent);
     }
+
+	@Override
+	public void addCheckcodeView() {
+		// TODO Auto-generated method stub
+		
+	}
 }

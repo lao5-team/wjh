@@ -70,3 +70,31 @@
 	* 响应结果(json) :
 		+ 手机号:校验码 : {"15811560377":"264074","15811560376":"103418"}
 		+ 无数据 : {}
+		
+		
+		
+所有机型信息URL：
+http://www.bookingmin.com/flight/aircraft/
+机型信息按编号查询
+http://www.bookingmin.com/flight/aircraft/{code}
+
+所有航空公司URL：
+http://www.bookingmin.com/flight/airline/
+航空公司按编号查询：
+http://www.bookingmin.com/flight/airline/{code}
+
+所有机场URL：
+http://www.bookingmin.com/flight/airport/
+机场按编号查询：
+http://www.bookingmin.com/flight/airport/{code}
+
+所有城市URL：
+http://www.bookingmin.com/flight/cities/
+通过英文名模糊查询城市
+http://www.bookingmin.com/flight/cities/fuzzy?q=ab
+
+所有国家URL:
+http://www.bookingmin.com/flight/country/
+
+所有货币URL：
+http://www.bookingmin.com/flight/currency/

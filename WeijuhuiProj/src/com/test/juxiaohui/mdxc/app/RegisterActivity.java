@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.manager.ServerManager;
+import com.test.juxiaohui.mdxc.manager.UserManager;
 import com.test.juxiaohui.mdxc.mediator.IRegisterMediator;
 
 public class RegisterActivity extends Activity implements IRegisterMediator {
@@ -22,17 +23,17 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 	private EditText mPhoneNumberEditText;
 	private EditText mPasswordEditText;
 	private EditText mConfirmPwdEditText;
-	
 	private Button mRegiserButton;
-	
 	private Context mContext;
-	
 	private String mRegisterResult;
-	
+	private Button mCheckcodeButton;
+	private EditText mCheckcodeEditText;
+	private UserManager mUserManager;
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		mUserManager = UserManager.getInstance();
 		mContext = this;
 		initView();
 	}
@@ -44,6 +45,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 		addPasswordView();
 		addConfirmPasswordView();
 		addRegisterButton();
+		addGetCheckcodeView();
 	}
 	
 	@Override
@@ -87,9 +89,11 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 		String name;
 		String password;
 		String confirmPassword;
+		String checkcode;
 		name = mPhoneNumberEditText.getText().toString();
 		password = mPasswordEditText.getText().toString();
 		confirmPassword = mConfirmPwdEditText.getText().toString();
+		checkcode = mCheckcodeEditText.getText().toString();
 		if(name == null || name.equalsIgnoreCase(""))
 		{
 			showErrorMessage(mContext.getString(R.string.name_is_null));
@@ -116,7 +120,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 			mRegisterResult = "password_confirm_error";
 			return;
 		}
-		String[] params = {name,password};
+		String[] params = {name,password,checkcode};
 		new RegisterTask().execute(params);
 	}
 	
@@ -127,7 +131,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 		@Override
 		protected String doInBackground(String... arg0) {
 			// TODO Auto-generated method stub
-			return ServerManager.getInstance().register(arg0[0], arg0[1]);
+			return mUserManager.register(arg0[0], arg0[1], arg0[2]);
 		}
 		
 		@Override
@@ -176,5 +180,30 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
     {
     	return mRegisterResult;
     }
+
+	@Override
+	public void addGetCheckcodeView() {
+		mCheckcodeButton = (Button)findViewById(R.id.button_checkcode);
+		mCheckcodeButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				getCheckcode();
+			}
+		});
+		mCheckcodeEditText = (EditText)findViewById(R.id.et_checkcode);
+	}
+
+	@Override
+	public void getCheckcode() {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				mUserManager.sendCheckcode(mPhoneNumberEditText.getText().toString());
+			}
+		});
+		t.start();
+		
+	}
 
 }

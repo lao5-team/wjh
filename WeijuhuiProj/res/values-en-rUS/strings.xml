@@ -652,4 +652,6 @@
     <string name="year">Year</string>
     <string name="yes">Yes</string>   
     <string name="airline_details">Airline details</string>
+    <string name="get_checkCode">Send checkcode to your phone</string>
+ 	<string name="CheckCode">CheckCode</string>  
 </resources>

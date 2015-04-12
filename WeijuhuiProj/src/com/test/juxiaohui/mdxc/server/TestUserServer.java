@@ -1,6 +1,7 @@
 package com.test.juxiaohui.mdxc.server;
 
 import android.util.Log;
+
 import com.easemob.EMCallBack;
 import com.easemob.chat.EMChatManager;
 import com.easemob.exceptions.EaseMobException;
@@ -9,6 +10,7 @@ import com.test.juxiaohui.common.dal.IUserServer;
 import com.test.juxiaohui.common.data.User;
 import com.test.juxiaohui.domain.MyServerManager;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,7 +34,7 @@ public class TestUserServer implements IUserServer {
     }
 
     @Override
-    public String register(String username, String password) {
+    public String register(String username, String password, String checkcode) {
         try {
             EMChatManager.getInstance().createAccountOnServer(username, password);
             return "Success";
@@ -126,4 +128,10 @@ public class TestUserServer implements IUserServer {
         caller.execute();
 
     }
+
+	@Override
+	public void sendCheckcode(String phoneNumber) {
+		// TODO Auto-generated method stub
+		
+	}
 }

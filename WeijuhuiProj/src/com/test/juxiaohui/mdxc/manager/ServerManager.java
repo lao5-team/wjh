@@ -33,21 +33,6 @@ public class ServerManager {
         mCitySearch = new CitySearchServer();
     }
 
-    public String register(String username ,String password)
-    {
-        return mUserServer.register(username, password);
-    }
-
-    public String login(String username ,String password)
-    {
-        return mUserServer.login(username, password);
-
-    }
-
-    public void logout()
-    {
-        mUserServer.logout();
-    }
 
     public boolean isLogin()
     {
