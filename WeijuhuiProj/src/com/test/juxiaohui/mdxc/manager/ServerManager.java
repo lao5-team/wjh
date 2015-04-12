@@ -1,10 +1,10 @@
-package com.test.juxiaohui.common.manager;
+package com.test.juxiaohui.mdxc.manager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.test.juxiaohui.common.dal.ICitySearchServer;
-import com.test.juxiaohui.common.dal.IFlightManager;
+import com.test.juxiaohui.common.dal.IFlightServer;
 import com.test.juxiaohui.common.dal.IPassengerServer;
 import com.test.juxiaohui.common.dal.IUserServer;
 import com.test.juxiaohui.mdxc.data.CityData;
@@ -13,10 +13,6 @@ import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
 import com.test.juxiaohui.mdxc.data.FlightData.BEHAVIOR_TYPE;
 import com.test.juxiaohui.mdxc.data.Passenger;
 import com.test.juxiaohui.mdxc.server.*;
-import com.test.juxiaohui.utils.SyncHTTPCaller;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by yihao on 15/3/4.
@@ -25,7 +21,7 @@ public class ServerManager {
 
     private static ServerManager mInstance = null;
     private IUserServer mUserServer;
-    private IFlightManager mFlightManager;
+    private IFlightServer mFlightManager;
     private IPassengerServer mPassengerServer;
     private ICitySearchServer mCitySearch;
 
@@ -37,21 +33,6 @@ public class ServerManager {
         mCitySearch = new CitySearchServer();
     }
 
-    public String register(String username ,String password)
-    {
-        return mUserServer.register(username, password);
-    }
-
-    public String login(String username ,String password)
-    {
-        return mUserServer.login(username, password);
-
-    }
-
-    public void logout()
-    {
-        mUserServer.logout();
-    }
 
     public boolean isLogin()
     {

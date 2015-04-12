@@ -18,9 +18,9 @@ public class UserServer implements IUserServer {
 
 	
 	@Override
-	public String register(String username, String password) {
+	public String register(String username, String password, String checkcode) {
 		// TODO Auto-generated method stub
-		String url = "http://64.251.7.148:8081/user-web/app/register/register.json";
+		String url = "http://64.251.7.148/user/app/register/index.json";
 
 		JSONObject json = new JSONObject();
 		try {
@@ -35,7 +35,7 @@ public class UserServer implements IUserServer {
 		params.add(new BasicNameValuePair("userName", username));
 		params.add(new BasicNameValuePair("password", password));
 		params.add(new BasicNameValuePair("confirmPassword", password));
-
+		params.add(new BasicNameValuePair("checkCode", checkcode));
 		SyncHTTPCaller<String> caller;
 		caller = new SyncHTTPCaller<String>(url, "", params) {
 
@@ -45,19 +45,27 @@ public class UserServer implements IUserServer {
 				try {
 					JSONObject json = new JSONObject(result);
 					resultObj = json.getString("status");
+					if(resultObj.equals("200"))
+					{
+						return "Success";
+					}
+					else
+					{
+						return "Fail";
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
+					return "Fail";
 				}
-				return resultObj;
+
 			}
 		};
-		caller.execute();
-		return "Success";
+		return caller.execute();
 	}
 
 	@Override
 	public String login(String username, String password) {
-		String url = "http://64.251.7.148:8081/user-web/app/login/login.json";
+		String url = "http://64.251.7.148/user/app/login/index.json";
 		List params=new ArrayList();
 		params.add(new BasicNameValuePair("userName", username));
 		params.add(new BasicNameValuePair("password", password));
@@ -70,14 +78,22 @@ public class UserServer implements IUserServer {
 				try {
 					JSONObject json = new JSONObject(result);
 					resultObj = json.getString("status");
+					if(resultObj.equals("200"))
+					{
+						return "Success";
+					}
+					else
+					{
+						return "Fail";
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
+					return "Fail";
 				}
-				return resultObj;
+
 			}
 		};
-		//caller.execute();
-		return "Success";
+		return caller.execute();
 	}
 
 	@Override
@@ -92,6 +108,29 @@ public class UserServer implements IUserServer {
 		String url = "http://64.251.7.148:8081/user-web/app/login/logout";
 		SyncHTTPCaller<String> caller = new SyncHTTPCaller<String>(
 				url, null, "") {
+
+			@Override
+			public String postExcute(String result) {
+				String resultObj = null;
+				try {
+					JSONObject json = new JSONObject(result);
+					resultObj = json.getString("status");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return resultObj;
+			}
+		};
+		caller.execute();
+	}
+
+	@Override
+	public void sendCheckcode(String phoneNumber) {
+		String url = "http://64.251.7.148/user/app/register/checkcode.json";
+		List params=new ArrayList();
+		params.add(new BasicNameValuePair("userName", phoneNumber));
+		SyncHTTPCaller<String> caller = new SyncHTTPCaller<String>(
+				url, null, params) {
 
 			@Override
 			public String postExcute(String result) {

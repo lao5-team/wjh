@@ -1,13 +1,15 @@
 package com.test.juxiaohui.mdxc.app;
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.easemob.chat.EMChat;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.common.manager.ServerManager;
+import com.test.juxiaohui.mdxc.manager.ServerManager;
+import com.test.juxiaohui.mdxc.manager.UserManager;
+
 import junit.framework.Assert;
 
 /**
@@ -33,7 +35,7 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
         super.setUp();
         mActivity = getActivity();
         EMChat.getInstance().init(mActivity);
-        ServerManager.getInstance().logout();
+        UserManager.getInstance().logout();
         mTvUsername = (TextView) mActivity.findViewById(R.id.textView_username);
         mEtxUsername = (EditText) mActivity.findViewById(R.id.editText_username);
         mEtxPassword = (EditText) mActivity.findViewById(R.id.editText_password);
@@ -108,7 +110,7 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
     public void tearDown()
     {
         try {
-            ServerManager.getInstance().logout();
+            UserManager.getInstance().logout();
             super.tearDown();
 
         } catch (Exception e) {

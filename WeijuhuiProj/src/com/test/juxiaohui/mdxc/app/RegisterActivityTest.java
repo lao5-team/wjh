@@ -4,15 +4,11 @@ import junit.framework.Assert;
 
 import com.easemob.chat.EMChat;
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.common.manager.ServerManager;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.text.InputType;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 public class RegisterActivityTest extends ActivityInstrumentationTestCase2<RegisterActivity> {
 

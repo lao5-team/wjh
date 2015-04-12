@@ -7,6 +7,8 @@ public interface ILoginMediator {
     public void addUsernameView();
 
     public void addPasswordView();
+    
+    public void addCheckcodeView();
 
     public void confirm();
 
