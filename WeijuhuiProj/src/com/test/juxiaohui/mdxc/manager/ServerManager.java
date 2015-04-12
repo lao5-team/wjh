@@ -73,25 +73,6 @@ public class ServerManager {
 		return mPassengerServer.getAllPassengers();
 	}
 
-	public ArrayList<CityData> getNearbyPort()
-	{
-		return mCitySearch.getNearbyPort();
-	}
-	
-	public ArrayList<CityData> getLastSearchCities()
-	{
-		return mCitySearch.getLastSearchCities();
-	}
-	
-	public ArrayList<CityData> getHostCities()
-	{
-		return mCitySearch.getHostCities();
-	}
-	
 
-	public ArrayList<CityData> getSearchResult(String condition)
-	{
-		return mCitySearch.getSearchResult(condition);
-	}
 
 }

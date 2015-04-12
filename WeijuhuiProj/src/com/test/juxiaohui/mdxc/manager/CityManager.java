@@ -124,6 +124,21 @@ public class CityManager {
             e.printStackTrace();
         }
     }
-
+    
+	public ArrayList<CityData> getNearbyPort()
+	{
+		return CitySearchServer.getInstance().getNearbyPort();
+	}
+	
+	public ArrayList<CityData> getLastSearchCities()
+	{
+		return CitySearchServer.getInstance().getLastSearchCities();
+	}
+	
+	public ArrayList<CityData> getHostCities()
+	{
+		return CitySearchServer.getInstance().getHostCities();
+	}
+	
 
 }
