@@ -32,9 +32,7 @@ public class SliderContentView extends RelativeLayout {
 	
 	private long mDownActionTime = 0l;
 	private float lastX = 0;
-	private float lastY = 0;
 	private float mDownActionX = 0;
-	private float mDownActionY = 0;
 	
 	//add view
 	private LayoutInflater mInflater;
@@ -47,9 +45,7 @@ public class SliderContentView extends RelativeLayout {
 	
 	
 	private Context mContext;
-	
-	//private TextView mTvHotel;
-	//private TextView mTvFlights;
+
 	private ImageView mLeftDrawer;
 	
 	private float maxDistanceX;
@@ -59,10 +55,6 @@ public class SliderContentView extends RelativeLayout {
 	private float moveScale;
 	private float widthScale;
 	private float heightScale;
-	private float mTextViewOriginHeight;
-	private float mTextViewOriginWidth;
-	private float screenHeight;
-	private float startY;
 	private boolean init = false;
 	
 	private Bitmap mScreenShot;
@@ -82,32 +74,24 @@ public class SliderContentView extends RelativeLayout {
 	{
 		WindowManager wm = (WindowManager) getContext() 
                 .getSystemService(Context.WINDOW_SERVICE); 
-		screenHeight = wm.getDefaultDisplay().getHeight();
 		orginWidth = this.getWidth();	
         orginHeight = this.getHeight();
-        startY = this.getY();
         widthScale = (2.0f/3.0f);
         heightScale = (2.0f/3.0f);
         maxDistanceX = orginWidth * 0.8f;
         maxShrinkY = (orginHeight * (1 -heightScale))/2;
         moveScale = maxDistanceX/maxShrinkY;
-        //mTextViewOriginWidth = mTvHotel.getWidth();
-        //mTextViewOriginHeight = mTvHotel.getHeight();
-        
         mFragmentHomeView.setDrawingCacheEnabled(true);
         mFragmentHomeView.buildDrawingCache();
 		mScreenShot = mFragmentHomeView.getDrawingCache().copy(Bitmap.Config.ARGB_4444, true);
 		mTempContentView.setImageBitmap(mScreenShot);
 		this.addView(mTempContentView);
 		mTempContentView.setVisibility(View.GONE);
-       // viewScale = (((View)this.getParent()).getWidth())/(((View)this.getParent()).getHeight());	
 	}
 	private void initView()
 	{
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mFragmentHomeView = new FragmentHomeView(mContext);
-		//mTvHotel = (TextView) mContentView.findViewById(R.id.tv_hotel_button);
-		//mTvFlights = (TextView) mContentView.findViewById(R.id.tv_flight_button);
 		mLeftDrawer = (ImageView) mFragmentHomeView.findViewById(R.id.rl_left_drawer);
 		mLeftDrawer.setOnClickListener(new OnClickListener() {
 			
@@ -138,11 +122,7 @@ public class SliderContentView extends RelativeLayout {
 					init = true;
 				}
 				transformToFullView(mSelf.getLeft(),mSelf.getTop(),mSelf.getRight() - mSelf.getLeft(),mSelf.getBottom() - mSelf.getTop());
-				mTempContentView.setClickable(false);
-				//mSelf.layout(0, 0 , Math.round(orginWidth),  Math.round(orginHeight));
-				//mTempContentView.layout(0, 0,Math.round(orginWidth), Math.round(orginHeight));
-
-				
+				mTempContentView.setClickable(false);			
 			}
 		});
 		mTempContentView.setClickable(false);
@@ -179,20 +159,10 @@ public class SliderContentView extends RelativeLayout {
 			public void onAnimationEnd(Animation arg0) {
 				// TODO Auto-generated method stub	
 				
-				//mSelf.layout(0, 0, Math.round(orginWidth), Math.round(orginHeight));
-				
-				
-/*				mFragmentHomeView.layout(Math.round(-cx), 0,Math.round(orginWidth-cx), Math.round(orginHeight));
-				mTempContentView.layout(Math.round(-cx), 0,Math.round(orginWidth-cx), Math.round(orginHeight));
-				mTempContentView.setClickable(false);
-				mFragmentHomeView.setVisibility(View.VISIBLE);
-				mTempContentView.setVisibility(View.GONE);*/
 				Message msg = new Message();
 				msg.what = FULL_SCREEN;
 				mHandler.sendMessageDelayed(msg, 10);				
 				mTempContentView.setClickable(false);
-
-				//mTempContentView.setVisibility(View.GONE);
 				
 			}
 		});
@@ -209,12 +179,7 @@ public class SliderContentView extends RelativeLayout {
 				mSelf.layout(Math.round(maxDistanceX), Math.round(maxShrinkY + 0.5f) , Math.round(maxDistanceX + orginWidth * widthScale), Math.round( maxShrinkY + 0.5f + orginHeight*heightScale));
 				mTempContentView.layout(0, 0,Math.round(orginWidth * widthScale), Math.round(orginHeight*heightScale));
 				mFragmentHomeView.layout(0, 0,Math.round(orginWidth * widthScale), Math.round(orginHeight*heightScale));
-				mTempContentView.setClickable(true);
-				//mSelf.layout(0, 0, mSelf.getRight(), mSelf.getBottom());
-				
-				
-				
-				
+				mTempContentView.setClickable(true);						
 			}
 			else if(msg.what == FULL_SCREEN)
 			{
@@ -233,7 +198,6 @@ public class SliderContentView extends RelativeLayout {
 		
 		final AnimationSet mAnimationSet = new AnimationSet(true);
 		mTempContentView.setVisibility(VISIBLE);
-	//	mContentView.setVisibility(View.GONE);
 		TranslateAnimation translateAnimation = new TranslateAnimation(0,(maxDistanceX - cx) , 0,0);
 		final ScaleAnimation scaleAnimation =new ScaleAnimation(1f, (orginWidth * widthScale)/cw, 1f, (orginHeight * heightScale)/ch,   
 				Animation.ABSOLUTE, (maxDistanceX - cx), Animation.RELATIVE_TO_SELF, 0.5f); 
@@ -270,19 +234,6 @@ public class SliderContentView extends RelativeLayout {
 	}
 	
 	
-	private void addFlightView()
-	{
-//		mTvFlights = (TextView)mContentView.findViewById(R.id.tv_flight_button);
-//		mTvFlights.setClickable(true);
-//		mTvFlights.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				FlightSearchActivity.startActivity(mContext);
-//				
-//			}
-//		});
-	}
 	
 	 @Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -307,24 +258,12 @@ public class SliderContentView extends RelativeLayout {
 			init = true;
 		}
 		Log.d("qinyy", "lastTop : " + this.getTop() + "     lastLeft :" +  this.getLeft());
-     //   orginHeight = ((View)this.getParent()).getHeight();
-      //  orginWidth = ((View)this.getParent()).getWidth();
-		//float y = ev.getY();
 		switch (ev.getAction())
 		{
 		case MotionEvent.ACTION_DOWN:
 			mDownActionTime = System.currentTimeMillis();
 			mDownActionX = x;	
 			mTempContentView.setVisibility(VISIBLE);
-		//	mFragmentHomeView.setVisibility(View.GONE);
-			/*
-			if(mTempContentView.getParent() != null && !mTempContentView.getParent().equals(this))
-				((ViewGroup)(mTempContentView.getParent())).removeView(mTempContentView);
-			if(mTempContentView.getParent() == null)
-				this.addView(mTempContentView);
-			this.removeView(mContentView);*/
-		//	mDownActionY = y;
-		
 			break;
 		case MotionEvent.ACTION_MOVE:
 			float distanceX = x - lastX;
@@ -342,21 +281,18 @@ public class SliderContentView extends RelativeLayout {
 			{
 				this.layout(0,0,Math.round(orginWidth), Math.round(orginHeight));
 				mTempContentView.layout(0,0,Math.round(orginWidth), Math.round(orginHeight));
-				//mContentView.layout(0,0,Math.round(orginWidth), Math.round(orginHeight));
+				
 			}
 			else
 			{
 				float currentWidthScale = (1 - (leftbound/maxDistanceX)*(1 - widthScale));
 				float currentHeightScale = (1 - (topbound/maxShrinkY)*(1 - heightScale));
 				this.layout(Math.round(leftbound), Math.round(topbound), Math.round(leftbound + orginWidth * currentWidthScale), Math.round( topbound + orginHeight*currentHeightScale));
-				/*mTempContentView.layout(Math.round(distanceX), Math.round(distanceX/moveScale), Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));
-				mFragmentHomeView.layout(Math.round(distanceX), Math.round(distanceX/moveScale), Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));*/
 				mTempContentView.layout(0, 0, Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));
 				mFragmentHomeView.layout(0, 0, Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));
 				Log.d("qinyy", "distanceX: " + distanceX + " distanceY:  " + (distanceX/moveScale) +"   l:" + leftbound + " t:" + topbound + " r:" +Math.round(leftbound + orginWidth * currentWidthScale) + " b" + Math.round( topbound + orginHeight*currentHeightScale));
 			}
-				
-			//float distanceYthis
+
 			break;
 		case MotionEvent.ACTION_UP:
 			Log.e("qinyy", "x - mDownActionX: " + (x - mDownActionX) + " time  " + (System.currentTimeMillis() - mDownActionTime) );
@@ -366,7 +302,6 @@ public class SliderContentView extends RelativeLayout {
 				transformToFullView(mSelf.getLeft(), mSelf.getTop(), (mSelf.getRight() - mSelf.getLeft()), (mSelf.getBottom() - mSelf.getTop()));
 			else 
 				transformToMiniView(mSelf.getLeft(), mSelf.getTop(), (mSelf.getRight() - mSelf.getLeft()), (mSelf.getBottom() - mSelf.getTop()));
-			//transformToFullView(mSelf.getLeft(), mSelf.getTop(), (mSelf.getRight() - mSelf.getLeft()), (mSelf.getBottom() - mSelf.getTop()));
 			
 			break;
 		default:

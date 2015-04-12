@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.zip.Inflater;
 
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.activity.ShowVideoActivity;
 import com.test.juxiaohui.mdxc.data.CityData;
 import com.test.juxiaohui.mdxc.manager.CityManager;
 import com.test.juxiaohui.mdxc.server.CitySearchServer;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import android.content.Context;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -35,7 +37,9 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 	
 	private Context mContext;
 	
-	public CityStickyListHeadersListAdapter(ArrayList<CityData> nearbyPorts, ArrayList<CityData> lastSearchCitys, ArrayList<CityData> hotCitys,Context context)
+	private StickyListHeadersListView mStickHeaderListView;
+	
+	public CityStickyListHeadersListAdapter(ArrayList<CityData> nearbyPorts, ArrayList<CityData> lastSearchCitys, ArrayList<CityData> hotCitys,Context context, StickyListHeadersListView stickHeaderListView)
 	{
 		mHotCities = hotCitys;
 		mNearbyPorts = nearbyPorts;
@@ -43,11 +47,18 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 		mResultCities = CityManager.getInstance().getSearchResult("");//CitySearchServer.getInstance().getSearchResult("");
 		mInflater = LayoutInflater.from(context);
 		mContext = context;
+		mStickHeaderListView = stickHeaderListView;
 	}
 	
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
+		
+		if(isShowResult)
+			mStickHeaderListView.headerVisibable = false;
+		else
+			mStickHeaderListView.headerVisibable = true;
+		
 		if(isShowResult && mResultCities != null)
 			return mResultCities.size();
 		else if(!isShowResult)
@@ -107,7 +118,6 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 	//	{
 			
 	//	}
-		
 		if(data == null || ! (data instanceof CityData))
 			return null;
 		if (convertView == null) {
@@ -133,24 +143,28 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 
 	@Override
 	public long getHeaderId(int position) {
-		// TODO Auto-generated method stub
-//		int a = mNearbyPorts == null ? 0 : mNearbyPorts.size();
-//		int b = mLastSearchCities == null ? 0 : mLastSearchCities.size();
-//		int c = mHotCities == null ? 0 : mHotCities.size();
-//		if(position >= 0 && position < a)
-//		{
-//			return 0;
-//		}
-//		if(position >= a && position < a + b)
-//		{
-//			return 1;
-//		}
-//		if(position >= a + b && position < a + b + c)
-//		{
-//			return 2;
-//		}
-//		return position;
-		return -1;
+		// TODO Auto-generated method stub`
+		
+		if(isShowResult)
+			return -1;
+		
+		int a = mNearbyPorts == null ? 0 : mNearbyPorts.size();
+		int b = mLastSearchCities == null ? 0 : mLastSearchCities.size();
+		int c = mHotCities == null ? 0 : mHotCities.size();
+		if(position >= 0 && position < a)
+		{
+			return 0;
+		}
+		if(position >= a && position < a + b)
+		{
+			return 1;
+		}
+		if(position >= a + b && position < a + b + c)
+		{
+			return 2;
+		}
+		return position;
+		//return 0;
 	}
 
 	@Override
@@ -158,6 +172,9 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 		// TODO Auto-generated method stub
 
 		HeaderViewHolder holder;
+
+		if(isShowResult)
+			return null;
 		
 		if (convertView == null) {
 			convertView = new TextView(mContext);
@@ -175,8 +192,7 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 			holder = (HeaderViewHolder) convertView.getTag();
 		}
 */
-
-		
+	
 		switch((int)(getHeaderId(position)))
 		{
 		case 0:

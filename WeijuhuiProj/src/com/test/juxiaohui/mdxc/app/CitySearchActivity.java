@@ -94,7 +94,7 @@ public class CitySearchActivity extends Activity implements ICitySearchActivityM
 		Sidebar sidebar = (Sidebar)findViewById(R.id.sidebar);
 		sidebar.setListView(mCityListView.getWrappedList());
 		mCityListView.getWrappedList().setFastScrollEnabled(true);
-		mCityAdapter = new CityStickyListHeadersListAdapter(getNearbyPort(), getLastSearchCities(), getHostCities(), this);
+		mCityAdapter = new CityStickyListHeadersListAdapter(getNearbyPort(), getLastSearchCities(), getHostCities(), this,mCityListView);
 		mCityListView.setAdapter(mCityAdapter);
 		mCityListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -108,6 +108,7 @@ public class CitySearchActivity extends Activity implements ICitySearchActivityM
 				finish();
 			}
 		});
+		
 	}
 
 	@Override

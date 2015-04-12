@@ -77,6 +77,8 @@ public class FlightData {
     		convertView.setTag(holder);
     	}
     	holder = (ViewHolder) convertView.getTag();
+    	if(holder == null)
+    		return convertView;
     	holder.mTvAirlineName.setText(data.mAirlineName);
     	if(data.mAirlineLogoUrl.length()>0)
     	{
