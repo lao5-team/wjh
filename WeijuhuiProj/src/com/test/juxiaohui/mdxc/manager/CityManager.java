@@ -25,6 +25,7 @@ public class CityManager {
         if(null == mInstance)
         {
             mInstance = new CityManager();
+
         }
         return mInstance;
     }
@@ -57,7 +58,7 @@ public class CityManager {
             {
                 for(int j=0; j<results.size(); j++)
                 {
-                    if(results.get(j).cityName.substring(i, i+1).equalsIgnoreCase(condition.substring(i, i+1)))
+                    if(results.get(j).cityName.length()>i&&results.get(j).cityName.substring(i, i+1).equalsIgnoreCase(condition.substring(i, i+1)))
                     {
                         temp.add(results.get(j));
                     }
@@ -79,7 +80,7 @@ public class CityManager {
 
     }
 
-    private void readFromCache()
+    public void readFromCache()
     {
         try {
             InputStream is = DemoApplication.applicationContext.getAssets().open("cities_server.txt");

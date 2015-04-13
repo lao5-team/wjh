@@ -35,6 +35,7 @@ public class FlightData {
 	public String mFromTime;
 	public String mToTime;
 	public String mAirLine;
+	public String mDurTime = "60";
 
 
     public static FlightData NULL = new FlightData();
@@ -96,7 +97,7 @@ public class FlightData {
 		holder.mTvDepartCity.setText(data.mFromCode);
 		holder.mTvArrivalTime.setText(data.mToTime);
 		holder.mTvArrivalCity.setText(data.mToCode);
-    	holder.mTvDistance.setText("unknown km");
+    	holder.mTvDistance.setText(data.mDurTime + " min");
     	holder.mTvCurrency.setText("CNY");
     	holder.mTvPrize.setText(data.mPrize.mTicketPrize + data.mPrize.mTax + "");
     	

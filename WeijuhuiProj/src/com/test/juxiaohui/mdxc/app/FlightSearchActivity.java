@@ -71,6 +71,9 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         addDateView();
         addClassView();
         addSearchView();
+
+        //set default passenger number
+        setPassengerNumber(1);
     }
 
     @Override
@@ -382,12 +385,15 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 			case IFlightSearchMediator.CITY_DEPART:
 				mTvDepartCity.setText(citydata.cityName);
 				mSearchRequest.mDepartCity = citydata.cityName;
-				mSearchRequest.mDepartCode = citydata.portCode;
+				mSearchRequest.mDepartCode = citydata.cityCode;
+                mTvDepartTip.setVisibility(View.GONE);
+
 				break;
 			case IFlightSearchMediator.CITY_ARRIVAL:
 				mTvArrivalCity.setText(citydata.cityName);
 				mSearchRequest.mArrivalCity = citydata.cityName;
-				mSearchRequest.mArrivalCode = citydata.portCode;
+				mSearchRequest.mArrivalCode = citydata.cityCode;
+                mTvArrivalTip.setVisibility(View.GONE);
 			}		
 		}
 		

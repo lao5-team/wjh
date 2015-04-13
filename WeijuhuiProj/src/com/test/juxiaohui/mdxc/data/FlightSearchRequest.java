@@ -21,7 +21,7 @@ public class FlightSearchRequest {
     /**
      * 座舱类型，经济，商务，头等。。。
      */
-    public String mClassType = ""; //Economy
+    public String mClassType = CLASS_ECONOMY; //Economy
     
     public static FlightSearchRequest NULL = new FlightSearchRequest();
 

@@ -52,10 +52,10 @@ public class FlightServer implements IFlightServer {
                     for(int i=0; i<prices.length(); i++)
                     {
                     	JSONObject priceObj = prices.getJSONObject(i);
-                    	JSONArray numbers = priceObj.getJSONArray("fromNumbers");
-                    	for(int j=0; j<numbers.length(); j++)
+                    	JSONArray fromNumbers = priceObj.getJSONArray("fromNumbers");
+                    	for(int j=0; j<fromNumbers.length(); j++)
                     	{
-                    		String fromNumber = numbers.getString(j);
+                    		String fromNumber = fromNumbers.getString(j);
                         	JSONObject flight = flights.getJSONObject(fromNumber);
                         	if(null!=flight)
                         	{
@@ -63,6 +63,18 @@ public class FlightServer implements IFlightServer {
                         		flight.put("currency", priceObj.get("currency"));
                         	}
                     	}
+
+                        JSONArray toNumbers = priceObj.getJSONArray("toNumbers");
+                        for(int j=0; j<toNumbers.length(); j++)
+                        {
+                            String toNumber = toNumbers.getString(j);
+                            JSONObject flight = flights.getJSONObject(toNumber);
+                            if(null!=flight)
+                            {
+                                flight.put("price", priceObj.getString("price"));
+                                flight.put("currency", priceObj.get("currency"));
+                            }
+                        }
 //                    	for(String number:numbers)
 //                    	{
 //                    		JSONObject flights = json.getJSONObject("flights").getJSONObject(number);
@@ -83,6 +95,7 @@ public class FlightServer implements IFlightServer {
                         flightData.mToCode = jsonObject.getString("toAirport");
                         flightData.mFromTime = jsonObject.getString("fromTime");
                         flightData.mToTime = jsonObject.getString("toTime");
+                        flightData.mDurTime = jsonObject.getString("duration");
                         if(jsonObject.has("price"))
                         {
                         	flightData.mPrize = new PrizeData();
@@ -192,7 +205,7 @@ public class FlightServer implements IFlightServer {
      */
     @Override
     public FlightData getFlightData(String id) {
-        return null;
+        return FlightData.NULL;
     }
     
     private String createFromFile()
