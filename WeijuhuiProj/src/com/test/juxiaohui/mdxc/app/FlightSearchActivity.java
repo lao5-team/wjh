@@ -411,8 +411,8 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     	String str = mDataFormat.format(date);
 		mTvDepartTime.setText(str);
 		mSearchRequest.mDepartDate = str;
-		mTvReturnTime.setText(getDayafter(str));
-		mSearchRequest.mReturnDate = mTvReturnTime.getText().toString();
+//		mTvReturnTime.setText(getDayafter(str));
+//		mSearchRequest.mReturnDate = mTvReturnTime.getText().toString();
     }
 
     @Override
