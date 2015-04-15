@@ -149,4 +149,10 @@
 	<string name="search_history">Search History</string>
 	<string name="setting">Setting</string>
 	<string name="feed_back">Feedback</string>
+	
+	
+	<string name="cabin_class">Class</string>
+	<string name="economy">Economy</string>
+	<string name="business">Business</string>
+	<string name="first">First</string>
 </resources>

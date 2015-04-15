@@ -10,6 +10,8 @@ public class FlightSearchRequest {
     public static final String TYPE_ROUNDTRIP = "round_trip";
     public static final String TYPE_ONEWAY = "round_oneway";
 	public static final String CLASS_ECONOMY = "Economy";
+	public static final String CLASS_BUSINESS = "Business";
+	public static final String CLASS_FIRST = "First";
     public String mTripType = TYPE_ONEWAY;
     public String mDepartCity = "";
     public String mArrivalCity = "";

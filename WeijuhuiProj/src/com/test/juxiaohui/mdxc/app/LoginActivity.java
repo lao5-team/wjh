@@ -146,6 +146,7 @@ public class LoginActivity extends Activity implements ILoginMediator{
     {
     	String username = DemoApplication.getInstance().getUserName();
     	String password = DemoApplication.getInstance().getPassword();
+    	EntryActivity.startActivity(LoginActivity.this);
     	if(null!=username && null!=password)
     	{
             mLoginResult = UserManager.getInstance().login(username, password);

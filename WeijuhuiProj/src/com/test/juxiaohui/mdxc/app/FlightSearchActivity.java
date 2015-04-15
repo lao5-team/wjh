@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.mdxc.app.view.CabinClassDialog;
 import com.test.juxiaohui.mdxc.data.CityData;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
 import com.test.juxiaohui.mdxc.mediator.IFlightSearchMediator;
@@ -49,6 +50,12 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     ImageView mIvPlus;
     LinearLayout mLlSearch;
     TextView mTvClass;
+    
+    CabinClassDialog mDlgCabinClass;
+    
+    Context mContext;
+    
+    
 
     /*Data*/
     FlightSearchRequest mSearchRequest = new FlightSearchRequest();
@@ -71,7 +78,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         addDateView();
         addClassView();
         addSearchView();
-
+        mContext = this;
         //set default passenger number
         setPassengerNumber(1);
     }
@@ -213,12 +220,53 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     @Override
     public void addClassView() {
     	mTvClass = (TextView)findViewById(R.id.tv_flight_class);
+    	if(mDlgCabinClass == null)
+    	{
+    		mDlgCabinClass = new CabinClassDialog(this, new ICabinClassListener() {
+				
+				@Override
+				public void onChangeCabinClass(int cabinClass) {
+					// TODO Auto-generated method stub
+					switch(cabinClass)
+					{
+						case CabinClassDialog.ECONOMY:
+							mTvClass.setText(mContext.getResources().getString(R.string.economy));
+							mSearchRequest.mClassType = FlightSearchRequest.CLASS_ECONOMY;
+							break;
+						case CabinClassDialog.BUSINESS:
+							mTvClass.setText(mContext.getResources().getString(R.string.business));
+							mSearchRequest.mClassType = FlightSearchRequest.CLASS_BUSINESS;
+							break;
+						case CabinClassDialog.FIRST:
+							mTvClass.setText(mContext.getResources().getString(R.string.first));
+							mSearchRequest.mClassType = FlightSearchRequest.CLASS_FIRST;
+							break;
+					}
+				}
+			});
+    	}
     	if(IS_TEST_MODE)
     	{
         	mTvClass.setText("ECONOMY");
         	mSearchRequest.mClassType = FlightSearchRequest.CLASS_ECONOMY;
     	}
     	mSearchRequest.mClassType = FlightSearchRequest.CLASS_ECONOMY;
+    	
+    	mTvClass.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				if(FlightSearchRequest.CLASS_ECONOMY.equalsIgnoreCase(mSearchRequest.mClassType))
+					mDlgCabinClass.show(CabinClassDialog.ECONOMY);
+				else if(FlightSearchRequest.CLASS_BUSINESS.equalsIgnoreCase(mSearchRequest.mClassType))
+					mDlgCabinClass.show(CabinClassDialog.BUSINESS);
+				else if(FlightSearchRequest.CLASS_FIRST.equalsIgnoreCase(mSearchRequest.mClassType))
+					mDlgCabinClass.show(CabinClassDialog.FIRST);
+				else
+					mDlgCabinClass.show();
+			}
+		});
     }
 
     @Override
@@ -414,5 +462,10 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 			e.printStackTrace();
 			return "";
 		}
+	}
+	
+	public interface ICabinClassListener
+	{
+		public void onChangeCabinClass(int cabinClass);
 	}
 }
