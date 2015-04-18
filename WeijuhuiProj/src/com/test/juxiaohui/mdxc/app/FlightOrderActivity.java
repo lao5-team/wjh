@@ -16,6 +16,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.mdxc.data.ContactUser;
 import com.test.juxiaohui.mdxc.manager.ServerManager;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.Passenger;
@@ -77,6 +78,11 @@ public class FlightOrderActivity extends Activity implements
 	}
 
 	@Override
+	public void addContactView() {
+
+	}
+
+	@Override
 	public void addPassengerView() {
 		mIbAddPassenger = (ImageButton)findViewById(R.id.imageButton_addPassenger);
 		mIbAddPassenger.setOnClickListener(new OnClickListener() {
@@ -118,8 +124,17 @@ public class FlightOrderActivity extends Activity implements
 	}
 
 	@Override
-	public void Order() {
-		// TODO Auto-generated method stub
+	public void setContact(ContactUser contactUser) {
+
+	}
+
+	@Override
+	public void submitOrder() {
+
+	}
+
+	@Override
+	public void cancel() {
 
 	}
 	

@@ -13,6 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+/**
+ * Created by yihao on 15/4/18.
+ * 用来表示旅客,既可以给机票使用，也可以给酒店使用
+ */
 public class Passenger {
 	public static final int ID_TYPE_PASSPORT = 0;
 	public static final int ID_TYPE_ID = 1;

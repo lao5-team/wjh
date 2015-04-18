@@ -16,16 +16,16 @@ public interface IUserServer {
     public String register(String username, String password, String checkcode);
 
     /**
-     * 
+     * 登陆接口，登陆的结果用String返回
      * @param username
      * @param password
-     * @return
+     * @return 返回登陆结果
      */
     public String login(String username, String password);
 
     public User getCurrentUser();
 
-    public void logout();
+    public String logout();
     
     public void sendCheckcode(String phoneNumber);
 }
