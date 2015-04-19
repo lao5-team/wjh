@@ -77,7 +77,7 @@ public class UserManager {
 
 				//load this user's passengers
 				loadPassengers();
-				return INVALID_USERNAME_PASSWORD;//LOGIN_SUCCESS;
+				return LOGIN_SUCCESS;//LOGIN_SUCCESS;
 			}
 			else
 			{
