@@ -33,7 +33,7 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 		ArrayList<JSONObject> valueList = new ArrayList<JSONObject>();
 		if(null!=this.getWritableDatabase())
 		{
-			loadAll(keyList, valueList);
+			loadAll();
 		}
 		
 	}
@@ -188,20 +188,12 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 
 	/**
 	 * 从数据库载入所有数据
-	 * @param keyList
-	 * @param valueList
 	 */
-	private void loadAll(ArrayList<String> keyList, ArrayList<JSONObject> valueList)
-	{		
-		if(null == keyList)
-		{
-			throw new IllegalArgumentException("keyList is null!");
-		}
-		if(null == valueList)
-		{
-	 		throw new IllegalArgumentException("valueList is null!");
-		}
-		
+	private void loadAll()
+	{
+		ArrayList<String> keyList = new ArrayList<String>();
+		ArrayList<JSONObject> valueList = new ArrayList<JSONObject>();
+
 		SQLiteDatabase db = this.getWritableDatabase();	
 		Cursor cursor = db.query(mName, new String[]{"id, value"}, null, null, null, null, null);		
 		while(cursor.moveToNext())
@@ -438,9 +430,5 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 		
 		mMap.put(key, value);
 		putByDB(key, value);
-		
 	}
-	
-	
-
 }

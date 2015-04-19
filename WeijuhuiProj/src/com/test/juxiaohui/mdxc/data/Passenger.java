@@ -17,19 +17,16 @@ import android.widget.TextView;
  * Created by yihao on 15/4/18.
  * 用来表示旅客,既可以给机票使用，也可以给酒店使用
  */
-public class Passenger {
+public class Passenger implements Comparable{
 	public static final int ID_TYPE_PASSPORT = 0;
 	public static final int ID_TYPE_ID = 1;
+
 	public static Passenger NULL = new Passenger();
 	
 	public String mId = "";
-	
 	public String mFirstName = "";
-	
 	public String mLastName = "";
-	
 	public int mIdType = ID_TYPE_PASSPORT;
-	
 	public String mIdNumber = "";
 	
 	public static Passenger createTestPassenger()
@@ -93,8 +90,19 @@ public class Passenger {
 		return view;
     	
     }
-	
-	
+
+	@Override
+	public String toString()
+	{
+		JSONObject jsonObject = Passenger.toJSON(this);
+		return jsonObject.toString();
+	}
+
+	@Override
+	public int compareTo(Object another) {
+		Passenger passenger = (Passenger)another;
+		return mId.compareTo(passenger.mId);
+	}
 }
 	
 	

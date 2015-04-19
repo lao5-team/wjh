@@ -93,10 +93,11 @@ public class TestUserServer implements IUserServer {
     }
 
     @Override
-    public void logout() {
+    public String logout() {
         EMChatManager.getInstance().logout();
         Log.v(DemoApplication.TAG, "logout");
         mCurrentUser = User.NULL;
+        return "Success";
     }
 
     private void getHuanxinToken()

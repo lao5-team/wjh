@@ -103,7 +103,7 @@ public class UserServer implements IUserServer {
 	}
 
 	@Override
-	public void logout() {
+	public String logout() {
 		// TODO Auto-generated method stub
 		String url = "http://64.251.7.148:8081/user-web/app/login/logout";
 		SyncHTTPCaller<String> caller = new SyncHTTPCaller<String>(
@@ -111,17 +111,24 @@ public class UserServer implements IUserServer {
 
 			@Override
 			public String postExcute(String result) {
-				String resultObj = null;
+				String resultObj = "Failed";
 				try {
 					JSONObject json = new JSONObject(result);
 					resultObj = json.getString("status");
+					if(resultObj.contains("200")){
+						resultObj = "Success";
+					}
+					else{
+						resultObj = "Failed";
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 				return resultObj;
 			}
 		};
-		caller.execute();
+		//return caller.execute();
+		return "Success";
 	}
 
 	@Override

@@ -1,12 +1,17 @@
 package com.test.juxiaohui.mdxc.manager;
 
+import android.util.Log;
+import com.test.juxiaohui.DemoApplication;
+import com.test.juxiaohui.cache.temp.JSONCache;
 import com.test.juxiaohui.common.dal.IUserServer;
 import com.test.juxiaohui.common.data.User;
 import com.test.juxiaohui.mdxc.data.ContactUser;
 import com.test.juxiaohui.mdxc.data.Passenger;
 import com.test.juxiaohui.mdxc.server.UserServer;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,7 +30,7 @@ public class UserManager {
 	private ContactUser mContatctUser = ContactUser.NULL;
 	private List<Passenger> mPassengerList = new ArrayList<Passenger>();
 
-
+	public static boolean DEBUG = true;
 	public static UserManager getInstance()
 	{
 		if(null == mInstance)
@@ -69,7 +74,10 @@ public class UserManager {
 				user.setUsername(username);
 				user.setPassword(password);
 				mCurrentUser = user;
-				return LOGIN_SUCCESS;
+
+				//load this user's passengers
+				loadPassengers();
+				return INVALID_USERNAME_PASSWORD;//LOGIN_SUCCESS;
 			}
 			else
 			{
@@ -121,7 +129,6 @@ public class UserManager {
 
 	/**
 	 * 设置当前用户的联系人
-	 * @param contactUser
 	 */
 	public void setContactUser(ContactUser contactUser)
 	{
@@ -159,17 +166,28 @@ public class UserManager {
 		{
 			mPassengerList.clear();
 			mPassengerList.addAll(listPassenger);
+
+			//save to cache
+			savePassengers();
 		}
 		else
 		{
 			;
 		}
+		if(DEBUG)
+		{
+			for(Passenger passenger:mPassengerList)
+			{
+				Log.v(DemoApplication.TAG, passenger.toString());
+			}
+		}
 
 	}
 
 	/**
-	 *
-	 * @return
+	 * 获取当前用户的乘客列表
+	 * @return 任何情况下，都会返回一个非null的List，
+	 * 如果用户未登录，则返回一个空List
 	 */
 	public List<Passenger> getPassengerList()
 	{
@@ -180,6 +198,66 @@ public class UserManager {
 		else
 		{
 			return new ArrayList<Passenger>();
+		}
+	}
+
+	/**
+	 * 通过id获取一个乘客
+	 * @param id
+	 * @return 如果id有效，则返回一个乘客，否则返回Passenger.NULL
+	 */
+	public Passenger getPassengerById(String id)
+	{
+		Passenger tempPassenger = new Passenger();
+		tempPassenger.mId = id;
+		int result = Arrays.binarySearch(mPassengerList.toArray(), tempPassenger);
+		if(result>=0)
+		{
+			return mPassengerList.get(result);
+		}
+		else
+		{
+			return Passenger.NULL;
+		}
+	}
+
+	/**
+	 * 该缓存方式只是临时方法
+	 * 使用JSONCache存储数据库，命名方式为passengers_xxx，xxx表示用户名
+	 */
+	private void savePassengers()
+	{
+		JSONCache jsonCache = new JSONCache(DemoApplication.applicationContext, "passengers_" + mCurrentUser.getInnerName());
+		for(Passenger passenger:mPassengerList)
+		{
+			jsonCache.putItem(passenger.mId, Passenger.toJSON(passenger));
+		}
+	}
+
+	private void loadPassengers()
+	{
+		JSONCache jsonCache = new JSONCache(DemoApplication.applicationContext, "passengers_" + mCurrentUser.getInnerName());
+		List<JSONObject> jsonObj = jsonCache.getAllItems();
+		mPassengerList.clear();
+		for(JSONObject obj:jsonObj)
+		{
+			mPassengerList.add(Passenger.fromJSON(obj));
+		}
+	}
+
+	private void saveContactUser()
+	{
+		JSONCache jsonCache = new JSONCache(DemoApplication.applicationContext, "contact_" + mCurrentUser.getInnerName());
+		jsonCache.putItem(mContatctUser.mFirstName, ContactUser.toJSON(mContatctUser));
+	}
+
+	private void loadContactUser()
+	{
+		JSONCache jsonCache = new JSONCache(DemoApplication.applicationContext, "contact_" + mCurrentUser.getInnerName());
+		List<JSONObject> jsonObj = jsonCache.getAllItems();
+		for(JSONObject obj:jsonObj)
+		{
+			mContatctUser = ContactUser.fromJSON(obj);
 		}
 	}
 

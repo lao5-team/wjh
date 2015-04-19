@@ -20,12 +20,13 @@ import com.test.juxiaohui.mdxc.data.ContactUser;
 import com.test.juxiaohui.mdxc.manager.ServerManager;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.Passenger;
+import com.test.juxiaohui.mdxc.manager.UserManager;
 import com.test.juxiaohui.mdxc.mediator.IFlightOrderMediator;
 
 public class FlightOrderActivity extends Activity implements
 		IFlightOrderMediator {
 	public static int REQ_SELECT_PASSENGER = 0;
-	private FlightData mData;
+	private FlightData mFlightData;
 	private List<Passenger> mPassengers = new ArrayList<Passenger>();
 	
 	
@@ -33,6 +34,7 @@ public class FlightOrderActivity extends Activity implements
 	private ImageButton mIbAddPassenger;
 	private LinearLayout mLlFlights;
 	private LinearLayout mLlPassengers;
+	private UserManager mUserManager = UserManager.getInstance();
 	
 	
 	
@@ -62,19 +64,19 @@ public class FlightOrderActivity extends Activity implements
 	
 	@Override
 	public void setFlightData(FlightData data) {
-		mData = data;
+		mFlightData = data;
 	}
 
 	@Override
 	public void addFlightView() {
 		mLlFlights = (LinearLayout) findViewById(R.id.ll_airlines);
-		mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mData));
+		mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mFlightData));
 	}
 
 	@Override
 	public void addPriceView() {
 		mTvPrice = (TextView) this.findViewById(R.id.tv_amount_with_current_currency);
-		mTvPrice.setText("CNY" + (mData.mPrize.mTicketPrize + mData.mPrize.mTax));
+		mTvPrice.setText("CNY" + (mFlightData.mPrize.mTicketPrize + mFlightData.mPrize.mTax));
 	}
 
 	@Override
@@ -116,16 +118,15 @@ public class FlightOrderActivity extends Activity implements
 	}
 
 	@Override
-	public void removePassenger(Passenger passenger) {
+	public void removePassenger(final Passenger passenger) {
 		int index = mPassengers.indexOf(passenger);
 		mPassengers.remove(passenger);
 		mLlPassengers.removeViewAt(index);
-
 	}
 
 	@Override
 	public void setContact(ContactUser contactUser) {
-
+		mUserManager.setContactUser(contactUser);
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class FlightOrderActivity extends Activity implements
 
 	@Override
 	public void cancel() {
-
+		finish();
 	}
 	
 	@Override
@@ -163,8 +164,6 @@ public class FlightOrderActivity extends Activity implements
 				}
 			});
 			t.start();
-			
-
 		}
 	}
 

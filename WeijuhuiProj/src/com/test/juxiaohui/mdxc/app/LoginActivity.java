@@ -35,7 +35,7 @@ public class LoginActivity extends Activity implements ILoginMediator{
 			@Override
 			public void run() {
 				//UserManager.getInstance().logout();
-				login();
+				loginFromCache();
 				
 			}
 		});
@@ -71,6 +71,29 @@ public class LoginActivity extends Activity implements ILoginMediator{
         mEtxPassword = (EditText)findViewById(R.id.editText_password);
     }
 
+    /**
+     * 当用户登录过一次后，会缓存用户名和密码
+     * 下次就会自动从缓存中取出用户名和密码进行登录
+     */
+    @Override
+    public void loginFromCache() {
+        String username = DemoApplication.getInstance().getUserName();
+        String password = DemoApplication.getInstance().getPassword();
+        if(null!=username && null!=password)
+        {
+            mLoginResult = UserManager.getInstance().login(username, password);
+            if(mLoginResult.equals(UserManager.LOGIN_SUCCESS))
+            {
+                EntryActivity.startActivity(LoginActivity.this);
+                finish();
+            }
+            else
+            {
+                showErrorMessage(mLoginResult);
+            }
+        }
+    }
+
     @Override
     public void confirm() {
         boolean isValid = true;
@@ -101,7 +124,7 @@ public class LoginActivity extends Activity implements ILoginMediator{
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(mLoginResult.contains("Success"))
+                            if(mLoginResult.equals(UserManager.LOGIN_SUCCESS))
                             {
                                 showErrorMessage("Login Success");
                                 EntryActivity.startActivity(LoginActivity.this);
@@ -141,23 +164,7 @@ public class LoginActivity extends Activity implements ILoginMediator{
         Log.v(DemoApplication.TAG, "Login Result = " + mLoginResult);
         return mLoginResult;
     }
-    
-    public void login()
-    {
-    	String username = DemoApplication.getInstance().getUserName();
-    	String password = DemoApplication.getInstance().getPassword();
-    	EntryActivity.startActivity(LoginActivity.this);
-    	if(null!=username && null!=password)
-    	{
-            mLoginResult = UserManager.getInstance().login(username, password);
-            if(mLoginResult.contains("Success"))
-            {
-                EntryActivity.startActivity(LoginActivity.this);
-                finish();
-            }  	   		
-    	}
 
-    }
     
     public void onClickRegister(View view)
     {
@@ -165,9 +172,4 @@ public class LoginActivity extends Activity implements ILoginMediator{
     	startActivity(intent);
     }
 
-	@Override
-	public void addCheckcodeView() {
-		// TODO Auto-generated method stub
-		
-	}
 }
