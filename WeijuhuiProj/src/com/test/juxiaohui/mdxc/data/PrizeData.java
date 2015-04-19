@@ -8,6 +8,7 @@ public class PrizeData {
 	public static PrizeData NULL = new PrizeData();
 	public float mTicketPrize = 0;
 	public float mTax = 0;
+	public String mCurrency;
 	
 	public PrizeData(float ticketPrize, float tax)
 	{

@@ -26,33 +26,36 @@ import com.test.juxiaohui.mdxc.mediator.IFlightOrderMediator;
 public class FlightOrderActivity extends Activity implements
 		IFlightOrderMediator {
 	public static int REQ_SELECT_PASSENGER = 0;
-	private FlightData mFlightData;
+	private FlightData mFromData,mToData;
 	private List<Passenger> mPassengers = new ArrayList<Passenger>();
 	
 	
-	private TextView mTvPrice;
+	private TextView mTvPerAireFarePrice,mTvPerAireFareCurrency,mTvPerTaxPrice,mTvPerTaxCurrency,mTvTotalPrice;
 	private ImageButton mIbAddPassenger;
 	private LinearLayout mLlFlights;
 	private LinearLayout mLlPassengers;
+	private TextView mTvAddPassengers;
 	private UserManager mUserManager = UserManager.getInstance();
 	
+	private boolean isOneWay;
 	
 	
-	public static void startActivity(String id, Context context)
+	
+	public static void startActivity(String fromId,String toId, Context context)
 	{
 		Intent intent = new Intent(context, FlightOrderActivity.class);
-		intent.putExtra("id", id);
+		intent.putExtra("form_id", fromId);
+		intent.putExtra("to_id", toId);
 		context.startActivity(intent);
 	}
 	
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_flight_book);
-		String id = getIntent().getStringExtra("id");
-		FlightData data  = ServerManager.getInstance().getFlightData(id);	
+		setContentView(R.layout.activity_flight_book);	
 		List<Passenger> passengers= ServerManager.getInstance().getAllPassengers();
-		setFlightData(data);	
+		setFlightData(ServerManager.getInstance().getFlightData( getIntent().getStringExtra("form_id")),
+						ServerManager.getInstance().getFlightData( getIntent().getStringExtra("to_id")));	
 		addFlightView();
 		addPassengerView();
 		addPriceView();
@@ -63,31 +66,67 @@ public class FlightOrderActivity extends Activity implements
 	}
 	
 	@Override
-	public void setFlightData(FlightData data) {
-		mFlightData = data;
+	public void setFlightData(FlightData fromData,FlightData toData) {
+		mFromData = fromData;
+		mToData = toData;
+		if(mFromData == null)
+			finish();
+		if(toData == null)
+			isOneWay = true;
+		else
+			isOneWay = false;
 	}
 
 	@Override
 	public void addFlightView() {
 		mLlFlights = (LinearLayout) findViewById(R.id.ll_airlines);
-		mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mFlightData));
+		mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mFromData));
+		if(!isOneWay)
+			mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mToData));
 	}
 
 	@Override
 	public void addPriceView() {
-		mTvPrice = (TextView) this.findViewById(R.id.tv_amount_with_current_currency);
-		mTvPrice.setText("CNY" + (mFlightData.mPrize.mTicketPrize + mFlightData.mPrize.mTax));
+		String temp;
+		//机票单价
+		mTvPerAireFarePrice = (TextView) this.findViewById(R.id.tv_price);
+		temp = isOneWay? String.valueOf(mFromData.mPrize.mTicketPrize):String.valueOf(mFromData.mPrize.mTicketPrize + mToData.mPrize.mTicketPrize);
+		mTvPerAireFarePrice.setText(temp);	
+		//机票单价币种
+		mTvPerAireFareCurrency = (TextView) this.findViewById(R.id.tv_price_currency);
+		temp = String.valueOf(mFromData.mPrize.mCurrency);
+		mTvPerAireFareCurrency.setText(temp);
+		//税费单价
+		mTvPerTaxPrice = (TextView) this.findViewById(R.id.tv_tax);
+		temp = isOneWay? String.valueOf(mFromData.mPrize.mTax):String.valueOf(mFromData.mPrize.mTax + mToData.mPrize.mTax);
+		mTvPerTaxPrice.setText(temp);
+		//税费单价币种
+		mTvPerTaxCurrency = (TextView) this.findViewById(R.id.tv_tax_currency);
+		temp = String.valueOf(mFromData.mPrize.mCurrency);
+		mTvPerTaxCurrency.setText(temp);
+		//总价
+		mTvTotalPrice = (TextView) this.findViewById(R.id.tv_amount_with_current_currency);
+		if(isOneWay)
+			mTvTotalPrice.setText("RMB" + (mFromData.mPrize.mTicketPrize + mFromData.mPrize.mTax));
+		else
+			mTvTotalPrice.setText("RMB" + 
+									(mFromData.mPrize.mTicketPrize + mFromData.mPrize.mTax + 
+											mToData.mPrize.mTicketPrize + mToData.mPrize.mTax));
+
 	}
 
 	@Override
-	public void addContactView() {
-
+	public void addContactView() 
+	{
+		
 	}
 
 	@Override
-	public void addPassengerView() {
-		mIbAddPassenger = (ImageButton)findViewById(R.id.imageButton_addPassenger);
-		mIbAddPassenger.setOnClickListener(new OnClickListener() {
+	public void addPassengerView() 
+	{
+	//	mIbAddPassenger = (ImageButton)findViewById(R.id.imageButton_addPassenger);
+		mTvAddPassengers = (TextView)findViewById(R.id.tv_addPassenger);
+		mTvAddPassengers.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {

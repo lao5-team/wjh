@@ -5,7 +5,6 @@ import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.Passenger;
 
 public interface IFlightOrderMediator {
-	public void setFlightData(FlightData data);
 	
 	public void addFlightView();
 	
@@ -30,4 +29,6 @@ public interface IFlightOrderMediator {
 	public void submitOrder();
 
 	public void cancel();
+
+	public void setFlightData(FlightData fromData, FlightData toData);
 }
