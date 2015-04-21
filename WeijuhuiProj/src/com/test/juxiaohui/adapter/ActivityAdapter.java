@@ -120,7 +120,7 @@ public class ActivityAdapter extends BaseAdapter {
 		ActivityData data = (ActivityData)getItem(position);
 		holder.mTvName.setText(data.mTitle);
 		holder.mFromUser.setText("组织者: " + data.mCreator.mName);			
-		Picasso.with(mFragment.getActivity()).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
+		//Picasso.with(mFragment.getActivity()).load(mActivities.get(position).mCB.mImgUrl).into(holder.mImgPic);
 		return convertView;
 	}
 

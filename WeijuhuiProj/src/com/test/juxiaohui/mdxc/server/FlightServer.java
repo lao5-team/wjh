@@ -1,16 +1,5 @@
 package com.test.juxiaohui.mdxc.server;
 
-import com.test.juxiaohui.DemoApplication;
-import com.test.juxiaohui.common.dal.IFlightServer;
-import com.test.juxiaohui.mdxc.data.FlightData;
-import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
-import com.test.juxiaohui.mdxc.data.PrizeData;
-import com.test.juxiaohui.utils.SyncHTTPCaller;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,10 +7,24 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.test.juxiaohui.DemoApplication;
+import com.test.juxiaohui.common.dal.IFlightServer;
+import com.test.juxiaohui.mdxc.data.FlightData;
+import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
+import com.test.juxiaohui.mdxc.data.PrizeData;
+import com.test.juxiaohui.utils.SyncHTTPCaller;
+
 /**
  * Created by yihao on 15/3/31.
  */
 public class FlightServer implements IFlightServer {
+	
+	private List<FlightData> mFlightDataList;
+	
 	/**
 	 * 查询航班信息，区分国内航班与国际航班 请求示例
 	 * http://64.251.7.148/flight/list?from=LAX&to=SHA&departDate
@@ -69,6 +72,7 @@ public class FlightServer implements IFlightServer {
 								flight.put("currency", priceObj.get("currency"));
 								//补全机票航程类型 去程
 								flight.put("trip_type", "depart");
+								flight.put("taxes", priceObj.get("taxes"));
 							}
 						}
 
@@ -86,6 +90,9 @@ public class FlightServer implements IFlightServer {
 											priceObj.get("currency"));
 									//补全机票航程类型 返程
 									flight.put("trip_type", "return");
+									flight.put("price",priceObj.getString("price"));
+									flight.put("currency",priceObj.get("currency"));
+									flight.put("taxes", priceObj.get("taxes"));
 								}
 							}
 						} catch (JSONException e) {
@@ -106,6 +113,25 @@ public class FlightServer implements IFlightServer {
 								.names().getString(i));
 
 						resultObjects.add(FlightData.fromJSON(jsonObject));
+						FlightData flightData = new FlightData();
+						flightData.mId = jsonObject.getString("number");
+						flightData.mAirlineName = jsonObject
+								.getString("airline");
+						flightData.mFromCity = jsonObject.getString("fromCity");
+						flightData.mToCity = jsonObject.getString("toCity");
+						flightData.mFromCode = jsonObject
+								.getString("fromAirport");
+						flightData.mToCode = jsonObject.getString("toAirport");
+						flightData.mFromTime = jsonObject.getString("fromTime");
+						flightData.mToTime = jsonObject.getString("toTime");
+						flightData.mDurTime = jsonObject.getString("duration");
+						if (jsonObject.has("price")) {
+							flightData.mPrize = new PrizeData();
+							flightData.mPrize.mTicketPrize = Float
+									.valueOf(jsonObject.getString("price"));
+							flightData.mPrize.mCurrency = jsonObject.getString("currency");
+						}
+						resultObjects.add(flightData);
 					}
 
 				} catch (JSONException e) {
@@ -114,7 +140,8 @@ public class FlightServer implements IFlightServer {
 				return resultObjects;
 			}
 		};
-		return caller.execute();
+		mFlightDataList = caller.execute();
+		return mFlightDataList;
 	}
 
 	/**
@@ -217,6 +244,13 @@ public class FlightServer implements IFlightServer {
 	 */
 	@Override
 	public FlightData getFlightData(String id) {
+		if(id == null)
+			return FlightData.NULL;
+		for(FlightData data:mFlightDataList)
+		{
+			if(id.equalsIgnoreCase(data.mId))
+				return data;
+		}
 		return FlightData.NULL;
 	}
 

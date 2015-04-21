@@ -51,7 +51,8 @@ public class FlightSearchResultActivity extends Activity implements ISearchResul
 
     @Override
     public void setResult(List<FlightData> results) {
-    	((CommonAdapter<FlightData>)mListView.getAdapter()).setData(results);
+    	if(results != null)
+    		((CommonAdapter<FlightData>)mListView.getAdapter()).setData(results);
     	mListView.invalidate();
     }
 
@@ -79,7 +80,7 @@ public class FlightSearchResultActivity extends Activity implements ISearchResul
 
     @Override
     public void selectOneFlight(FlightData data) {
-    	 FlightOrderActivity.startActivity(data.mId, this);	
+    	 FlightOrderActivity.startActivity(data.mId,null, this);	
     }
 
 	@Override

@@ -127,8 +127,7 @@ public class UserServer implements IUserServer {
 				return resultObj;
 			}
 		};
-		//return caller.execute();
-		return "Success";
+		return caller.execute();
 	}
 
 	@Override

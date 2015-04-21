@@ -149,13 +149,13 @@ public class FlightData {
     		holder = new ViewHolder();
     		holder.mTvAirlineName = (TextView)convertView.findViewById(R.id.textView_aireline_name);
     		holder.mIvAirlineLogo = (ImageView)convertView.findViewById(R.id.imageView_airline_logo);
-    		holder.mTvDepartTime = (TextView)convertView.findViewById(R.id.textView_depart_time);
-    		holder.mTvDepartCity = (TextView)convertView.findViewById(R.id.textView_depart_city);
-    		holder.mTvArrivalTime = (TextView)convertView.findViewById(R.id.textView_arrival_time);
-    		holder.mTvArrivalCity = (TextView)convertView.findViewById(R.id.textView_arrival_city);
-    		holder.mTvDistance = (TextView)convertView.findViewById(R.id.textView_distance);
-    		holder.mTvCurrency = (TextView)convertView.findViewById(R.id.textView_currency);
-    		holder.mTvPrize = (TextView)convertView.findViewById(R.id.textView_prize);
+    		holder.mTvDepartTime = (TextView)convertView.findViewById(R.id.tv_depart_date);
+    		holder.mTvDepartCity = (TextView)convertView.findViewById(R.id.tv_depart_city);
+    		holder.mTvArrivalTime = (TextView)convertView.findViewById(R.id.tv_arrival_date);
+    		holder.mTvArrivalCity = (TextView)convertView.findViewById(R.id.tv_arrival_city);
+    		holder.mTvDistance = (TextView)convertView.findViewById(R.id.tv_duration);
+    		holder.mTvCurrency = (TextView)convertView.findViewById(R.id.tv_currency);
+    		holder.mTvPrize = (TextView)convertView.findViewById(R.id.tv_price);
     		convertView.setTag(holder);
     	}
     	holder = (ViewHolder) convertView.getTag();
