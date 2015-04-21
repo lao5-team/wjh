@@ -38,6 +38,12 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 		
 	}
 
+	//这个方法不会被外部类用到，也不要在内部调用它
+	private JSONCache()
+	{
+		super(null, null , null, 1);
+	}
+
 //	@Override
 //	public JSONObject get(String key) {
 //		if(null == key)

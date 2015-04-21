@@ -67,6 +67,8 @@ public class FlightServer implements IFlightServer {
 							if (null != flight) {
 								flight.put("price", priceObj.getString("price"));
 								flight.put("currency", priceObj.get("currency"));
+								//补全机票航程类型 去程
+								flight.put("trip_type", "depart");
 							}
 						}
 
@@ -82,6 +84,8 @@ public class FlightServer implements IFlightServer {
 											priceObj.getString("price"));
 									flight.put("currency",
 											priceObj.get("currency"));
+									//补全机票航程类型 返程
+									flight.put("trip_type", "return");
 								}
 							}
 						} catch (JSONException e) {
@@ -100,24 +104,8 @@ public class FlightServer implements IFlightServer {
 					for (int i = 0; i < flights.length(); i++) {
 						JSONObject jsonObject = flights.getJSONObject(flights
 								.names().getString(i));
-						FlightData flightData = new FlightData();
-						flightData.mId = jsonObject.getString("number");
-						flightData.mAirlineName = jsonObject
-								.getString("airline");
-						flightData.mFromCity = jsonObject.getString("fromCity");
-						flightData.mToCity = jsonObject.getString("toCity");
-						flightData.mFromCode = jsonObject
-								.getString("fromAirport");
-						flightData.mToCode = jsonObject.getString("toAirport");
-						flightData.mFromTime = jsonObject.getString("fromTime");
-						flightData.mToTime = jsonObject.getString("toTime");
-						flightData.mDurTime = jsonObject.getString("duration");
-						if (jsonObject.has("price")) {
-							flightData.mPrize = new PrizeData();
-							flightData.mPrize.mTicketPrize = Float
-									.valueOf(jsonObject.getString("price"));
-						}
-						resultObjects.add(flightData);
+
+						resultObjects.add(FlightData.fromJSON(jsonObject));
 					}
 
 				} catch (JSONException e) {
