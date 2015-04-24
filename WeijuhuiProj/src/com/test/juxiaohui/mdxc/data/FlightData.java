@@ -98,7 +98,7 @@ public class FlightData {
 		holder.mTvArrivalTime.setText(data.mToTime);
 		holder.mTvArrivalCity.setText(data.mToCode);
     	holder.mTvDistance.setText(data.mDurTime + " min");
-    	holder.mTvCurrency.setText("CNY");
+    	holder.mTvCurrency.setText(data.mPrize.mCurrency);
     	holder.mTvPrize.setText(data.mPrize.mTicketPrize + data.mPrize.mTax + "");
     	
     	return convertView;

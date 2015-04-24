@@ -155,4 +155,6 @@
 	<string name="economy">Economy</string>
 	<string name="business">Business</string>
 	<string name="first">First</string>
+	
+	<string name="done">Done</string>
 </resources>

@@ -4,29 +4,34 @@
     android:layout_height="wrap_content"
     android:background="@color/bright_foreground_inverse_material_light" >
     
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/airline_layout"
+        android:paddingLeft="@dimen/margin_10"
+        android:paddingTop="@dimen/margin_10"
+        >
     <ImageView
         android:id="@+id/imageView_airline_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
         android:src="@drawable/chatfrom_voice_playing" />
 
     <TextView
         android:id="@+id/textView_aireline_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView_airline_logo"
         android:layout_marginLeft="14dp"
-        android:layout_toRightOf="@+id/imageView_airline_logo"
         android:text="TextView"
         android:textColor="@color/color_000000"
         android:textSize="15dp" />
+        
+    </LinearLayout>
+
 
     <RelativeLayout 
-        android:layout_toEndOf="@id/imageView_airline_logo"
+        android:layout_below="@id/airline_layout"
         android:background="@drawable/selector_btn_4" 
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content">
@@ -41,12 +46,11 @@
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content" 
             android:layout_marginLeft="5.0dip" 
-            android:layout_marginTop="5.0dip" 
             android:layout_marginRight="15.0dip" 
             android:layout_marginBottom="5.0dip" 
             android:layout_alignParentRight="true">
             
-            <ImageView 
+<!--             <ImageView 
                 android:id="@+id/iv_airline" 
                 android:layout_width="wrap_content" 
                 android:layout_height="wrap_content" 
@@ -63,17 +67,8 @@
                 android:layout_width="wrap_content" 
                 android:layout_height="wrap_content" 
                 android:layout_marginLeft="5.0dip" 
-                android:layout_alignParentRight="true" />
+                android:layout_alignParentRight="true" /> -->
             
-            <TextView 
-                android:textSize="@dimen/font_size_medium" 
-                android:textColor="@color/color_666666" 
-                android:id="@+id/tv_airline" 
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" 
-                android:singleLine="true" 
-                android:layout_toLeftOf="@id/tv_tickets_left" 
-                android:layout_toRightOf="@id/iv_airline" />
             
             <LinearLayout 
                 android:gravity="center_vertical" 
@@ -81,7 +76,7 @@
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content" 
                 android:layout_marginLeft="@dimen/margin_10" 
-                android:layout_below="@id/tv_airline">
+                android:layout_alignParentTop="true">
                 
                 <LinearLayout 
                     android:gravity="center" 
@@ -107,9 +102,10 @@
                             android:lineSpacingMultiplier="0.9" />
                         
                         <TextView 
-                            android:textSize="@dimen/font_size_small" 
+                            android:textSize="@dimen/font_size_x_small" 
                             android:textColor="@color/color_333333" 
                             android:id="@id/tv_depart_date" 
+                            android:maxWidth="@dimen/flight_view_data_maxwidth"
                             android:layout_width="wrap_content" 
                             android:layout_height="wrap_content" 
                             android:text="08:00" 
@@ -136,7 +132,7 @@
     					<ImageView 
     					    android:id="@+id/iv_arrow" 
     					    android:background="@drawable/icon_flight_arrow" 
-    					    android:layout_width="wrap_content" 
+    					    android:layout_width="@dimen/flight_view_arrow_widht" 
     					    android:layout_height="wrap_content" 
     					    android:layout_centerInParent="true" />
     					
@@ -187,6 +183,7 @@
                             android:textSize="@dimen/font_size_x_small" 
                             android:textColor="@color/color_333333" 
                             android:id="@+id/tv_arrival_date" 
+                            android:maxWidth="@dimen/flight_view_data_maxwidth"
                             android:layout_width="wrap_content" 
                             android:layout_height="wrap_content" 
                             android:text="08:00" 
@@ -213,12 +210,14 @@
                         android:textColor="@color/color_666666" 
                         android:id="@+id/tv_currency" 
                         android:layout_width="wrap_content" 
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="RMB" />
                     <TextView 
-                        android:textSize="@dimen/font_size_x_large" 
+                        android:textSize="@dimen/font_size_x_small" 
                         android:textStyle="bold" 
                         android:textColor="@color/color_1484dc" 
-                        android:id="@id/tv_price" 
+                        android:id="@+id/tv_price" 
+                        android:ellipsize="end"
                         android:layout_width="wrap_content" 
                         android:layout_height="wrap_content" 
                         android:singleLine="true" />

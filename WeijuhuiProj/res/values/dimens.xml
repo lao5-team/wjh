@@ -134,5 +134,20 @@
     <dimen name="setting_custom_arrow_width">10dip</dimen>
     <dimen name="setting_custom_arrow_height">13dip</dimen>
     
+    <!-- flight view -->
+    <dimen name="flight_view_arrow_widht">80dip</dimen>
+    <dimen name="flight_view_data_maxwidth">70dip</dimen>
+    
+    <!-- common title bar -->
+    <dimen name="common_titlebar_height">50dip</dimen>
+    <dimen name="common_titlebar_backicon_size">25dip</dimen>
+    <dimen name="common_titlebar_backicon_margin">12.5dip</dimen>
+    <dimen name="common_titlebar_markview_width">200dip</dimen>
+    
+    <!-- passenger list -->
+    <dimen name="passengerlist_confirmlayout_height">80dip</dimen>
+    <dimen name="passengerlist_confirmbutton_height">60dip</dimen>
+    <dimen name="passengerlist_confirmbutton_width">250dip</dimen>
+    
 
 </resources>
