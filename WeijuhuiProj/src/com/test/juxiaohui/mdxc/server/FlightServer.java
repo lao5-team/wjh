@@ -70,6 +70,8 @@ public class FlightServer implements IFlightServer {
 							if (null != flight) {
 								flight.put("price", priceObj.getString("price"));
 								flight.put("currency", priceObj.get("currency"));
+								//补全机票航程类型 去程
+								flight.put("trip_type", "depart");
 								flight.put("taxes", priceObj.get("taxes"));
 							}
 						}
@@ -82,6 +84,12 @@ public class FlightServer implements IFlightServer {
 								JSONObject flight = flights
 										.getJSONObject(toNumber);
 								if (null != flight) {
+									flight.put("price",
+											priceObj.getString("price"));
+									flight.put("currency",
+											priceObj.get("currency"));
+									//补全机票航程类型 返程
+									flight.put("trip_type", "return");
 									flight.put("price",priceObj.getString("price"));
 									flight.put("currency",priceObj.get("currency"));
 									flight.put("taxes", priceObj.get("taxes"));
@@ -103,6 +111,8 @@ public class FlightServer implements IFlightServer {
 					for (int i = 0; i < flights.length(); i++) {
 						JSONObject jsonObject = flights.getJSONObject(flights
 								.names().getString(i));
+
+						resultObjects.add(FlightData.fromJSON(jsonObject));
 						FlightData flightData = new FlightData();
 						flightData.mId = jsonObject.getString("number");
 						flightData.mAirlineName = jsonObject

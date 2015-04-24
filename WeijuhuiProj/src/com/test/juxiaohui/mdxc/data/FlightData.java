@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by yihao on 15/3/13.
@@ -22,8 +24,14 @@ public class FlightData {
 	{
 		DOMISTIC, INTERNATIONAL
 	}
+
+	public static enum TRIP_TYPE
+	{
+		DEPART, RETURN
+	}
 	
-	public String mId = "";
+	private String mId = "";
+	public String mNumber = "";
     public List<RouteData> mRoutes = new ArrayList<RouteData>();
     public String mAirlineName = "unknown airline";
     public String mAirlineLogoUrl = "";
@@ -34,9 +42,8 @@ public class FlightData {
 	public String mToCode;
 	public String mFromTime;
 	public String mToTime;
-	public String mAirLine;
 	public String mDurTime = "60";
-
+	public TRIP_TYPE mTripType = TRIP_TYPE.DEPART;
 
     public static FlightData NULL = new FlightData();
     public static FlightData createTestData()
@@ -45,6 +52,12 @@ public class FlightData {
     	data.mId = UUID.randomUUID().toString();
     	return data;
     }
+
+	public String getId()
+	{
+		mId = mNumber + mFromTime;
+		return mId;
+	}
     
     public static class ViewHolder
     {
@@ -58,6 +71,74 @@ public class FlightData {
     	TextView mTvCurrency;
     	TextView mTvPrize; 	
     }
+
+	public static FlightData fromJSON(JSONObject jsonObject)
+	{
+		FlightData flightData = new FlightData();
+		try {
+			flightData.mNumber = jsonObject.getString("number");
+			flightData.mAirlineName = jsonObject
+					.getString("airline");
+			flightData.mFromCity = jsonObject.getString("fromCity");
+			flightData.mToCity = jsonObject.getString("toCity");
+			flightData.mFromCode = jsonObject
+					.getString("fromAirport");
+			flightData.mToCode = jsonObject.getString("toAirport");
+			flightData.mFromTime = jsonObject.getString("fromTime");
+			flightData.mToTime = jsonObject.getString("toTime");
+			flightData.mDurTime = jsonObject.getString("duration");
+			if (jsonObject.has("price")) {
+				flightData.mPrize = new PrizeData();
+				flightData.mPrize.mTicketPrize = Float
+						.valueOf(jsonObject.getString("price"));
+				if (jsonObject.getString("trip_type").equals("depart"))
+				{
+					flightData.mTripType = FlightData.TRIP_TYPE.DEPART;
+				}
+				else if(jsonObject.getString("trip_type").equals("return"))
+				{
+					flightData.mTripType = FlightData.TRIP_TYPE.RETURN;
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			flightData = FlightData.NULL;
+		}
+
+		return flightData;
+	}
+
+	public static JSONObject toJSON(FlightData flightData)
+	{
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("number", flightData.mNumber);
+			jsonObject.put("airline", flightData.mAirlineName);
+			jsonObject.put("fromCity", flightData.mFromCity);
+			jsonObject.put("toCity", flightData.mToCity);
+			jsonObject.put("fromAirport", flightData.mFromCode);
+			jsonObject.put("toAirport", flightData.mToCode);
+			jsonObject.put("fromTime", flightData.mFromTime);
+			jsonObject.put("toTime", flightData.mToTime);
+			jsonObject.put("duration", flightData.mDurTime);
+			if(flightData.mPrize!=null)
+			{
+				jsonObject.put("price", flightData.mPrize.mTicketPrize);
+				if(flightData.mTripType == FlightData.TRIP_TYPE.DEPART)
+				{
+					jsonObject.put("trip_type", "depart");
+				}
+				else if(flightData.mTripType == TRIP_TYPE.RETURN)
+				{
+					jsonObject.put("trip_type", "return");
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			jsonObject = null;
+		}
+		return jsonObject;
+	}
     
     public static View getItemView(Context context, LayoutInflater inflator, View convertView, FlightData data)
     {
