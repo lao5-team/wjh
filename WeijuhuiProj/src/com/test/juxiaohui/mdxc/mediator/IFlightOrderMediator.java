@@ -2,6 +2,7 @@ package com.test.juxiaohui.mdxc.mediator;
 
 import com.test.juxiaohui.mdxc.data.ContactUser;
 import com.test.juxiaohui.mdxc.data.FlightData;
+import com.test.juxiaohui.mdxc.data.FlightOrder;
 import com.test.juxiaohui.mdxc.data.Passenger;
 
 public interface IFlightOrderMediator {
@@ -30,5 +31,7 @@ public interface IFlightOrderMediator {
 
 	public void cancel();
 
-	public void setFlightData(FlightData fromData, FlightData toData);
+	public void setFlightOrder(FlightOrder order);
+
+
 }

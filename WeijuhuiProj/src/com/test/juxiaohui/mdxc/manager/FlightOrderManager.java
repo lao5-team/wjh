@@ -3,7 +3,6 @@ package com.test.juxiaohui.mdxc.manager;
 import com.test.juxiaohui.common.dal.IFlightServer;
 import com.test.juxiaohui.mdxc.data.FlightOrder;
 import com.test.juxiaohui.mdxc.server.FlightServer;
-import com.test.juxiaohui.shop.data.Order;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Created by yihao on 15/4/10.
  */
-public class OrderManager {
+public class FlightOrderManager {
     public static String SUBMIT_SUCCESS = "submit_success";
     public static String SUBMIT_FAILED = "submit_failed";
     public static String CANCEL_SUCCESS = "cancel_success";
@@ -21,13 +20,13 @@ public class OrderManager {
     public static String REMOVE_FAILED = "remove_failed";
 
     IFlightServer mFlightServer = null;
-    private static OrderManager mInstance = null;
+    private static FlightOrderManager mInstance = null;
     private HashMap<String, FlightOrder> mMapOrders = new HashMap<String, FlightOrder>();
-    public static OrderManager getInstance()
+    public static FlightOrderManager getInstance()
     {
         if(null == mInstance)
         {
-            mInstance = new OrderManager();
+            mInstance = new FlightOrderManager();
         }
         return mInstance;
     }
@@ -48,7 +47,7 @@ public class OrderManager {
             String result = mFlightServer.submitOrder(flightOrder);
             if(!result.equals(""))
             {
-                return SUBMIT_SUCCESS;
+                return "24";
             }
             else
             {
@@ -70,7 +69,8 @@ public class OrderManager {
         }
         else
         {
-            return mFlightServer.queryOrderList(UserManager.getInstance().getCurrentUser().getId());
+            //return mFlightServer.queryOrderList(UserManager.getInstance().getCurrentUser().getId());
+            return mFlightServer.queryOrderList("0");
         }
     }
 
@@ -137,7 +137,7 @@ public class OrderManager {
     }
 
     /**
-     * 创建一个新订单
+     * 创建一个新订单，该订单会在OrderManager中缓存
      * @return
      */
     public FlightOrder createFlightOrder(int tripType)
@@ -148,7 +148,7 @@ public class OrderManager {
         return order;
     }
 
-    private OrderManager()
+    private FlightOrderManager()
     {
         mFlightServer = new FlightServer();
     }

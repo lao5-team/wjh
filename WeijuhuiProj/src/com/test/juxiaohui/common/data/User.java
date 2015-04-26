@@ -11,7 +11,7 @@ public class User {
     protected String mSex = "";
     protected String mNickname = "";
     protected String mPhoneNumber = "";
-    protected String mId = "";
+    protected String mId = "0";
     public static User NULL = new User()
     {
 
@@ -81,6 +81,11 @@ public class User {
     public String getId()
     {
         return mId;
+    }
+
+    public void setId(String id)
+    {
+        mId = id;
     }
 
 

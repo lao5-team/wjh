@@ -259,7 +259,7 @@ public class FlightServer implements IFlightServer {
 	 */
 	@Override
 	public List<FlightOrder> queryOrderList(String user_id) {
-		String url = "http://www.bookingmin.com/orders/cancel?id="+user_id;
+		String url = "http://www.bookingmin.com/orders/user/"+user_id;
 		SyncHTTPCaller<List<FlightOrder>> caller = new SyncHTTPCaller<List<FlightOrder>>(url, null, null, SyncHTTPCaller.TYPE_GET) {
 			@Override
 			public List<FlightOrder> postExcute(String result) {

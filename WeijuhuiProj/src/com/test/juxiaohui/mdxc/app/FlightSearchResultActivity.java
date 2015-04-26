@@ -1,6 +1,7 @@
 package com.test.juxiaohui.mdxc.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -32,6 +33,18 @@ public class FlightSearchResultActivity extends Activity implements ISearchResul
 	List<FlightData> mFlightsList = new ArrayList<FlightData>();
 	FlightSearchRequest mRequest = FlightSearchRequest.NULL;
 	RelativeLayout mRlprogress;
+
+	public static String INTENT_FLIGHT = "flightdata";
+
+
+	public static void startActivity(int requestCode, FlightSearchRequest request, Activity activity)
+	{
+		Intent intent = new Intent(activity, FlightSearchResultActivity.class);
+		intent.putExtra("request", FlightSearchRequest.toJSON(request).toString());
+		activity.startActivityForResult(intent, requestCode);
+
+	}
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +93,11 @@ public class FlightSearchResultActivity extends Activity implements ISearchResul
 
     @Override
     public void selectOneFlight(FlightData data) {
-    	 FlightOrderActivity.startActivity(data.getId(),null, this);
+    	 //FlightOrderActivity.startActivity(data.getId(),null, this);
+		Intent intent = new Intent();
+		intent.putExtra(INTENT_FLIGHT, FlightData.toJSON(data).toString());
+		setResult(RESULT_OK, intent);
+		finish();
     }
 
 	@Override

@@ -59,7 +59,7 @@
         </RelativeLayout>
 
         <Button
-            android:id="@+id/btn_bottom_select"
+            android:id="@+id/btn_bottom_submit"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/bottom_bar_button_width"
             android:background="@drawable/selector_btn_2"

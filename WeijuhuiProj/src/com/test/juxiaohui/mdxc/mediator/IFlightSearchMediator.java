@@ -1,15 +1,13 @@
 package com.test.juxiaohui.mdxc.mediator;
 
+import com.test.juxiaohui.mdxc.data.FlightData;
+
 import java.util.Date;
 
 /**
  * Created by yihao on 15/3/5.
  */
 public interface IFlightSearchMediator {
-
-	public static int CITY_DEPART = 0;
-	public static int CITY_ARRIVAL = 1;
-	
     public void addFlightTypeView();
 
     public void addCityView();
@@ -31,7 +29,7 @@ public interface IFlightSearchMediator {
      * 设置航班类型，往返，单程
      * @param type
      */
-    public void setFlightType(String type);
+    public void setFlightType(int type);
 
     /**
      * 设置出发城市
@@ -60,7 +58,11 @@ public interface IFlightSearchMediator {
      */
     public void setFlightClass(String class_type);
 
-    public void search();
+    /**
+     * 搜索航班
+     * @param type 航班类型 0 去程，1 返程
+     */
+    public void search(int type);
 
     /**
      * 打开城市列表
@@ -77,6 +79,12 @@ public interface IFlightSearchMediator {
     public void setDepartDate(Date date);
 
     public void setArrivalDate(Date date);
+
+    public void onSetStartFlight(FlightData data);
+
+    public void onSetReturnFlght(FlightData data);
+
+
 
 
 

@@ -70,10 +70,8 @@ public class UserManager {
 			String result = mUserServer.login(username, password, null);
 			if(result.equals("Success"))
 			{
-				User user = new User();
-				user.setUsername(username);
-				user.setPassword(password);
-				mCurrentUser = user;
+
+				mCurrentUser = mUserServer.getUserInfo(username);
 
 				//load this user's passengers
 				loadPassengers();
@@ -224,6 +222,11 @@ public class UserManager {
 	public boolean isLogin()
 	{
 		return !mCurrentUser.equals(User.NULL);
+	}
+
+	public User getUserInfo(String username)
+	{
+		return mUserServer.getUserInfo(username);
 	}
 
 	/**

@@ -10,26 +10,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.*;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.TextView;
 
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.data.ContactUser;
+import com.test.juxiaohui.mdxc.data.FlightOrder;
+import com.test.juxiaohui.mdxc.manager.FlightOrderManager;
 import com.test.juxiaohui.mdxc.manager.ServerManager;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.Passenger;
 import com.test.juxiaohui.mdxc.manager.UserManager;
 import com.test.juxiaohui.mdxc.mediator.IFlightOrderMediator;
+import com.test.juxiaohui.shop.data.OrderManager;
 
 public class FlightOrderActivity extends Activity implements
 		IFlightOrderMediator {
 	public static int REQ_SELECT_PASSENGER = 0;
-	private FlightData mFromData,mToData;
-	private List<Passenger> mPassengers = new ArrayList<Passenger>();
-	
+
 	
 	private TextView mTvPerAireFarePrice,mTvPerAireFareCurrency,mTvPerTaxPrice,mTvPerTaxCurrency,mTvTotalPrice;
 	private ImageButton mIbAddPassenger;
@@ -38,17 +36,15 @@ public class FlightOrderActivity extends Activity implements
 	private TextView mTvAddPassengers;
 	private UserManager mUserManager = UserManager.getInstance();
 	
-	private boolean isOneWay;
-	
+
 	private LinearLayout mSelf;
 	private LayoutInflater mInflater;
+	private FlightOrder mFlightOrder;
 	
-	
-	public static void startActivity(String fromId,String toId, Context context)
+	public static void startActivity(String orderId, Context context)
 	{
 		Intent intent = new Intent(context, FlightOrderActivity.class);
-		intent.putExtra("form_id", fromId);
-		intent.putExtra("to_id", toId);
+		intent.putExtra("order_id", orderId);
 		context.startActivity(intent);
 	}
 	
@@ -57,20 +53,22 @@ public class FlightOrderActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		mInflater = this.getLayoutInflater();
 		mSelf = (LinearLayout) mInflater.inflate(R.layout.activity_flight_book, null);
+		setFlightOrder(FlightOrderManager.getInstance().getFlightOrderbyId(getIntent().getStringExtra("order_id")));
 		setContentView(mSelf);	
-		List<Passenger> passengers= ServerManager.getInstance().getAllPassengers();
-		setFlightData(ServerManager.getInstance().getFlightData( getIntent().getStringExtra("form_id")),
-						ServerManager.getInstance().getFlightData( getIntent().getStringExtra("to_id")));
 		addFlightView();
 		addPassengerView();
 		addPriceView();
-/*		for(Passenger passenger:passengers)
-		{
-			addPassenger(passenger);
-		}*/
+
+		Button btn_OK = (Button)this.findViewById(R.id.btn_bottom_submit);
+		btn_OK.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				submitOrder();
+			}
+		});
 	}
 	
-	@Override
+/*	@Override
 	public void setFlightData(FlightData fromData,FlightData toData) {
 		mFromData = fromData;
 		mToData = toData;
@@ -80,14 +78,17 @@ public class FlightOrderActivity extends Activity implements
 			isOneWay = true;
 		else
 			isOneWay = false;
-	}
+	}*/
 
 	@Override
 	public void addFlightView() {
 		mLlFlights = (LinearLayout) findViewById(R.id.ll_airlines);
-		mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mFromData));
-		if(!isOneWay)
-			mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mToData));
+		if(mFlightOrder.mTripType == FlightOrder.TRIP_ONE_WAY){
+			mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mFlightOrder.getStartFlightData()));
+		}else if(mFlightOrder.mTripType == FlightOrder.TRIP_ROUND){
+			mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mFlightOrder.getReturnFlightData()));
+			mLlFlights.addView(FlightData.getItemView(this, this.getLayoutInflater(), null, mFlightOrder.getStartFlightData()));
+		}
 	}
 
 	@Override
@@ -99,31 +100,32 @@ public class FlightOrderActivity extends Activity implements
 		mTvPerTaxCurrency = null;
 		mTvTotalPrice = null;
 		//机票单价
-
+		FlightData fromData = mFlightOrder.getStartFlightData();
+		FlightData toData = mFlightOrder.getReturnFlightData();
 		mTvPerAireFarePrice = (TextView) this.findViewById(R.id.tv_per_price);
-		temp = isOneWay? String.valueOf(mFromData.mPrice.mTicketPrice):String.valueOf(mFromData.mPrice.mTicketPrice + mToData.mPrice.mTicketPrice);
+		temp = mFlightOrder.mTripType==FlightOrder.TRIP_ONE_WAY? String.valueOf(fromData.mPrice.mTicketPrice):String.valueOf(fromData.mPrice.mTicketPrice + toData.mPrice.mTicketPrice);
 		mTvPerAireFarePrice.setText(temp);	
 		//机票单价币种
 		mTvPerAireFareCurrency = (TextView) this.findViewById(R.id.tv_per_price_currency);
-		temp = String.valueOf(mFromData.mPrice.mCurrency);
+		temp = String.valueOf(fromData.mPrice.mCurrency);
 		mTvPerAireFareCurrency.setText(temp);
 		//税费单价
 		mTvPerTaxPrice = (TextView) this.findViewById(R.id.tv_tax);
-		temp = isOneWay? String.valueOf(mFromData.mPrice.mTax):String.valueOf(mFromData.mPrice.mTax + mToData.mPrice.mTax);
+		temp = mFlightOrder.mTripType==FlightOrder.TRIP_ONE_WAY? String.valueOf(fromData.mPrice.mTax):String.valueOf(fromData.mPrice.mTax + toData.mPrice.mTax);
 		mTvPerTaxPrice.setText(temp);
 		//税费单价币种
 		mTvPerTaxCurrency = (TextView) this.findViewById(R.id.tv_tax_currency);
-		temp = String.valueOf(mFromData.mPrice.mCurrency);
+		temp = String.valueOf(fromData.mPrice.mCurrency);
 
 		mTvPerTaxCurrency.setText(temp);
 		//总价
 		mTvTotalPrice = (TextView) mSelf.findViewById(R.id.tv_amount_with_current_currency);
-		if(isOneWay)
-			mTvTotalPrice.setText("RMB" + (mFromData.mPrice.mTicketPrice + mFromData.mPrice.mTax));
+		if(mFlightOrder.mTripType==FlightOrder.TRIP_ONE_WAY)
+			mTvTotalPrice.setText("RMB" + (fromData.mPrice.mTicketPrice + fromData.mPrice.mTax));
 		else
 			mTvTotalPrice.setText("RMB" + 
-									(mFromData.mPrice.mTicketPrice + mFromData.mPrice.mTax +
-											mToData.mPrice.mTicketPrice + mToData.mPrice.mTax));
+									(fromData.mPrice.mTicketPrice + fromData.mPrice.mTax +
+											toData.mPrice.mTicketPrice + toData.mPrice.mTax));
 
 	}
 
@@ -152,7 +154,7 @@ public class FlightOrderActivity extends Activity implements
 
 	@Override
 	public void addPassenger(final Passenger passenger) {
-		mPassengers.add(passenger);
+		mFlightOrder.mListPassenger.add(passenger);
 		LinearLayout ll = (LinearLayout) this.getLayoutInflater().inflate(R.layout.item_remove_container, null);
 		ImageView ivRemove = (ImageView)ll.findViewById(R.id.imageView_remove);
 		ivRemove.setClickable(true);
@@ -170,8 +172,8 @@ public class FlightOrderActivity extends Activity implements
 
 	@Override
 	public void removePassenger(final Passenger passenger) {
-		int index = mPassengers.indexOf(passenger);
-		mPassengers.remove(passenger);
+		int index = mFlightOrder.mListPassenger.indexOf(passenger);
+		mFlightOrder.mListPassenger.remove(passenger);
 		mLlPassengers.removeViewAt(index);
 	}
 
@@ -182,14 +184,22 @@ public class FlightOrderActivity extends Activity implements
 
 	@Override
 	public void submitOrder() {
-
+		FlightOrderManager.getInstance().submitFlightOrder(mFlightOrder);
+		Toast.makeText(this, "Order submitted!!", Toast.LENGTH_SHORT).show();
+		finish();
 	}
 
 	@Override
 	public void cancel() {
 		finish();
 	}
-	
+
+	@Override
+	public void setFlightOrder(FlightOrder order) {
+		mFlightOrder = order;
+	}
+
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{

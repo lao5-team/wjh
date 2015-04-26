@@ -13,18 +13,18 @@ import java.util.List;
 /**
  * Created by yihao on 15/4/20.
  */
-public class OrderManagerTest extends AndroidTestCase {
+public class FlightOrderManagerTest extends AndroidTestCase {
 
-    OrderManager mOrderManager;
+    FlightOrderManager mOrderManager;
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mOrderManager = OrderManager.getInstance();
+        mOrderManager = FlightOrderManager.getInstance();
     }
 
     public void testSubmitOrder()
     {
-        UserManager.getInstance().login("15510472558", "123456");
+/*        UserManager.getInstance().login("15510472558", "123456");
         FlightData flightData = new FlightData();
         FlightOrder flightOrder = FlightOrder.NULL;
         mOrderManager.submitFlightOrder(flightOrder);
@@ -37,12 +37,12 @@ public class OrderManagerTest extends AndroidTestCase {
         {
 
             String result = mOrderManager.submitFlightOrder(validOrder);
-            Assert.assertEquals(result, OrderManager.SUBMIT_FAILED);
+            Assert.assertEquals(result, FlightOrderManager.SUBMIT_FAILED);
         }
 
         //登录
         UserManager.getInstance().login("15510472558", "123456");
-        Assert.assertEquals(true, UserManager.getInstance().isLogin());
+        Assert.assertEquals(true, UserManager.getInstance().isLogin());*/
 
         //联系人无效，失败
 
@@ -60,6 +60,8 @@ public class OrderManagerTest extends AndroidTestCase {
         //没有登录，获取订单为空
 
         //登录后，获取不为空的订单
+        UserManager.getInstance().login("15510472558", "123456");
+        Assert.assertTrue(0!=FlightOrderManager.getInstance().getFlightOrderList().size());
 
     }
 

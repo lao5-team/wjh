@@ -3,7 +3,6 @@ package com.test.juxiaohui.mdxc.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,10 +14,15 @@ import android.widget.TextView;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.app.view.CabinClassDialog;
 import com.test.juxiaohui.mdxc.data.CityData;
+import com.test.juxiaohui.mdxc.data.FlightData;
+import com.test.juxiaohui.mdxc.data.FlightOrder;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
+import com.test.juxiaohui.mdxc.manager.FlightOrderManager;
 import com.test.juxiaohui.mdxc.mediator.IFlightSearchMediator;
 import com.test.juxiaohui.widget.CalendarActivity;
 import com.test.juxiaohui.widget.CalendarActivity.onDataSelectedListener;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +33,11 @@ import java.util.Date;
  * Created by yihao on 15/3/13.
  */
 public class FlightSearchActivity extends Activity implements IFlightSearchMediator{
-	public static boolean IS_TEST_MODE = false;
+    private final int REQ_SEARCH_FLIGHT_START = 0;
+    private final int REQ_SEARCH_FLIGHT_RETURN = 1;
+    private final int REQ_CITY_DEPART = 2;
+    private final int REQ_CITY_ARRIVAL = 3;
+	public static boolean IS_TEST_MODE = true;
     Button mBtnRoundTrip;
     Button mBtnOneWay;
     TextView mTvDepartCity;
@@ -54,7 +62,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     CabinClassDialog mDlgCabinClass;
     
     Context mContext;
-    
+    private FlightOrder mCurrentOrder;
     
 
     /*Data*/
@@ -79,8 +87,27 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         addClassView();
         addSearchView();
         mContext = this;
+        mCurrentOrder = FlightOrderManager.getInstance().createFlightOrder(mSearchRequest.mTripType);
         //set default passenger number
         setPassengerNumber(1);
+
+        if(IS_TEST_MODE) {
+            mLlDepart.setVisibility(View.VISIBLE);
+            mTvDepartCity.setText("Las vagas");
+            mTvDepartTip.setVisibility(View.GONE);
+            mSearchRequest.mDepartCity = mTvDepartCity.getText().toString();
+            mSearchRequest.mDepartCode = "LAS";
+
+            mLlArrival.setVisibility(View.VISIBLE);
+            mTvArrivalCity.setText("Shanghai");
+            mTvArrivalTip.setVisibility(View.GONE);
+            mSearchRequest.mArrivalCity = mTvArrivalCity.getText().toString();
+            mSearchRequest.mArrivalCode = "SHA";
+
+            mSearchRequest.mTripType = FlightOrder.TRIP_ONE_WAY;
+            mSearchRequest.mDepartDate = "2015/4/27";
+            mSearchRequest.mClassType = FlightSearchRequest.CLASS_ECONOMY;
+        }
     }
 
     @Override
@@ -89,14 +116,14 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mBtnRoundTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFlightType(FlightSearchRequest.TYPE_ROUNDTRIP);
+                setFlightType(FlightOrder.TRIP_ROUND);
             }
         });
         mBtnOneWay = (Button) findViewById(R.id.button_oneway);
         mBtnOneWay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFlightType(FlightSearchRequest.TYPE_ONEWAY);
+                setFlightType(FlightOrder.TRIP_ONE_WAY);
             }
         });
     }
@@ -108,7 +135,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mLlDepart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCities(IFlightSearchMediator.CITY_DEPART);
+                openCities(REQ_CITY_DEPART);
             }
         });
         mTvDepartCity = (TextView) findViewById(R.id.tv_depart_city);
@@ -137,26 +164,12 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mLlArrival.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCities(IFlightSearchMediator.CITY_ARRIVAL);
+                openCities(REQ_CITY_ARRIVAL);
             }
         });
         mTvArrivalCity = (TextView) findViewById(R.id.tv_arrival_city);
         mTvArrivalCode = (TextView) findViewById(R.id.tv_arrival_code);
         mTvArrivalTip = (TextView) findViewById(R.id.tv_arrival_tip);
-        if(IS_TEST_MODE)
-        {
-        	mLlDepart.setVisibility(View.VISIBLE);
-        	mTvDepartCity.setText("Beijing");
-        	mTvDepartTip.setVisibility(View.GONE);
-        	mSearchRequest.mDepartCity = mTvDepartCity.getText().toString();
-            mSearchRequest.mDepartCode = "LAX";
-
-        	mLlArrival.setVisibility(View.VISIBLE);
-        	mTvArrivalCity.setText("Shanghai");
-        	mTvArrivalTip.setVisibility(View.GONE);
-        	mSearchRequest.mArrivalCity = mTvArrivalCity.getText().toString();
-            mSearchRequest.mArrivalCode = "SHA";
-        }
     }
 
 
@@ -186,13 +199,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 			}
 		});
         
-        if(IS_TEST_MODE)
-        {
-            Date date = new Date();
-            mTvDepartTime.setText(date.getMonth() + "/" + date.getDate()); 
-            mSearchRequest.mDepartDate = "2015/04/14";//= mTvDepartTime.getText().toString();
-            mSearchRequest.mReturnDate = "2015/04/15";
-        }
+
 
     }
 
@@ -204,7 +211,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mIvMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setPassengerNumber(mSearchRequest.mPassengerNumber-1);
+                setPassengerNumber(mSearchRequest.mPassengerNumber - 1);
             }
         });
         mIvPlus = (ImageView)findViewById(R.id.iv_plus);
@@ -212,7 +219,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mIvPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setPassengerNumber(mSearchRequest.mPassengerNumber+1);
+                setPassengerNumber(mSearchRequest.mPassengerNumber + 1);
             }
         });
     }
@@ -245,11 +252,6 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 				}
 			});
     	}
-    	if(IS_TEST_MODE)
-    	{
-        	mTvClass.setText("ECONOMY");
-        	mSearchRequest.mClassType = FlightSearchRequest.CLASS_ECONOMY;
-    	}
     	mSearchRequest.mClassType = FlightSearchRequest.CLASS_ECONOMY;
     	
     	mTvClass.setOnClickListener(new OnClickListener() {
@@ -276,7 +278,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mLlSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                search();
+                search(0);
             }
         });
     }
@@ -295,7 +297,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
      * @param type
      */
     @Override
-    public void setFlightType(String type) {
+    public void setFlightType(int type) {
         mSearchRequest.mTripType = type;
     }
 
@@ -332,7 +334,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     @Override
     public void setPassengerNumber(int num) {
         mSearchRequest.mPassengerNumber = num;
-        mTvPassengerNumber.setText(""+num);
+        mTvPassengerNumber.setText("" + num);
         if(num <= 1)
         {
             mIvMinus.setEnabled(false);
@@ -356,11 +358,22 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
         mSearchRequest.mClassType = class_type;
     }
 
+    /**
+     * 搜索航班
+     * @param type 航班类型 0 去程，1 返程
+     */
     @Override
-    public void search() {
-    	Intent intent = new Intent(this, FlightSearchResultActivity.class);
-    	intent.putExtra("request", FlightSearchRequest.toJSON(mSearchRequest).toString());
-    	startActivity(intent);
+    public void search(int type) {
+        if(type == 0)
+        {
+            FlightSearchResultActivity.startActivity(REQ_SEARCH_FLIGHT_START, mSearchRequest, this);
+        }
+        else if(type == 1)
+        {
+            FlightSearchResultActivity.startActivity(REQ_SEARCH_FLIGHT_RETURN, mSearchRequest, this);
+        }
+
+
     }
     /**
      * 打开可选城市列表
@@ -376,34 +389,31 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
     public void openCalendar(final boolean isDepart) {
     	CalendarActivity.PopupWindows popwindow = new CalendarActivity.PopupWindows(this, getWindow().getDecorView());
     	popwindow.setDateSelectedListener(new onDataSelectedListener() {
-			
-			@Override
-			public void onDateSelected(final String str_date) {
-				// TODO Auto-generated method stub
-				
-				runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						try {
-							final Date date = mDataFormat.parse(str_date);
-							if(isDepart)
-							{
-								setDepartDate(date);
-							}
-							else
-							{
-								setArrivalDate(date);
-							}
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				});
-				
-			}
-		});
+
+            @Override
+            public void onDateSelected(final String str_date) {
+                // TODO Auto-generated method stub
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            final Date date = mDataFormat.parse(str_date);
+                            if (isDepart) {
+                                setDepartDate(date);
+                            } else {
+                                setArrivalDate(date);
+                            }
+                        } catch (ParseException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        });
     }
 
     @Override
@@ -421,34 +431,69 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 		mTvReturnTime.setText(str);
 		mSearchRequest.mReturnDate = str;
     }
-    
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		if(null!=data)
-		{
-			CityData citydata = (CityData)data.getSerializableExtra("city");
-			switch(requestCode)
-			{
-			case IFlightSearchMediator.CITY_DEPART:
-				mTvDepartCity.setText(citydata.cityName);
-				mSearchRequest.mDepartCity = citydata.cityName;
-				mSearchRequest.mDepartCode = citydata.cityCode;
-                mTvDepartTip.setVisibility(View.GONE);
 
-				break;
-			case IFlightSearchMediator.CITY_ARRIVAL:
-				mTvArrivalCity.setText(citydata.cityName);
-				mSearchRequest.mArrivalCity = citydata.cityName;
-				mSearchRequest.mArrivalCode = citydata.cityCode;
-                mTvArrivalTip.setVisibility(View.GONE);
-			}		
-		}
-		
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-	
-	private String getDayafter(String str_date)
+    @Override
+    public void onSetStartFlight(FlightData data) {
+        mCurrentOrder.setStartFlightData(data);
+        if(mSearchRequest.mTripType==FlightOrder.TRIP_ONE_WAY)
+        {
+            FlightOrderActivity.startActivity(mCurrentOrder.mId, this);
+        }
+        else if(mSearchRequest.mTripType == FlightOrder.TRIP_ROUND){
+            search(1);
+        }
+    }
+
+    @Override
+    public void onSetReturnFlght(FlightData data) {
+        mCurrentOrder.setReturnFlightData(data);
+        FlightOrderActivity.startActivity(mCurrentOrder.mId, this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (null != data) {
+            switch (requestCode) {
+                case REQ_CITY_DEPART:
+                    CityData citydata = (CityData) data.getSerializableExtra("city");
+                    mTvDepartCity.setText(citydata.cityName);
+                    mSearchRequest.mDepartCity = citydata.cityName;
+                    mSearchRequest.mDepartCode = citydata.cityCode;
+                    mTvDepartTip.setVisibility(View.GONE);
+                    break;
+
+                case REQ_CITY_ARRIVAL:
+                    citydata = (CityData) data.getSerializableExtra("city");
+                    mTvArrivalCity.setText(citydata.cityName);
+                    mSearchRequest.mArrivalCity = citydata.cityName;
+                    mSearchRequest.mArrivalCode = citydata.cityCode;
+                    mTvArrivalTip.setVisibility(View.GONE);
+                    break;
+
+                case REQ_SEARCH_FLIGHT_START:
+                    try {
+                        FlightData flightData = FlightData.fromJSON(new JSONObject(data.getStringExtra(FlightSearchResultActivity.INTENT_FLIGHT)));
+                        onSetStartFlight(flightData);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+
+                case REQ_SEARCH_FLIGHT_RETURN:
+                    try {
+                        FlightData flightData = FlightData.fromJSON(new JSONObject(data.getStringExtra(FlightSearchResultActivity.INTENT_FLIGHT)));
+                        onSetReturnFlght(flightData);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private String getDayafter(String str_date)
 	{
 		try {
 			Date date = mDataFormat.parse(str_date);
@@ -458,7 +503,6 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
 			calendar.set(Calendar.DATE, day + 1);
 			return mDataFormat.format(calendar.getTime());
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "";
 		}

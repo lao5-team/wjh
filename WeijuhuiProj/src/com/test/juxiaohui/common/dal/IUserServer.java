@@ -33,4 +33,6 @@ public interface IUserServer {
     public String logout();
     
     public void sendCheckcode(String phoneNumber);
+
+    public User getUserInfo(String username);
 }

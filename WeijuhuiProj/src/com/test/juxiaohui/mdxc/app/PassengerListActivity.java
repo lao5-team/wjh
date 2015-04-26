@@ -3,10 +3,12 @@ package com.test.juxiaohui.mdxc.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.adapter.PassengerListAdapter;
 import com.test.juxiaohui.mdxc.data.Passenger;
 import com.test.juxiaohui.mdxc.manager.ServerManager;
+import com.test.juxiaohui.mdxc.manager.UserManager;
 import com.test.juxiaohui.mdxc.mediator.IPassengerListMediator;
 import com.test.juxiaohui.mdxc.widget.CommonTitleBar;
 
@@ -87,7 +89,7 @@ public class PassengerListActivity extends Activity implements IPassengerListMed
 		
 		
 		mPassengerListView = new ListView(mContext);
-		mPassengerListAdapter = new PassengerListAdapter(mContext, getPassengerSelector(ServerManager.getInstance().getAllPassengers()));
+		mPassengerListAdapter = new PassengerListAdapter(mContext, getPassengerSelector(UserManager.getInstance().getPassengerList()));
 		mPassengerListView.setAdapter(mPassengerListAdapter);
 		mPassengerListView.setBackgroundColor(getResources().getColor(R.color.color_gray_12));
 		mPassengerListView.setId(10086);
@@ -111,6 +113,20 @@ public class PassengerListActivity extends Activity implements IPassengerListMed
 		mBtnConfirm.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_btn_1));
 		mBtnConfirm.setText(R.string.done);
 		mBtnConfirm.setGravity(Gravity.CENTER);
+		mBtnConfirm.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ArrayList<String> passengers_ids = new ArrayList<String>();
+				for (Passenger passenger:getSelectedPassengers())
+				{
+					passengers_ids.add(passenger.mId);
+				}
+				Intent intent = new Intent();
+				intent.putStringArrayListExtra("passenger_ids", passengers_ids);
+				setResult(RESULT_OK, intent);
+				finish();
+			}
+		});
 		mConfirmButtonLayout.addView(mBtnConfirm,confirmButtonParams);
 		mMainView.addView(mConfirmButtonLayout,confirmLayoutParams);
 		

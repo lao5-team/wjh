@@ -1,6 +1,7 @@
 package com.test.juxiaohui.mdxc.manager;
 
 import android.test.AndroidTestCase;
+import com.test.juxiaohui.common.data.User;
 import com.test.juxiaohui.mdxc.data.ContactUser;
 import com.test.juxiaohui.mdxc.data.Passenger;
 import junit.framework.Assert;
@@ -81,6 +82,11 @@ public class UserManagerTest extends AndroidTestCase {
         Assert.assertEquals(mUserManager.logout(), UserManager.LOGOUT_SUCCESS);
 
         Assert.assertEquals(mUserManager.login("15510472558", "1234567"), UserManager.INVALID_USERNAME_PASSWORD);
+    }
+
+    public void testGetUser()
+    {
+       Assert.assertTrue(User.NULL!=mUserManager.getUserInfo("15510472558"));
     }
 
 }

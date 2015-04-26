@@ -144,4 +144,9 @@ public class TestUserServer implements IUserServer {
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public User getUserInfo(String username) {
+        return null;
+    }
 }

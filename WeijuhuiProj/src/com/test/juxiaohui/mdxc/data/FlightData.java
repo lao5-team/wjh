@@ -24,10 +24,8 @@ import org.json.JSONObject;
  */
 public class FlightData {
     public static SimpleDateFormat FORMAT_SEARCH = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static SimpleDateFormat FORMAT_ORDER = new SimpleDateFormat("yyyyMMdd");
-    public static int TRIP_ONE_WAY = 0;
-    public static int TRIP_ROUND = 1;
-    public static int TRIP_MULTI_CITY = 2;
+    public static SimpleDateFormat FORMAT_ORDER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 
     private String mId = "";
     public String mNumber = "";
@@ -42,7 +40,7 @@ public class FlightData {
     public Date mFromTime;
     public Date mToTime;
     public String mDurTime = "60";
-    public int mTripType = TRIP_ONE_WAY;
+    public int mTripType = FlightOrder.TRIP_ONE_WAY;
 
     public static FlightData NULL = new FlightData();
 
@@ -101,9 +99,9 @@ public class FlightData {
                 flightData.mPrice.mTicketPrice = Float
                         .valueOf(jsonObject.getString("price"));
                 if (jsonObject.getString("trip_type").equals("depart")) {
-                    flightData.mTripType = FlightData.TRIP_ONE_WAY;
+                    flightData.mTripType = FlightOrder.TRIP_ONE_WAY;
                 } else if (jsonObject.getString("trip_type").equals("return")) {
-                    flightData.mTripType = FlightData.TRIP_ROUND;
+                    flightData.mTripType = FlightOrder.TRIP_ROUND;
                 }
             }
         } catch (JSONException e) {
@@ -130,9 +128,9 @@ public class FlightData {
             jsonObject.put("duration", flightData.mDurTime);
             if (flightData.mPrice != null) {
                 jsonObject.put("price", flightData.mPrice.mTicketPrice);
-                if (flightData.mTripType == FlightData.TRIP_ONE_WAY) {
+                if (flightData.mTripType == FlightOrder.TRIP_ONE_WAY) {
                     jsonObject.put("trip_type", "depart");
-                } else if (flightData.mTripType == FlightData.TRIP_ROUND) {
+                } else if (flightData.mTripType == FlightOrder.TRIP_ROUND) {
                     jsonObject.put("trip_type", "return");
                 }
             }
@@ -189,6 +187,10 @@ public class FlightData {
         try {
             JSONArray array = new JSONArray();
             for (FlightData flight : listFlightData) {
+                if(flight==FlightData.NULL)
+                {
+                    break;
+                }
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("flight", flight.mNumber);
                 jsonObject.put("departTime", FORMAT_ORDER.format(flight.mFromTime));

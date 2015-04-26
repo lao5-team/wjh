@@ -163,4 +163,28 @@ public class UserServer implements IUserServer {
 		caller.execute();
 	}
 
+	@Override
+	public User getUserInfo(final String username) {
+		String url = "http://64.251.7.148/user/app/user/index.json";
+		List params=new ArrayList();
+		params.add(new BasicNameValuePair("user.mobilePhone", username));
+		SyncHTTPCaller<User> caller = new SyncHTTPCaller<User>(
+				url, null, params) {
+			@Override
+			public User postExcute(String result) {
+				User resultObj = new User();
+				try {
+					JSONObject json = new JSONObject(result);
+					json = json.getJSONObject("user");
+					resultObj.setId(json.getString("id"));
+					resultObj.setUsername(username);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return resultObj;
+			}
+		};
+		return caller.execute();
+	}
+
 }

@@ -75,14 +75,16 @@ public class PassengerListAdapter extends BaseAdapter {
 			holder.checkView = (ImageView) convertView.findViewById(R.id.iv_check);
 			holder.checkSection = (LinearLayout) convertView.findViewById(R.id.view_check_section);
 			holder.checkSection.setTag(position);
+
 			holder.checkSection.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View arg0) {
 					// TODO Auto-generated method stub
 					int p = (Integer) arg0.getTag();
-					mPassengersList.get(p).mIsSelected = true;
+					mPassengersList.get(p).mIsSelected = !mPassengersList.get(p).mIsSelected;
 					notifyDataSetChanged();
+
 				}
 			});
 			holder.editView = (ImageView) convertView.findViewById(R.id.iv_edit);

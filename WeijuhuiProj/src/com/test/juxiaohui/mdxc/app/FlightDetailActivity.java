@@ -73,7 +73,7 @@ public class FlightDetailActivity extends Activity implements
 		TextView tvBottomPrice = (TextView)mBottomBar.findViewById(R.id.tv_bottom_price);
 		tvBottomPrice.setText("7,673");
 		
-		Button btnBottomSelect = (Button)mBottomBar.findViewById(R.id.btn_bottom_select);
+		Button btnBottomSelect = (Button)mBottomBar.findViewById(R.id.btn_bottom_submit);
 		btnBottomSelect.setText("预定");
 		btnBottomSelect.setOnClickListener(new OnClickListener() {
 			

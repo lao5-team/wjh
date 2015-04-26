@@ -1,5 +1,10 @@
 package com.test.juxiaohui.mdxc.data;
 
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import com.test.juxiaohui.R;
 import junit.framework.Assert;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,7 +19,14 @@ import java.util.List;
  * Created by yihao on 15/4/18.
  */
 public class FlightOrder {
+    /**
+     * 定义订单来源
+     */
     public static int SOURCE_ANDROID = 11;
+
+    /**
+     * 定义航班类型
+     */
     public static int TRIP_ONE_WAY = 0;
     public static int TRIP_ROUND = 1;
     public static int TRIP_MULTI_CITY = 2;
@@ -34,12 +46,17 @@ public class FlightOrder {
         Assert.assertNotNull(contactUser);
 
         Assert.assertNotNull(passengerList);
+
+        mFlightdataList.add(FlightData.NULL);
+        mFlightdataList.add(FlightData.NULL);
     }
 
     public FlightOrder(int tripType)
     {
         Assert.assertTrue(tripType>=TRIP_ONE_WAY&&tripType<=TRIP_MULTI_CITY);
         mTripType = tripType;
+        mFlightdataList.add(FlightData.NULL);
+        mFlightdataList.add(FlightData.NULL);
     }
 
     /**
@@ -93,6 +110,26 @@ public class FlightOrder {
     public int getTripType()
     {
         return mTripType;
+    }
+
+    public void setStartFlightData(FlightData data)
+    {
+        mFlightdataList.set(0, data);
+    }
+
+    public void setReturnFlightData(FlightData data)
+    {
+        mFlightdataList.set(1, data);
+    }
+
+    public FlightData getStartFlightData()
+    {
+        return mFlightdataList.get(0);
+    }
+
+    public FlightData getReturnFlightData()
+    {
+        return mFlightdataList.get(1);
     }
 
     public static FlightOrder fromJSON(JSONObject object)
@@ -182,6 +219,26 @@ public class FlightOrder {
             e.printStackTrace();
         }
         return order;
+    }
+
+    public static View getView(Context context, LayoutInflater inflator, View convertView, FlightOrder data)
+    {
+        View view = inflator.inflate(R.layout.item_flight_order, null);
+        TextView tvFlight = (TextView) view.findViewById(R.id.textView_flight);
+        if(data.mTripType == FlightOrder.TRIP_ONE_WAY)
+        {
+            tvFlight.setText("From " + data.getStartFlightData().mFromCity + " To " + data.getStartFlightData().mToCity);
+        }
+        else if(data.mTripType == FlightOrder.TRIP_ROUND)
+        {
+            tvFlight.setText("From " + data.getStartFlightData().mFromCity + " To " + data.getReturnFlightData().mToCity);
+        }
+        TextView tvDepart = (TextView) view.findViewById(R.id.textView_depart);
+        tvDepart.setText(FlightData.FORMAT_ORDER.format(data.getStartFlightData().mFromTime));
+
+        TextView tvState = (TextView) view.findViewById(R.id.textView_state);
+        tvState.setText("Order Submitted");
+        return view;
     }
 
     private FlightOrder()
