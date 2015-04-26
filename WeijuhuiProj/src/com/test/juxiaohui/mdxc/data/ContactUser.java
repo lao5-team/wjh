@@ -12,6 +12,15 @@ public class ContactUser {
     public String mLastName = "";
     public String mEmail = "";
     public String mPhoneNumber = "";
+    public String contactName = "";
+    public String contCountryCode = "";
+    public String contPhone = "";
+    public String contEmail = "";
+    public String recipient = "";
+    public String reciPhone = "";
+    public String reciAddress = "";
+    public String reciPostalCode = "";
+    public String pickUpTime = "";
 
     public static ContactUser NULL = new ContactUser();
 

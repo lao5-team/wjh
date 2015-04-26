@@ -80,7 +80,7 @@ public class FlightSearchResultActivity extends Activity implements ISearchResul
 
     @Override
     public void selectOneFlight(FlightData data) {
-    	 FlightOrderActivity.startActivity(data.mId,null, this);	
+    	 FlightOrderActivity.startActivity(data.getId(),null, this);
     }
 
 	@Override
@@ -96,7 +96,7 @@ public class FlightSearchResultActivity extends Activity implements ISearchResul
 				
 				@Override
 				public void run() {
-					mFlightsList = ServerManager.getInstance().flightSearch(mRequest, FlightData.BEHAVIOR_TYPE.DOMISTIC);
+					mFlightsList = ServerManager.getInstance().flightSearch(mRequest, 1);
 					runOnUiThread(new Runnable() {
 						
 						@Override

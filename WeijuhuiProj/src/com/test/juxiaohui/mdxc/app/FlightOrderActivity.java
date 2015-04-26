@@ -60,7 +60,7 @@ public class FlightOrderActivity extends Activity implements
 		setContentView(mSelf);	
 		List<Passenger> passengers= ServerManager.getInstance().getAllPassengers();
 		setFlightData(ServerManager.getInstance().getFlightData( getIntent().getStringExtra("form_id")),
-						ServerManager.getInstance().getFlightData( getIntent().getStringExtra("to_id")));	
+						ServerManager.getInstance().getFlightData( getIntent().getStringExtra("to_id")));
 		addFlightView();
 		addPassengerView();
 		addPriceView();
@@ -99,29 +99,31 @@ public class FlightOrderActivity extends Activity implements
 		mTvPerTaxCurrency = null;
 		mTvTotalPrice = null;
 		//机票单价
-		mTvPerAireFarePrice = (TextView) mSelf.findViewById(R.id.tv_per_price);
-		temp = isOneWay? String.valueOf(mFromData.mPrize.mTicketPrize):String.valueOf(mFromData.mPrize.mTicketPrize + mToData.mPrize.mTicketPrize);
+
+		mTvPerAireFarePrice = (TextView) this.findViewById(R.id.tv_per_price);
+		temp = isOneWay? String.valueOf(mFromData.mPrice.mTicketPrice):String.valueOf(mFromData.mPrice.mTicketPrice + mToData.mPrice.mTicketPrice);
 		mTvPerAireFarePrice.setText(temp);	
 		//机票单价币种
-		mTvPerAireFareCurrency = (TextView) mSelf.findViewById(R.id.tv_per_price_currency);
-		temp = String.valueOf(mFromData.mPrize.mCurrency);
+		mTvPerAireFareCurrency = (TextView) this.findViewById(R.id.tv_per_price_currency);
+		temp = String.valueOf(mFromData.mPrice.mCurrency);
 		mTvPerAireFareCurrency.setText(temp);
 		//税费单价
-		mTvPerTaxPrice = (TextView) mSelf.findViewById(R.id.tv_tax);
-		temp = isOneWay? String.valueOf(mFromData.mPrize.mTax):String.valueOf(mFromData.mPrize.mTax + mToData.mPrize.mTax);
+		mTvPerTaxPrice = (TextView) this.findViewById(R.id.tv_tax);
+		temp = isOneWay? String.valueOf(mFromData.mPrice.mTax):String.valueOf(mFromData.mPrice.mTax + mToData.mPrice.mTax);
 		mTvPerTaxPrice.setText(temp);
 		//税费单价币种
-		mTvPerTaxCurrency = (TextView) mSelf.findViewById(R.id.tv_tax_currency);
-		temp = String.valueOf(mFromData.mPrize.mCurrency);
+		mTvPerTaxCurrency = (TextView) this.findViewById(R.id.tv_tax_currency);
+		temp = String.valueOf(mFromData.mPrice.mCurrency);
+
 		mTvPerTaxCurrency.setText(temp);
 		//总价
 		mTvTotalPrice = (TextView) mSelf.findViewById(R.id.tv_amount_with_current_currency);
 		if(isOneWay)
-			mTvTotalPrice.setText("RMB" + (mFromData.mPrize.mTicketPrize + mFromData.mPrize.mTax));
+			mTvTotalPrice.setText("RMB" + (mFromData.mPrice.mTicketPrice + mFromData.mPrice.mTax));
 		else
 			mTvTotalPrice.setText("RMB" + 
-									(mFromData.mPrize.mTicketPrize + mFromData.mPrize.mTax + 
-											mToData.mPrize.mTicketPrize + mToData.mPrize.mTax));
+									(mFromData.mPrice.mTicketPrice + mFromData.mPrice.mTax +
+											mToData.mPrice.mTicketPrice + mToData.mPrice.mTax));
 
 	}
 

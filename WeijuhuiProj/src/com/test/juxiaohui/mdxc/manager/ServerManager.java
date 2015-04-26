@@ -10,7 +10,6 @@ import com.test.juxiaohui.common.dal.IUserServer;
 import com.test.juxiaohui.mdxc.data.CityData;
 import com.test.juxiaohui.mdxc.data.FlightData;
 import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
-import com.test.juxiaohui.mdxc.data.FlightData.BEHAVIOR_TYPE;
 import com.test.juxiaohui.mdxc.data.Passenger;
 import com.test.juxiaohui.mdxc.server.*;
 
@@ -49,7 +48,7 @@ public class ServerManager {
     }
     
 	public List<FlightData> flightSearch(FlightSearchRequest request,
-			BEHAVIOR_TYPE type) {
+                                         int type) {
 		return mFlightManager.flightSearch(request, type);
 
 	}

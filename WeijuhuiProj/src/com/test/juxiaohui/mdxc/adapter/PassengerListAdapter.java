@@ -119,14 +119,14 @@ public class PassengerListAdapter extends BaseAdapter {
 			holder = (PassengerHoler) convertView.getTag();
 		}
 		
-		holder.title.setText(data.mFirstName + "/" + data.mLastName);
-		switch(data.mIdType)
+		holder.title.setText(data.mName);
+		if(data.mIdType.equals(Passenger.ID_TYPE_ID))
 		{
-		case Passenger.ID_TYPE_ID:
-			holder.subTitle.setText("ID " + data.mIdNumber);
-			break;
-		case Passenger.ID_TYPE_PASSPORT:
-			holder.subTitle.setText("PASSPORT " + data.mIdNumber);
+			holder.subTitle.setText("ID " + data.mIdNo);
+		}
+		else if(data.mIdType.equals(Passenger.ID_TYPE_PASSPORT))
+		{
+			holder.subTitle.setText("PASSPORT " + data.mIdNo);
 		}
 		
 		if(mPassengersList.get(position).mIsSelected)

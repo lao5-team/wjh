@@ -4,18 +4,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.test.juxiaohui.common.data.User;
+import com.test.juxiaohui.mdxc.data.*;
+import com.test.juxiaohui.mdxc.manager.UserManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.common.dal.IFlightServer;
-import com.test.juxiaohui.mdxc.data.FlightData;
-import com.test.juxiaohui.mdxc.data.FlightSearchRequest;
-import com.test.juxiaohui.mdxc.data.PrizeData;
 import com.test.juxiaohui.utils.SyncHTTPCaller;
 
 /**
@@ -37,7 +39,7 @@ public class FlightServer implements IFlightServer {
 	 */
 	@Override
 	public List<FlightData> flightSearch(FlightSearchRequest request,
-			FlightData.BEHAVIOR_TYPE type) {
+			int type) {
 		String url = "http://64.251.7.148/flight/list?";
 		url += "from=" + request.mDepartCode;
 		url += "&to=" + request.mArrivalCode;
@@ -111,27 +113,7 @@ public class FlightServer implements IFlightServer {
 					for (int i = 0; i < flights.length(); i++) {
 						JSONObject jsonObject = flights.getJSONObject(flights
 								.names().getString(i));
-
 						resultObjects.add(FlightData.fromJSON(jsonObject));
-						FlightData flightData = new FlightData();
-						flightData.mId = jsonObject.getString("number");
-						flightData.mAirlineName = jsonObject
-								.getString("airline");
-						flightData.mFromCity = jsonObject.getString("fromCity");
-						flightData.mToCity = jsonObject.getString("toCity");
-						flightData.mFromCode = jsonObject
-								.getString("fromAirport");
-						flightData.mToCode = jsonObject.getString("toAirport");
-						flightData.mFromTime = jsonObject.getString("fromTime");
-						flightData.mToTime = jsonObject.getString("toTime");
-						flightData.mDurTime = jsonObject.getString("duration");
-						if (jsonObject.has("price")) {
-							flightData.mPrize = new PrizeData();
-							flightData.mPrize.mTicketPrize = Float
-									.valueOf(jsonObject.getString("price"));
-							flightData.mPrize.mCurrency = jsonObject.getString("currency");
-						}
-						resultObjects.add(flightData);
 					}
 
 				} catch (JSONException e) {
@@ -154,7 +136,7 @@ public class FlightServer implements IFlightServer {
 	 */
 	@Override
 	public FlightData bookabilityRequest(FlightData data,
-			FlightData.BEHAVIOR_TYPE type) {
+			int type) {
 		return null;
 	}
 
@@ -168,59 +150,136 @@ public class FlightServer implements IFlightServer {
 	 */
 	@Override
 	public FlightData repricingRequest(FlightData data,
-			FlightData.BEHAVIOR_TYPE type) {
+			int type) {
 		return null;
 	}
 
 	/**
 	 * 生成订单
-	 * 
+	 *
 	 * @param data
-	 * @param type
-	 *            BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
+	 * @param type BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
 	 * @return
 	 */
 	@Override
-	public FlightData createOrder(FlightData data, FlightData.BEHAVIOR_TYPE type) {
+	public FlightData createOrder(FlightData data, int type) {
 		return null;
 	}
 
+
 	/**
 	 * 提交订单
-	 * 
-	 * @param data
-	 * @param type
-	 *            BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
-	 * @return
+	 *
+	 * @param order
+	 * @return 如果提交订单成功，则返回一个有效的id，否则返回""
 	 */
 	@Override
-	public FlightData submitOrder(FlightData data, FlightData.BEHAVIOR_TYPE type) {
-		return null;
+	public String submitOrder(FlightOrder order) {
+
+		String url = "http://www.bookingmin.com/orders/new?";
+		ContactUser contactUser = UserManager.getInstance().getContactUser();
+		List params = new ArrayList();
+		params.add(new BasicNameValuePair("amount", ""+order.getAmount()));
+		params.add(new BasicNameValuePair("userId", UserManager.getInstance().getCurrentUser().getId()));
+		params.add(new BasicNameValuePair("tripType", order.mTripType + ""));
+		//接口调用源
+		//* order source, 0:websit,10: mobile explorer,11:android app,12:ios app,3:others
+		params.add(new BasicNameValuePair("source", "11"));
+		params.add(new BasicNameValuePair("contactName", contactUser.contactName));
+		params.add(new BasicNameValuePair("contCountryCode", contactUser.contCountryCode));
+		params.add(new BasicNameValuePair("contPhone", contactUser.contPhone));
+		params.add(new BasicNameValuePair("contEmail", contactUser.contEmail));
+/*		params.add(new BasicNameValuePair("recipient", "zhuxinze"));
+		params.add(new BasicNameValuePair("reciPhone", "13466718731"));
+		params.add(new BasicNameValuePair("reciAddress", "中国"));
+		params.add(new BasicNameValuePair("reciPostalCode", "10086"));
+		params.add(new BasicNameValuePair("pickUpTime", "20150501"));
+		params.add(new BasicNameValuePair("specialReq", "test"));
+		params.add(new BasicNameValuePair("receiveTime", "20150501"));*/
+
+		params.add(new BasicNameValuePair("trips", FlightData.convertToOrderParams(order.mFlightdataList).toString()));
+		params.add(new BasicNameValuePair("passengers", Passenger.converToOrderParams(order.mListPassenger).toString()));
+		SyncHTTPCaller<String> caller;
+		caller = new SyncHTTPCaller<String>(url, "", params) {
+
+			@Override
+			public String postExcute(String result) {
+				String resultObj = null;
+				try {
+					JSONObject json = new JSONObject(result);
+					resultObj = json.getString("status");
+					if(resultObj.equals("200"))
+					{
+						return "Success";
+					}
+					else
+					{
+						return "Fail";
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+					return "Fail";
+				}
+
+			}
+		};
+		return caller.execute();
 	}
 
 	/**
 	 * 取消订单
-	 * 
-	 * @param data
-	 * @param type
-	 *            BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
-	 * @return
+	 *
+	 * @param id 订单id
+	 * @return 执行结果 CANCEL_SUCCESS 或者是CANCEL_FAILED
 	 */
 	@Override
-	public FlightData cancelOrder(FlightData data, FlightData.BEHAVIOR_TYPE type) {
-		return null;
+	public String cancelOrder(String id) {
+		String url = "http://www.bookingmin.com/orders/cancel?id="+id;
+		SyncHTTPCaller<String> caller = new SyncHTTPCaller<String>(url, null, null, SyncHTTPCaller.TYPE_GET) {
+			@Override
+			public String postExcute(String result) {
+				if(result.equals("success"))
+				{
+					return IFlightServer.CANCEL_SUCCESS;
+				}
+				else{
+					return IFlightServer.CANCEL_FAILED;
+				}
+			}
+		};
+
+		return caller.execute();
 	}
 
 	/**
 	 * 订单列表查询
-	 * 
-	 * @param data
-	 * @return
+	 *
+	 * @param user_id 用户id
+	 * @return 当前用户的机票订单列表
 	 */
 	@Override
-	public FlightData queryOrderList(FlightData data) {
-		return null;
+	public List<FlightOrder> queryOrderList(String user_id) {
+		String url = "http://www.bookingmin.com/orders/cancel?id="+user_id;
+		SyncHTTPCaller<List<FlightOrder>> caller = new SyncHTTPCaller<List<FlightOrder>>(url, null, null, SyncHTTPCaller.TYPE_GET) {
+			@Override
+			public List<FlightOrder> postExcute(String result) {
+				List<FlightOrder> listOrders = new ArrayList<FlightOrder>();
+				try {
+					JSONArray jsonArray = new JSONArray(result);
+					for(int i=0; i<jsonArray.length(); i++){
+						FlightOrder order = FlightOrder.fromJSON(jsonArray.getJSONObject(i));
+						listOrders.add(order);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return listOrders;
+			}
+		};
+
+		return caller.execute();
 	}
+
 
 	/**
 	 * 订单详情查询
@@ -232,7 +291,7 @@ public class FlightServer implements IFlightServer {
 	 */
 	@Override
 	public FlightData queryOrderDetail(FlightData data,
-			FlightData.BEHAVIOR_TYPE type) {
+			int type) {
 		return null;
 	}
 
@@ -248,7 +307,7 @@ public class FlightServer implements IFlightServer {
 			return FlightData.NULL;
 		for(FlightData data:mFlightDataList)
 		{
-			if(id.equalsIgnoreCase(data.mId))
+			if(id.equalsIgnoreCase(data.getId()))
 				return data;
 		}
 		return FlightData.NULL;

@@ -52,22 +52,22 @@ public class UserManagerTest extends AndroidTestCase {
         List<Passenger> listPassenger = new ArrayList<Passenger>();
         Passenger passenger = new Passenger();
         passenger.mId = "1";
-        passenger.mFirstName = "a";
+        passenger.mName = "a";
         listPassenger.add(passenger);
         passenger = new Passenger();
         passenger.mId = "2";
-        passenger.mFirstName = "b";
+        passenger.mName = "b";
         listPassenger.add(passenger);
 
         mUserManager.setPassengerList(listPassenger);
-        Assert.assertEquals(mUserManager.getPassengerById("1").mFirstName, "a");
+        Assert.assertEquals(mUserManager.getPassengerById("1").mName, "a");
 
         mUserManager.logout();
         Assert.assertEquals(mUserManager.getPassengerList().size(), 0);
 
         mUserManager.login("15510472558", "123456");
         Assert.assertEquals(mUserManager.getPassengerList().size(), 2);
-        Assert.assertEquals(mUserManager.getPassengerById("1").mFirstName, "a");
+        Assert.assertEquals(mUserManager.getPassengerById("1").mName, "a");
 
 
     }

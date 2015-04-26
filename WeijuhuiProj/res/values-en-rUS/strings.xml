@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="CMONEY">C-Money</string>
- <string name="PASSPORT_DIGITS">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ</string>
+    <string name="PASSPORT_DIGITS">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ</string>
     <string name="TEMPERATURE">℃</string>
     <string name="UNIT_KM">km</string>
     <string name="UNIT_MI">mi</string>
