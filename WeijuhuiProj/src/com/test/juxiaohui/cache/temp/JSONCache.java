@@ -422,7 +422,18 @@ public class JSONCache extends SQLiteOpenHelper implements IListCache<String, JS
 	{
 		return mMap.size();
 	}
-	
+
+	/**
+	 * 清除缓存
+	 */
+	public void clear()
+	{
+		mMap.clear();
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(mName, null, null);
+		db.close();
+	}
+
 	private void put(String key, JSONObject value) {
 		if(null == key)
 		{

@@ -12,7 +12,9 @@ import java.util.concurrent.Future;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -22,11 +24,13 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 public abstract class SyncHTTPCaller<T> {
-	
+	public static int TYPE_POST = 0;
+	public static int TYPE_GET = 1;
 	String mURL;
 	String mCookie = "";
 	//String mEntity = null;
 	UrlEncodedFormEntity mEntity = null;
+	int mType = TYPE_POST;
 	public SyncHTTPCaller(String URL)
 	{
 		mURL = URL;
@@ -44,13 +48,7 @@ public abstract class SyncHTTPCaller<T> {
 		//mEntity = entity;
 	}
 	
-	public SyncHTTPCaller(String URL, String cookie, UrlEncodedFormEntity entity)
-	{
-		mURL = URL;
-		mCookie = cookie;
-		mEntity = entity;
-	}
-	
+
 	public SyncHTTPCaller(String URL, String cookie, List entity)
 	{
 		mURL = URL;
@@ -62,23 +60,34 @@ public abstract class SyncHTTPCaller<T> {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public SyncHTTPCaller(String URL, String cookie, List entity, int type)
+	{
+		this(URL, cookie, entity);
+		mType = type;
+
+	}
+
 	public T execute()
 	{
 		Callable<T> callable = new Callable<T>() {
 			@Override
 			public T call() throws Exception {
 				T result = null;
-				HttpPost post = new HttpPost(mURL);
-
-				if(mEntity!=null)
+				HttpRequestBase httpRequest = null;
+				if(mType == TYPE_POST)
 				{
-					post.setEntity(mEntity);
+					httpRequest = new HttpPost(mURL);
+					((HttpPost)httpRequest).setEntity(mEntity);
+				}
+				else if(mType == TYPE_GET)
+				{
+					httpRequest = new HttpGet(mURL);
 				}
 
 				HttpResponse httpResponse;
 					try {
-						httpResponse = new DefaultHttpClient().execute(post);
+						httpResponse = new DefaultHttpClient().execute(httpRequest);
 						if (httpResponse.getStatusLine().getStatusCode() == 200) {
 							String str = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
 							result = postExcute(str);

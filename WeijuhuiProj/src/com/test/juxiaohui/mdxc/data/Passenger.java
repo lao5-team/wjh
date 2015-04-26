@@ -1,8 +1,10 @@
 package com.test.juxiaohui.mdxc.data;
 
-import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import junit.framework.Assert;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,21 +20,34 @@ import android.widget.TextView;
  * 用来表示旅客,既可以给机票使用，也可以给酒店使用
  */
 public class Passenger implements Comparable{
-	public static final int ID_TYPE_PASSPORT = 0;
-	public static final int ID_TYPE_ID = 1;
+	public static final String ID_TYPE_PASSPORT = "passport";
+	public static final String ID_TYPE_ID = "id";
 
 	public static Passenger NULL = new Passenger();
 	
 	public String mId = "";
-	public String mFirstName = "";
-	public String mLastName = "";
-	public int mIdType = ID_TYPE_PASSPORT;
-	public String mIdNumber = "";
-	
+	public String mName = ""; //"name"
+	public String mIdType = ID_TYPE_PASSPORT; //"idType"
+	public String mIdNo = ""; //"idNo"
+	public String mNationality = ""; //"nationality"
+	public String mAgeGroup = ""; //"age_group"
+	public String mGender = ""; //"gender" 0 male, 1 female
+	public String mBirthDay = ""; //"birthday"
+	public String mFreqFlyerProgram	= ""; //"freqFlyerProgram"
+	public String mFreqFlyerNo = ""; //"freqFlyerNo"
 	public static Passenger createTestPassenger()
 	{
 		Passenger passenger = new Passenger();
-		passenger.mId = UUID.randomUUID().toString();
+		passenger.mId = "0";
+		passenger.mName = "zhuxinze";
+		passenger.mIdType = ID_TYPE_PASSPORT;
+		passenger.mIdNo = "123456";
+		passenger.mNationality = "China";
+		passenger.mAgeGroup = "adult";
+		passenger.mGender = "0";
+		passenger.mBirthDay = "19990203";
+		passenger.mFreqFlyerProgram = "test";
+		passenger.mFreqFlyerNo = "test";
 		return passenger;
 	}
 	
@@ -42,10 +57,15 @@ public class Passenger implements Comparable{
 		try {
 			Passenger passenger = new Passenger();
 			passenger.mId = obj.getString("id");
-			passenger.mFirstName = obj.getString("firstName");
-			passenger.mLastName = obj.getString("lastName");
-			passenger.mIdType = obj.getInt("idtype");
-			passenger.mIdNumber = obj.getString("idNumber");
+			passenger.mName = obj.getString("name");
+			passenger.mIdType = obj.getString("idType");
+			passenger.mIdNo = obj.getString("idNo");
+			passenger.mNationality = obj.getString("nationality");
+			passenger.mAgeGroup = obj.getString("age_group");
+			passenger.mGender = obj.getString("gender");
+			passenger.mBirthDay = obj.getString("birthday");
+			passenger.mFreqFlyerProgram = obj.getString("freqFlyerProgram");
+			passenger.mFreqFlyerNo = obj.getString("freqFlyerNo");
 			return passenger;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -59,16 +79,30 @@ public class Passenger implements Comparable{
 		try {
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("id", passenger.mId);
-			jsonObj.put("firstName", passenger.mFirstName);
-			jsonObj.put("lastName", passenger.mLastName);
-			jsonObj.put("idtype", passenger.mIdType);
-			jsonObj.put("idNumber", passenger.mIdNumber);
+			jsonObj.put("name", passenger.mName);
+			jsonObj.put("idType", passenger.mIdType);
+			jsonObj.put("idNo", passenger.mIdNo);
+			jsonObj.put("nationality", passenger.mNationality);
+			jsonObj.put("age_group", passenger.mAgeGroup);
+			jsonObj.put("gender", passenger.mGender);
+			jsonObj.put("birthday", passenger.mBirthDay);
+			jsonObj.put("freqFlyerProgram", passenger.mFreqFlyerProgram);
+			jsonObj.put("freqFlyerNo", passenger.mFreqFlyerNo);
 			return jsonObj;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static JSONArray converToOrderParams(List<Passenger> listPassengers) {
+		Assert.assertNotNull(listPassengers);
+		JSONArray array = new JSONArray();
+		for (Passenger passenger : listPassengers) {
+			array.put(Passenger.toJSON(passenger));
+		}
+		return array;
 	}
 	
 	
@@ -78,7 +112,7 @@ public class Passenger implements Comparable{
     	View view = inflator.inflate(R.layout.item_passenger, null);
     	TextView tvName = (TextView) view.findViewById(R.id.textView_name);
     	TextView tvID = (TextView) view.findViewById(R.id.textView_ID);
-    	tvName.setText(passenger.mLastName + "/" + passenger.mFirstName);
+    	tvName.setText(passenger.mName);
     	if(passenger.mIdType == Passenger.ID_TYPE_ID)
     	{
     		tvID.setText("ID:"+passenger.mId);

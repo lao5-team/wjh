@@ -90,28 +90,28 @@ public class FlightOrderActivity extends Activity implements
 		String temp;
 		//机票单价
 		mTvPerAireFarePrice = (TextView) this.findViewById(R.id.tv_price);
-		temp = isOneWay? String.valueOf(mFromData.mPrize.mTicketPrize):String.valueOf(mFromData.mPrize.mTicketPrize + mToData.mPrize.mTicketPrize);
+		temp = isOneWay? String.valueOf(mFromData.mPrice.mTicketPrice):String.valueOf(mFromData.mPrice.mTicketPrice + mToData.mPrice.mTicketPrice);
 		mTvPerAireFarePrice.setText(temp);	
 		//机票单价币种
 		mTvPerAireFareCurrency = (TextView) this.findViewById(R.id.tv_price_currency);
-		temp = String.valueOf(mFromData.mPrize.mCurrency);
+		temp = String.valueOf(mFromData.mPrice.mCurrency);
 		mTvPerAireFareCurrency.setText(temp);
 		//税费单价
 		mTvPerTaxPrice = (TextView) this.findViewById(R.id.tv_tax);
-		temp = isOneWay? String.valueOf(mFromData.mPrize.mTax):String.valueOf(mFromData.mPrize.mTax + mToData.mPrize.mTax);
+		temp = isOneWay? String.valueOf(mFromData.mPrice.mTax):String.valueOf(mFromData.mPrice.mTax + mToData.mPrice.mTax);
 		mTvPerTaxPrice.setText(temp);
 		//税费单价币种
 		mTvPerTaxCurrency = (TextView) this.findViewById(R.id.tv_tax_currency);
-		temp = String.valueOf(mFromData.mPrize.mCurrency);
+		temp = String.valueOf(mFromData.mPrice.mCurrency);
 		mTvPerTaxCurrency.setText(temp);
 		//总价
 		mTvTotalPrice = (TextView) this.findViewById(R.id.tv_amount_with_current_currency);
 		if(isOneWay)
-			mTvTotalPrice.setText("RMB" + (mFromData.mPrize.mTicketPrize + mFromData.mPrize.mTax));
+			mTvTotalPrice.setText("RMB" + (mFromData.mPrice.mTicketPrice + mFromData.mPrice.mTax));
 		else
 			mTvTotalPrice.setText("RMB" + 
-									(mFromData.mPrize.mTicketPrize + mFromData.mPrize.mTax + 
-											mToData.mPrize.mTicketPrize + mToData.mPrize.mTax));
+									(mFromData.mPrice.mTicketPrice + mFromData.mPrice.mTax +
+											mToData.mPrice.mTicketPrice + mToData.mPrice.mTax));
 
 	}
 

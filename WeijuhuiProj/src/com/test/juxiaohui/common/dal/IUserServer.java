@@ -19,10 +19,15 @@ public interface IUserServer {
      * 登陆接口，登陆的结果用String返回
      * @param username
      * @param password
+     * @param user 用来将登录后的用户信息返回，主要是为了返回用户id
      * @return 返回登陆结果
      */
-    public String login(String username, String password);
+    public String login(String username, String password, User user);
 
+    /**
+     * 获取当前登录的用户
+     * @return
+     */
     public User getCurrentUser();
 
     public String logout();

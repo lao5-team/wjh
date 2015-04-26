@@ -20,17 +20,15 @@ public class TestPassengerServer implements IPassengerServer {
 		if(mCache.getSize()==0)
 		{
 			Passenger passenger = Passenger.createTestPassenger();
-			passenger.mFirstName = "Zhang";
-			passenger.mLastName = "Hao";
-			passenger.mIdNumber = "1234567";
+			passenger.mName = "ZhangHao";
+			passenger.mIdNo = "1234567";
 			passenger.mIdType = Passenger.ID_TYPE_ID;
 			
 			addPassenger(passenger);
 			
 			passenger = Passenger.createTestPassenger();
-			passenger.mFirstName = "Li";
-			passenger.mLastName = "Ming";
-			passenger.mIdNumber = "1234567";
+			passenger.mName = "LiMing";
+			passenger.mIdNo = "1234567";
 			passenger.mIdType = Passenger.ID_TYPE_PASSPORT;
 			addPassenger(passenger);
 		}

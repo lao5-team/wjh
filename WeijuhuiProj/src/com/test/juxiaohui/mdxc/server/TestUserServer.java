@@ -45,8 +45,17 @@ public class TestUserServer implements IUserServer {
         }
     }
 
+
+    /**
+     * 登陆接口，登陆的结果用String返回
+     *
+     * @param username
+     * @param password
+     * @param user     用来将登录后的用户信息返回，主要是为了返回用户id
+     * @return 返回登陆结果
+     */
     @Override
-     public String login(String username, final String password) {
+     public String login(String username, final String password,  User user) {
         mUsername = username;
         mPassword = password;
 

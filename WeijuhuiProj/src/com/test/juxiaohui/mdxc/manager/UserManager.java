@@ -67,7 +67,7 @@ public class UserManager {
     {
 		if(mCurrentUser==User.NULL)
 		{
-			String result = mUserServer.login(username, password);
+			String result = mUserServer.login(username, password, null);
 			if(result.equals("Success"))
 			{
 				User user = new User();
@@ -219,6 +219,11 @@ public class UserManager {
 		{
 			return Passenger.NULL;
 		}
+	}
+
+	public boolean isLogin()
+	{
+		return !mCurrentUser.equals(User.NULL);
 	}
 
 	/**

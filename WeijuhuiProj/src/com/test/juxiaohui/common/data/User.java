@@ -6,12 +6,12 @@ import org.json.JSONObject;
  * Created by yihao on 15/3/4.
  */
 public class User {
-    protected String mUsername = null;
-    protected String mPassword = null;
-    protected String mSex = null;
-    protected String mNickname = null;
-    protected String mPhoneNumber = null;
-
+    protected String mUsername = "";
+    protected String mPassword = "";
+    protected String mSex = "";
+    protected String mNickname = "";
+    protected String mPhoneNumber = "";
+    protected String mId = "";
     public static User NULL = new User()
     {
 
@@ -76,6 +76,11 @@ public class User {
     public User fromJSON(JSONObject json)
     {
         return null;
+    }
+
+    public String getId()
+    {
+        return mId;
     }
 
 

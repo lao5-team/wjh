@@ -41,7 +41,7 @@ public class FlightManager {
      * @param type    BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
      * @return
      */
-    public List<FlightData> flightSearch(FlightSearchRequest request, FlightData.BEHAVIOR_TYPE type) {
+    public List<FlightData> flightSearch(FlightSearchRequest request, int type) {
         List<FlightData> listFlightData = mServer.flightSearch(request, type);
         for(FlightData data:listFlightData)
         {
@@ -57,7 +57,7 @@ public class FlightManager {
      * @param type BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
      * @return
      */
-    public FlightData bookabilityRequest(FlightData data, FlightData.BEHAVIOR_TYPE type) {
+    public FlightData bookabilityRequest(FlightData data, int type) {
         return null;
     }
 
@@ -68,7 +68,7 @@ public class FlightManager {
      * @param type BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
      * @return
      */
-    public FlightData repricingRequest(FlightData data, FlightData.BEHAVIOR_TYPE type) {
+    public FlightData repricingRequest(FlightData data, int type) {
         return null;
     }
 
@@ -79,7 +79,7 @@ public class FlightManager {
      * @param type BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
      * @return
      */
-    public FlightData createOrder(FlightData data, FlightData.BEHAVIOR_TYPE type) {
+    public FlightData createOrder(FlightData data, int type) {
         return null;
     }
 
@@ -90,7 +90,7 @@ public class FlightManager {
      * @param type BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
      * @return
      */
-    public FlightData submitOrder(FlightData data, FlightData.BEHAVIOR_TYPE type) {
+    public FlightData submitOrder(FlightData data, int type) {
         return null;
     }
 
@@ -101,7 +101,7 @@ public class FlightManager {
      * @param type BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
      * @return
      */
-    public FlightData cancelOrder(FlightData data, FlightData.BEHAVIOR_TYPE type) {
+    public FlightData cancelOrder(FlightData data, int type) {
         return null;
     }
 
@@ -122,7 +122,7 @@ public class FlightManager {
      * @param type BEHAVIOR_TYPE.DOMISTIC or BEHAVIOR_TYPE.INTERNATIONAL
      * @return
      */
-    public FlightData queryOrderDetail(FlightData data, FlightData.BEHAVIOR_TYPE type) {
+    public FlightData queryOrderDetail(FlightData data, int type) {
         return null;
     }
 

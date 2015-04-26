@@ -63,8 +63,15 @@ public class UserServer implements IUserServer {
 		return caller.execute();
 	}
 
+	/**
+	 * 登录
+	 * @param username
+	 * @param password
+	 * @param user 用来将登录后的用户信息返回，主要是为了返回一个id
+	 * @return
+	 */
 	@Override
-	public String login(String username, String password) {
+	public String login(String username, String password, User user) {
 		String url = "http://64.251.7.148/user/app/login/index.json";
 		List params=new ArrayList();
 		params.add(new BasicNameValuePair("userName", username));
@@ -80,6 +87,8 @@ public class UserServer implements IUserServer {
 					resultObj = json.getString("status");
 					if(resultObj.equals("200"))
 					{
+						//＃
+						//user.setId(id);
 						return "Success";
 					}
 					else
@@ -104,8 +113,9 @@ public class UserServer implements IUserServer {
 
 	@Override
 	public String logout() {
-		// TODO Auto-generated method stub
-		String url = "http://64.251.7.148:8081/user-web/app/login/logout";
+		return "Success";
+
+		/*String url = "http://64.251.7.148:8081/user-web/app/login/logout";
 		SyncHTTPCaller<String> caller = new SyncHTTPCaller<String>(
 				url, null, "") {
 
@@ -127,7 +137,7 @@ public class UserServer implements IUserServer {
 				return resultObj;
 			}
 		};
-		return caller.execute();
+		return caller.execute();*/
 	}
 
 	@Override
