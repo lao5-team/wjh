@@ -1,5 +1,8 @@
 package com.test.juxiaohui.mdxc.data;
 
+
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +22,8 @@ import android.widget.TextView;
  * Created by yihao on 15/4/18.
  * 用来表示旅客,既可以给机票使用，也可以给酒店使用
  */
-public class Passenger implements Comparable{
+
+public class Passenger implements Comparable,Serializable{
 	public static final String ID_TYPE_PASSPORT = "passport";
 	public static final String ID_TYPE_ID = "id";
 
@@ -136,6 +140,15 @@ public class Passenger implements Comparable{
 	public int compareTo(Object another) {
 		Passenger passenger = (Passenger)another;
 		return mId.compareTo(passenger.mId);
+	}
+	
+	public static void clonePassenger(Passenger src, Passenger des)
+	{
+/*		des.mFirstName = src.mFirstName;
+		des.mId = src.mId;
+		des.mIdNumber = src.mIdNumber;
+		des.mIdType = src.mIdType;
+		des.mLastName = src.mLastName;	*/	
 	}
 }
 	

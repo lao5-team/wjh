@@ -130,6 +130,20 @@
 	
 	
 	<string name="cabin_class">Class</string>
+
+	<!--<string name="economy">Economy</string>-->
+	<!--<string name="business">Business</string>-->
+	<!--<string name="first">First</string>-->
+	<!---->
+	<!--<string name="done">Done</string>-->
+	<!--<string name="name">Name</string>-->
+	<!--<string name="first_name">First Name</string>-->
+	<!--<string name="last_name">Last Name</string>-->
+	<string name="ID">ID</string>
+	<!--<string name="number">Number</string>-->
+	<!--<string name="passport">Passport</string>-->
+	<string name="identity_card_ID">Identity card ID</string>
+
     <string name="CMONEY">C-Money</string>
     <string name="PASSPORT_DIGITS">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ</string>
     <string name="TEMPERATURE">℃</string>

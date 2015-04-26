@@ -205,6 +205,8 @@ public class FlightOrderActivity extends Activity implements
 	{
 		if(requestCode == REQ_SELECT_PASSENGER)
 		{
+			if(data == null)
+				return;
 			final ArrayList<String> ids = data.getStringArrayListExtra("passenger_ids");
 			Thread t = new Thread(new Runnable() {
 				

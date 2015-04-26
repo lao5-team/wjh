@@ -29,19 +29,19 @@ public class UserManagerTest extends AndroidTestCase {
 
         mUserManager.login("15510472558", "123456");
         contactUser  = new ContactUser();
-        contactUser.mFirstName = "Yi";
-        contactUser.mLastName = "Hao";
-        contactUser.mEmail = "yhchinabest@163.com";
-        contactUser.mPhoneNumber = "15510472558";
+        contactUser.contactName = "Yi";
+        //contactUser.mLastName = "Hao";
+        contactUser.contEmail = "yhchinabest@163.com";
+        contactUser.contPhone = "15510472558";
         mUserManager.setContactUser(contactUser);
 
         contactUser = mUserManager.getContactUser();
-        Assert.assertEquals("Yi", contactUser.mFirstName);
+        Assert.assertEquals("Yi", contactUser.contactName);
 
         mUserManager.logout();
         mUserManager.login("15510472558", "123456");
         contactUser = mUserManager.getContactUser();
-        Assert.assertEquals("Yi", contactUser.mFirstName);
+        Assert.assertEquals("Yi", contactUser.contactName);
     }
 
     public void testSetPassenger()

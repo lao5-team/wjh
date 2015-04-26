@@ -23,12 +23,25 @@ import org.json.JSONObject;
  * Created by yihao on 15/3/13.
  */
 public class FlightData {
+	
+	public static enum BEHAVIOR_TYPE
+	{
+		DOMISTIC, INTERNATIONAL
+	}
+
+	public static enum TRIP_TYPE
+	{
+		DEPART, RETURN
+	}
+	
+	public String mId = "";
+	public String mNumber = "";
+
     public static SimpleDateFormat FORMAT_SEARCH = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static SimpleDateFormat FORMAT_ORDER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
-    private String mId = "";
-    public String mNumber = "";
+
     public List<RouteData> mRoutes = new ArrayList<RouteData>();
     public String mAirlineName = "unknown airline";
     public String mAirlineLogoUrl = "";

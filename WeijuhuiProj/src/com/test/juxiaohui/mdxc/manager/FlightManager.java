@@ -31,7 +31,7 @@ public class FlightManager {
     {
         mServer = new FlightServer();
         mCache = new JSONCache(DemoApplication.applicationContext, "flightManager");
-        mCache.clear();
+   //     mCache.clear();
     }
 
     /**

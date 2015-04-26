@@ -191,6 +191,7 @@ public class UserManager {
 	{
 		if(mCurrentUser!=User.NULL)
 		{
+			loadPassengers();
 			return mPassengerList;
 		}
 		else
@@ -256,7 +257,7 @@ public class UserManager {
 	private void saveContactUser()
 	{
 		JSONCache jsonCache = new JSONCache(DemoApplication.applicationContext, "contact_" + mCurrentUser.getInnerName());
-		jsonCache.putItem(mContatctUser.mFirstName, ContactUser.toJSON(mContatctUser));
+		jsonCache.putItem(mContatctUser.contactName, ContactUser.toJSON(mContatctUser));
 	}
 
 	private void loadContactUser()

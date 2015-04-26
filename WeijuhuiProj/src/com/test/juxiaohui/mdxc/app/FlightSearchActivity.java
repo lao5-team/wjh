@@ -380,7 +380,7 @@ public class FlightSearchActivity extends Activity implements IFlightSearchMedia
      * @param cityType 0
      */
     @Override
-    public void openCities(int cityType) {
+	public void openCities(int cityType) {
     	Intent intent = new Intent(this,CitySearchActivity.class);
     	startActivityForResult(intent, cityType);
     }
