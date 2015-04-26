@@ -142,12 +142,16 @@
     <dimen name="common_titlebar_height">50dip</dimen>
     <dimen name="common_titlebar_backicon_size">25dip</dimen>
     <dimen name="common_titlebar_backicon_margin">12.5dip</dimen>
-    <dimen name="common_titlebar_markview_width">200dip</dimen>
+    <dimen name="common_titlebar_markview_width">210dip</dimen>
     
     <!-- passenger list -->
     <dimen name="passengerlist_confirmlayout_height">80dip</dimen>
     <dimen name="passengerlist_confirmbutton_height">60dip</dimen>
     <dimen name="passengerlist_confirmbutton_width">250dip</dimen>
+    
+    
+    <dimen name="size_40dip">40dip</dimen>
+    <dimen name="size_20dip">20dip</dimen>
     
 
 </resources>

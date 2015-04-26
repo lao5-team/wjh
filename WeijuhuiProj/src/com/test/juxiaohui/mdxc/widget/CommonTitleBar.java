@@ -17,7 +17,7 @@ public class CommonTitleBar extends LinearLayout
 	private LinearLayout mMarkLayout;
 	private LayoutInflater mInflater;
 	private RelativeLayout mSelf;
-	private RelativeLayout mTitleIconLayout;
+	private LinearLayout mTitleIconLayout;
 	
 	private Context mContext;
 	
@@ -35,7 +35,7 @@ public class CommonTitleBar extends LinearLayout
 		mSelf = (RelativeLayout) mInflater.inflate(R.layout.common_title_bar, null);
 		this.addView(mSelf);
 		mBackIcon = (ImageView) mSelf.findViewById(R.id.title_back);
-		mTitleIconLayout = (RelativeLayout) mSelf.findViewById(R.id.title_icon);
+		mTitleIconLayout = (LinearLayout) mSelf.findViewById(R.id.title_icon);
 		mMarkLayout = (LinearLayout) mSelf.findViewById( R.id.title_mark_view);
 		
 	}

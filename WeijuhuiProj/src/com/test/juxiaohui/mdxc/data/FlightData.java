@@ -30,7 +30,7 @@ public class FlightData {
 		DEPART, RETURN
 	}
 	
-	private String mId = "";
+	public String mId = "";
 	public String mNumber = "";
     public List<RouteData> mRoutes = new ArrayList<RouteData>();
     public String mAirlineName = "unknown airline";

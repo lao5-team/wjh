@@ -193,6 +193,7 @@ public class UserManager {
 	{
 		if(mCurrentUser!=User.NULL)
 		{
+			loadPassengers();
 			return mPassengerList;
 		}
 		else

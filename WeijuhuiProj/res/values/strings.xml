@@ -157,4 +157,11 @@
 	<string name="first">First</string>
 	
 	<string name="done">Done</string>
+	<string name="name">Name</string>
+	<string name="first_name">First Name</string>
+	<string name="last_name">Last Name</string>
+	<string name="ID">ID</string>
+	<string name="number">Number</string>
+	<string name="passport">Passport</string>
+	<string name="identity_card_ID">Identity card ID</string>
 </resources>
