@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -39,6 +40,8 @@ public class FlightOrderActivity extends Activity implements
 	
 	private boolean isOneWay;
 	
+	private LinearLayout mSelf;
+	private LayoutInflater mInflater;
 	
 	
 	public static void startActivity(String fromId,String toId, Context context)
@@ -52,17 +55,19 @@ public class FlightOrderActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_flight_book);	
+		mInflater = this.getLayoutInflater();
+		mSelf = (LinearLayout) mInflater.inflate(R.layout.activity_flight_book, null);
+		setContentView(mSelf);	
 		List<Passenger> passengers= ServerManager.getInstance().getAllPassengers();
 		setFlightData(ServerManager.getInstance().getFlightData( getIntent().getStringExtra("form_id")),
-						ServerManager.getInstance().getFlightData( getIntent().getStringExtra("to_id")));	
+						ServerManager.getInstance().getFlightData( getIntent().getStringExtra("to_id")));
 		addFlightView();
 		addPassengerView();
 		addPriceView();
-		for(Passenger passenger:passengers)
+/*		for(Passenger passenger:passengers)
 		{
 			addPassenger(passenger);
-		}
+		}*/
 	}
 	
 	@Override
@@ -88,12 +93,18 @@ public class FlightOrderActivity extends Activity implements
 	@Override
 	public void addPriceView() {
 		String temp;
+		mTvPerAireFarePrice = null;
+		mTvPerAireFareCurrency = null;
+		mTvPerTaxPrice = null;
+		mTvPerTaxCurrency = null;
+		mTvTotalPrice = null;
 		//机票单价
-		mTvPerAireFarePrice = (TextView) this.findViewById(R.id.tv_price);
+
+		mTvPerAireFarePrice = (TextView) this.findViewById(R.id.tv_per_price);
 		temp = isOneWay? String.valueOf(mFromData.mPrice.mTicketPrice):String.valueOf(mFromData.mPrice.mTicketPrice + mToData.mPrice.mTicketPrice);
 		mTvPerAireFarePrice.setText(temp);	
 		//机票单价币种
-		mTvPerAireFareCurrency = (TextView) this.findViewById(R.id.tv_price_currency);
+		mTvPerAireFareCurrency = (TextView) this.findViewById(R.id.tv_per_price_currency);
 		temp = String.valueOf(mFromData.mPrice.mCurrency);
 		mTvPerAireFareCurrency.setText(temp);
 		//税费单价
@@ -103,9 +114,10 @@ public class FlightOrderActivity extends Activity implements
 		//税费单价币种
 		mTvPerTaxCurrency = (TextView) this.findViewById(R.id.tv_tax_currency);
 		temp = String.valueOf(mFromData.mPrice.mCurrency);
+
 		mTvPerTaxCurrency.setText(temp);
 		//总价
-		mTvTotalPrice = (TextView) this.findViewById(R.id.tv_amount_with_current_currency);
+		mTvTotalPrice = (TextView) mSelf.findViewById(R.id.tv_amount_with_current_currency);
 		if(isOneWay)
 			mTvTotalPrice.setText("RMB" + (mFromData.mPrice.mTicketPrice + mFromData.mPrice.mTax));
 		else
