@@ -54,15 +54,6 @@ public class CabinClassDialog extends Dialog
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
-		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.dimAmount = 0.25f;
-		lp.alpha = 0.95f;
-		lp.width = dm.widthPixels;
-		getWindow().setAttributes(lp);
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-		Window window = this.getWindow();
-		window.setGravity(Gravity.BOTTOM);
 		//window.setType(Window.FEATURE_NO_TITLE);
 		initView();
 	}
@@ -72,8 +63,9 @@ public class CabinClassDialog extends Dialog
 	private void initView()
 	{
 		mInflater= LayoutInflater.from(mContext);
-		LayoutParams mainViewlp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);		
+		LayoutParams mainViewlp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);		
 		mMainView = (LinearLayout) mInflater.inflate(R.layout.dialog_cabin_class, null);
+		mMainView.setLayoutParams(mainViewlp);
 		mEconomyLayout = (RelativeLayout) mMainView.findViewById(R.id.economy_layout);
 		mEconomyLayout.setTag(ECONOMY);
 		mEconomyLayout.setOnClickListener(mOnClickListener);
@@ -155,6 +147,18 @@ public class CabinClassDialog extends Dialog
     	else
     		mCurrentClass = flag;
     	this.show();
+	
+    	DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+		WindowManager.LayoutParams lp = getWindow().getAttributes();
+		lp.dimAmount = 0.25f;
+		lp.alpha = 0.95f;
+		lp.width = dm.widthPixels;
+		getWindow().setAttributes(lp);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		Window window = this.getWindow();
+		window.getDecorView().setPadding(0, 0, 0, 0);
+		window.setGravity(Gravity.BOTTOM);
+
     }
 	
 	private View.OnClickListener mOnClickListener = new View.OnClickListener() {
