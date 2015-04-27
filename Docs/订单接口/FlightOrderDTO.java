@@ -8,12 +8,14 @@ import java.util.List;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 
+import com.travel.common.util.JsonDateValueProcessor;
 import com.travel.entity.flight.FlightOrder;
 import com.travel.entity.flight.FlightPassenger;
 import com.travel.entity.flight.FlightTrip;
@@ -128,14 +130,6 @@ public class FlightOrderDTO {
      */
     private String trips;
     
-    public String getTrips() {
-		return trips;
-	}
-
-	public void setTrips(String trips) {
-		this.trips = trips;
-	}
-
 	/**
      * passengers, data format:json
      * example:[{id:"123",name"zhu,xin,ze",nationality:"china",idType:"passport",idNo:"123456",
@@ -245,7 +239,7 @@ public class FlightOrderDTO {
      * @param trips
      * @return
      */
-    public String drawDTO(FlightOrder flightOrder, List<FlightPassenger> pass, List<FlightTrip> trips){
+    public JSONObject drawDTO(FlightOrder flightOrder, List<FlightPassenger> pass, List<FlightTrip> trips){
     	this.setAmount(flightOrder.getAmount());
     	this.setContactName(flightOrder.getContactName());
     	this.setContCountryCode(flightOrder.getContCountryCode());
@@ -259,7 +253,9 @@ public class FlightOrderDTO {
     	if(flightOrder.getPickUpTime()!=null){
     		this.setPickUpTime(this.format(flightOrder.getPickUpTime()));
     	}
-    	this.setReceiveTime(this.format(flightOrder.getReceiveTime()));
+    	if(flightOrder.getReceiveTime()!=null){
+    		this.setReceiveTime(this.format(flightOrder.getReceiveTime()));
+    	}
     	this.setReciAddress(flightOrder.getReciAddress());
     	this.setReciPhone(flightOrder.getReciPhone());
     	this.setRecipient(flightOrder.getRecipient());
@@ -271,22 +267,26 @@ public class FlightOrderDTO {
     	this.setUserId(flightOrder.getUserId());
     	JSONObject jsonRes = JSONObject.fromObject(this);
     	
+		JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(Date.class , new JsonDateValueProcessor());
     	if(CollectionUtils.isNotEmpty(pass)){
-    		JSONArray jsonArrayPass = JSONArray.fromObject(pass);
-    		jsonRes.accumulate("passengers", jsonArrayPass);
+    		JSONArray jsonArrayPass = JSONArray.fromObject(pass,jsonConfig);
+    		System.out.println(jsonArrayPass);
+    		jsonRes.put("passengers", jsonArrayPass);
     	}
     	
     	if(CollectionUtils.isNotEmpty(trips)){
-    		JSONArray jsonArrayTrips = JSONArray.fromObject(trips);
-    		jsonRes.accumulate("trips", jsonArrayTrips);
+    		JSONArray jsonArrayTrips = JSONArray.fromObject(trips,jsonConfig);
+    		System.out.println(jsonArrayTrips);
+    		jsonRes.put("trips", jsonArrayTrips);
     	}
-    	return jsonRes.toString();
+    	return jsonRes;
     }
     
     private Date parseDate(String date){
     	Date parseDate = null;
 		try {
-			parseDate = DateUtils.parseDate(date, new String[]{"yyyyMMddHHmmss","yyyyMMdd"});
+			parseDate = DateUtils.parseDate(date, new String[]{"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd"});
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -294,7 +294,7 @@ public class FlightOrderDTO {
     }
     
     private String format(Date date){
-    	String strRes = DateFormatUtils.format(date, "yyyyMMddHHmmss");
+    	String strRes = DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");
     	return strRes;
     }
     
@@ -312,24 +312,24 @@ public class FlightOrderDTO {
 //    	jsonObject.put("sortNo", "1");
 //    	System.out.println(jsonObject.toString());
         
-    	JSONObject jsonObject = new JSONObject();
-    	jsonObject.put("name", "zhu,xin,ze");
-    	jsonObject.put("nationality", "china");
-    	jsonObject.put("idType", "passport");
-    	jsonObject.put("idNo", "123456");
-    	jsonObject.put("age_group", "adult");
-    	jsonObject.put("gender", "0");
-    	jsonObject.put("birthday", "19990203");
-    	jsonObject.put("freqFlyerProgram", "test");
-    	jsonObject.put("freqFlyerNo", "test");
-    	System.out.println(jsonObject.toString());
+//    	JSONObject jsonObject = new JSONObject();
+//    	jsonObject.put("name", "zhu,xin,ze");
+//    	jsonObject.put("nationality", "china");
+//    	jsonObject.put("idType", "passport");
+//    	jsonObject.put("idNo", "123456");
+//    	jsonObject.put("age_group", "adult");
+//    	jsonObject.put("gender", "0");
+//    	jsonObject.put("birthday", "19990203");
+//    	jsonObject.put("freqFlyerProgram", "test");
+//    	jsonObject.put("freqFlyerNo", "test");
+//    	System.out.println(jsonObject.toString());
     	
-//		try {
-//			Date parseDate = DateUtils.parseDate("20150501", new String[]{"yyyyMMddHHmmss","yyyyMMdd"});
-//			System.out.println(parseDate);
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			Date parseDate = DateUtils.parseDate("2015-04-25 00:06:00", new String[]{"yyyy-MM-dd HH:mm:ss","yyyy-M-dd"});
+			System.out.println(parseDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
     	
 	}
 
@@ -484,6 +484,14 @@ public class FlightOrderDTO {
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
+    
+    public String getTrips() {
+		return trips;
+	}
+
+	public void setTrips(String trips) {
+		this.trips = trips;
+	}
 
 	public String getPassengers() {
 		return passengers;

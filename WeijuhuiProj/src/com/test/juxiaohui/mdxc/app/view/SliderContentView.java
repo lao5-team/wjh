@@ -257,7 +257,7 @@ public class SliderContentView extends RelativeLayout {
 			initScrollData();
 			init = true;
 		}
-		Log.d("qinyy", "lastTop : " + this.getTop() + "     lastLeft :" +  this.getLeft());
+		Log.d("MDXC", "lastTop : " + this.getTop() + "     lastLeft :" +  this.getLeft());
 		switch (ev.getAction())
 		{
 		case MotionEvent.ACTION_DOWN:
@@ -290,12 +290,12 @@ public class SliderContentView extends RelativeLayout {
 				this.layout(Math.round(leftbound), Math.round(topbound), Math.round(leftbound + orginWidth * currentWidthScale), Math.round( topbound + orginHeight*currentHeightScale));
 				mTempContentView.layout(0, 0, Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));
 				mFragmentHomeView.layout(0, 0, Math.round(orginWidth * currentWidthScale), Math.round(orginHeight*currentHeightScale));
-				Log.d("qinyy", "distanceX: " + distanceX + " distanceY:  " + (distanceX/moveScale) +"   l:" + leftbound + " t:" + topbound + " r:" +Math.round(leftbound + orginWidth * currentWidthScale) + " b" + Math.round( topbound + orginHeight*currentHeightScale));
+				Log.d("MDXC", "distanceX: " + distanceX + " distanceY:  " + (distanceX/moveScale) +"   l:" + leftbound + " t:" + topbound + " r:" +Math.round(leftbound + orginWidth * currentWidthScale) + " b" + Math.round( topbound + orginHeight*currentHeightScale));
 			}
 
 			break;
 		case MotionEvent.ACTION_UP:
-			Log.e("qinyy", "x - mDownActionX: " + (x - mDownActionX) + " time  " + (System.currentTimeMillis() - mDownActionTime) );
+			Log.e("MDXC", "x - mDownActionX: " + (x - mDownActionX) + " time  " + (System.currentTimeMillis() - mDownActionTime) );
 			if(x - mDownActionX > 50 && (System.currentTimeMillis() - mDownActionTime) < 100)
 				transformToMiniView(mSelf.getLeft(), mSelf.getTop(), (mSelf.getRight() - mSelf.getLeft()), (mSelf.getBottom() - mSelf.getTop()));
 			else if(mSelf.getLeft() <= (orginWidth/2))

@@ -31,6 +31,7 @@ public abstract class SyncHTTPCaller<T> {
 	//String mEntity = null;
 	UrlEncodedFormEntity mEntity = null;
 	int mType = TYPE_POST;
+	T mDefaultResult = null;
 	public SyncHTTPCaller(String URL)
 	{
 		mURL = URL;
@@ -72,12 +73,18 @@ public abstract class SyncHTTPCaller<T> {
 
 	}
 
+	public SyncHTTPCaller(String URL, String cookie, List entity, int type, T defaultValue)
+	{
+		this(URL, cookie, entity, type);
+		mDefaultResult = defaultValue;
+
+	}
+
 	public T execute()
 	{
 		Callable<T> callable = new Callable<T>() {
 			@Override
 			public T call() throws Exception {
-				T result = null;
 				HttpRequestBase httpRequest = null;
 				if(mType == TYPE_POST)
 				{
@@ -94,7 +101,7 @@ public abstract class SyncHTTPCaller<T> {
 						httpResponse = new DefaultHttpClient().execute(httpRequest);
 						if (httpResponse.getStatusLine().getStatusCode() == 200) {
 							String str = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-							result = postExcute(str);
+							mDefaultResult = postExcute(str);
 						}
 					} catch (ClientProtocolException e) {
 						e.printStackTrace();
@@ -102,7 +109,7 @@ public abstract class SyncHTTPCaller<T> {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					return result;
+					return mDefaultResult;
 				}
 
 		};

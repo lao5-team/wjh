@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -25,6 +26,8 @@ public class FlightOrdersView extends LinearLayout {
 
     private LayoutInflater mInflater;
     private ListView mLvFlightOrders;
+    private ImageButton mImageButton_back;
+    private RelativeLayout mLayoutProgress;
     public FlightOrdersView(Context context) {
         super(context);
         mContext = context;
@@ -36,6 +39,7 @@ public class FlightOrdersView extends LinearLayout {
                 ((Activity)mContext).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mLayoutProgress.setVisibility(View.INVISIBLE);
                         mLvFlightOrders.setAdapter(new CommonAdapter<FlightOrder>(listOrders, new IAdapterItem<FlightOrder>() {
                             @Override
                             public View getView(FlightOrder data, View convertView) {
@@ -58,5 +62,15 @@ public class FlightOrdersView extends LinearLayout {
         mContentLayout.setLayoutParams(params);
         this.addView(mContentLayout);
         mLvFlightOrders = (ListView)findViewById(R.id.listView_flight_orders);
+
+        mImageButton_back = (ImageButton)findViewById(R.id.imageButton_back);
+        mImageButton_back.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        mLayoutProgress = (RelativeLayout) findViewById(R.id.rl_progress);
     }
 }

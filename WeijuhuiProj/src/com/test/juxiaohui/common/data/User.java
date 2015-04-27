@@ -11,7 +11,7 @@ public class User {
     protected String mSex = "";
     protected String mNickname = "";
     protected String mPhoneNumber = "";
-    protected String mId = "0";
+    protected String mId = "18";
     public static User NULL = new User()
     {
 

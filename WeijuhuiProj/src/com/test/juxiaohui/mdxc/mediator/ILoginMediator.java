@@ -17,4 +17,8 @@ public interface ILoginMediator {
     public void confirm();
 
     public void cancel();
+
+    public void showProgress();
+
+    public void hideProgress();
 }

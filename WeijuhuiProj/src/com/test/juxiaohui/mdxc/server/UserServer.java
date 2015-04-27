@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.test.juxiaohui.mdxc.manager.UserManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
@@ -77,11 +78,11 @@ public class UserServer implements IUserServer {
 		params.add(new BasicNameValuePair("userName", username));
 		params.add(new BasicNameValuePair("password", password));
 		SyncHTTPCaller<String> caller = new SyncHTTPCaller<String>(
-				url, null, params) {
+				url, null, params, SyncHTTPCaller.TYPE_POST, "") {
 
 			@Override
 			public String postExcute(String result) {
-				String resultObj = null;
+				String resultObj = "Fail";
 				try {
 					JSONObject json = new JSONObject(result);
 					resultObj = json.getString("status");

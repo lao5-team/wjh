@@ -73,7 +73,7 @@ public class FlightOrderManager {
         {
             if(isTestMode)
             {
-                return mFlightServer.queryOrderList("0");
+                return mFlightServer.queryOrderList("18");
             }
             else
             {

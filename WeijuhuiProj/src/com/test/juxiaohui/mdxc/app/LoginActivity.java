@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.test.juxiaohui.DemoApplication;
 import com.test.juxiaohui.R;
@@ -26,20 +24,16 @@ public class LoginActivity extends Activity implements ILoginMediator{
     Button mBtnCancel;
     Button mBtnRegister;
     String mLoginResult = "";
+    RelativeLayout mLayoutSplash;
+    LinearLayout mLayoutContent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mdxc_activity_login);
-        Thread t= new Thread(new Runnable() {
-			@Override
-			public void run() {
-				//UserManager.getInstance().logout();
-				loginFromCache();
-				
-			}
-		});
-        t.start();
+        mLayoutSplash = (RelativeLayout) findViewById(R.id.rl_splash);
+        mLayoutContent = (LinearLayout) findViewById(R.id.ll_content);
+
         addUsernameView();
         addPasswordView();
 
@@ -58,6 +52,41 @@ public class LoginActivity extends Activity implements ILoginMediator{
                 cancel();
             }
         });
+
+        //当前未登录
+        showProgress();
+        if(!UserManager.getInstance().isLogin())
+        {
+            //之前登录过，从缓存中登录
+            if(isHasLoginCache()){
+
+                Thread t= new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loginFromCache();
+                        if(UserManager.getInstance().isLogin())
+                        {
+                            gotoNext();
+                        }
+                        else
+                        {
+                            hideProgress();
+                        }
+
+                    }
+                });
+                t.start();
+            }
+            else
+            {
+                //手动登录
+                hideProgress();
+            }
+
+        }
+        else{
+            gotoNext();
+        }
         
     }
 
@@ -77,19 +106,17 @@ public class LoginActivity extends Activity implements ILoginMediator{
      */
     @Override
     public void loginFromCache() {
-        String username = DemoApplication.getInstance().getUserName();
-        String password = DemoApplication.getInstance().getPassword();
-        if(null!=username && null!=password)
+        if(!UserManager.getInstance().isLogin())
         {
-            mLoginResult = UserManager.getInstance().login(username, password);
-            if(mLoginResult.equals(UserManager.LOGIN_SUCCESS))
+            String username = DemoApplication.getInstance().getUserName();
+            String password = DemoApplication.getInstance().getPassword();
+            if(null!=username && null!=password)
             {
-                EntryActivity.startActivity(LoginActivity.this);
-                finish();
-            }
-            else
-            {
-                showErrorMessage(mLoginResult);
+                mLoginResult = UserManager.getInstance().login(username, password);
+                if(!mLoginResult.equals(UserManager.LOGIN_SUCCESS))
+                {
+                    showErrorMessage(mLoginResult);
+                }
             }
         }
     }
@@ -149,6 +176,30 @@ public class LoginActivity extends Activity implements ILoginMediator{
         finish();
     }
 
+    @Override
+    public void showProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mLayoutSplash.setVisibility(View.VISIBLE);
+                mLayoutContent.setVisibility(View.INVISIBLE);
+            }
+        });
+
+    }
+
+    @Override
+    public void hideProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mLayoutSplash.setVisibility(View.INVISIBLE);
+                mLayoutContent.setVisibility(View.VISIBLE);
+            }
+        });
+
+    }
+
     public void showErrorMessage(final String message)
     {
         runOnUiThread(new Runnable() {
@@ -165,11 +216,23 @@ public class LoginActivity extends Activity implements ILoginMediator{
         return mLoginResult;
     }
 
-    
+
     public void onClickRegister(View view)
     {
     	Intent intent = new Intent(this, RegisterActivity.class);
     	startActivity(intent);
+    }
+
+    private boolean isHasLoginCache()
+    {
+        String username = DemoApplication.getInstance().getUserName();
+        String password = DemoApplication.getInstance().getPassword();
+        return (null!=username&&null!=password);
+    }
+
+    private void gotoNext(){
+        EntryActivity.startActivity(LoginActivity.this);
+        finish();
     }
 
 }

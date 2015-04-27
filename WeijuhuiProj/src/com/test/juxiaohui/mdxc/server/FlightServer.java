@@ -183,7 +183,7 @@ public class FlightServer implements IFlightServer {
 		params.add(new BasicNameValuePair("amount", ""+order.getAmount()));
 		if(isTestMode)
 		{
-			params.add(new BasicNameValuePair("userId", "0"));
+			params.add(new BasicNameValuePair("userId", "18"));
 		}
 		else
 		{
@@ -227,15 +227,7 @@ public class FlightServer implements IFlightServer {
 				String resultObj = null;
 				try {
 					JSONObject json = new JSONObject(result);
-					resultObj = json.getString("status");
-					if(resultObj.equals("200"))
-					{
-						return "Success";
-					}
-					else
-					{
-						return "Fail";
-					}
+					return json.getString("result");
 				} catch (JSONException e) {
 					e.printStackTrace();
 					return "Fail";
