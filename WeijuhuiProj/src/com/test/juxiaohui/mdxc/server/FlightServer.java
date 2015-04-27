@@ -24,7 +24,8 @@ import com.test.juxiaohui.utils.SyncHTTPCaller;
  * Created by yihao on 15/3/31.
  */
 public class FlightServer implements IFlightServer {
-	
+
+	private static boolean isTestMode = true;
 	private List<FlightData> mFlightDataList;
 	
 	/**
@@ -180,7 +181,14 @@ public class FlightServer implements IFlightServer {
 		ContactUser contactUser = UserManager.getInstance().getContactUser();
 		List params = new ArrayList();
 		params.add(new BasicNameValuePair("amount", ""+order.getAmount()));
-		params.add(new BasicNameValuePair("userId", UserManager.getInstance().getCurrentUser().getId()));
+		if(isTestMode)
+		{
+			params.add(new BasicNameValuePair("userId", "0"));
+		}
+		else
+		{
+			params.add(new BasicNameValuePair("userId", UserManager.getInstance().getCurrentUser().getId()));
+		}
 		params.add(new BasicNameValuePair("tripType", order.mTripType + ""));
 		//接口调用源
 		//* order source, 0:websit,10: mobile explorer,11:android app,12:ios app,3:others
@@ -198,7 +206,19 @@ public class FlightServer implements IFlightServer {
 		params.add(new BasicNameValuePair("receiveTime", "20150501"));*/
 
 		params.add(new BasicNameValuePair("trips", FlightData.convertToOrderParams(order.mFlightdataList).toString()));
-		params.add(new BasicNameValuePair("passengers", Passenger.converToOrderParams(order.mListPassenger).toString()));
+
+		if(isTestMode)
+		{
+			List<Passenger> listPassengers = new ArrayList<Passenger>();
+			listPassengers.add(Passenger.createTestPassenger());
+			listPassengers.add(Passenger.createTestPassenger());
+			params.add(new BasicNameValuePair("passengers", Passenger.converToOrderParams(listPassengers).toString()));
+		}
+		else
+		{
+			params.add(new BasicNameValuePair("passengers", Passenger.converToOrderParams(order.mListPassenger).toString()));
+		}
+
 		SyncHTTPCaller<String> caller;
 		caller = new SyncHTTPCaller<String>(url, "", params) {
 

@@ -39,7 +39,7 @@ public class SliderContentView extends RelativeLayout {
 	private RelativeLayout mSelf;
 	private FragmentHomeView mFragmentHomeView;
 	private SettingsView mSettingsView;
-	
+	private FlightOrdersView mFlightOrdersView;
 	private final int MINI_SCREEN = 0;
 	private final int FULL_SCREEN = 1;
 	
@@ -318,6 +318,17 @@ public class SliderContentView extends RelativeLayout {
 		switch(tag)
 		{
 		case EntryActivity.MY_ODERS:
+			mSelf.removeAllViews();
+			if(mFlightOrdersView == null)
+			{
+				mFlightOrdersView = new FlightOrdersView(mContext);
+				LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+				mFlightOrdersView.setLayoutParams(params);
+				mFlightOrdersView.setTag(EntryActivity.MY_ODERS);
+			}
+			mSelf.addView(mFlightOrdersView);
+			mSelf.layout(0, 0, Math.round(orginWidth), Math.round(orginHeight));
+			isRoot = false;
 			break;
 		case EntryActivity.VIEWED_HOTELS:
 			break;

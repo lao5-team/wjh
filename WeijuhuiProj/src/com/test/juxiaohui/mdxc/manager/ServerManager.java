@@ -57,21 +57,5 @@ public class ServerManager {
 	{
 		return mFlightManager.getFlightData(id);
 	}
-	
-	public void addPassenger(Passenger passenger)
-	{
-		mPassengerServer.addPassenger(passenger);
-	}
-	
-	public Passenger getPassenger(String id)
-	{
-		return mPassengerServer.getPassenger(id);
-	}
-	
-	public List<Passenger> getAllPassengers() {
-		return mPassengerServer.getAllPassengers();
-	}
-
-
 
 }

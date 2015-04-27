@@ -8,7 +8,7 @@ public class PriceData {
 	public static PriceData NULL = new PriceData();
 	public float mTicketPrice = 0;
 	public float mTax = 0;
-	public String mCurrency;
+	public String mCurrency = "RMB";
 	
 	public PriceData(float ticketPrize, float tax)
 	{

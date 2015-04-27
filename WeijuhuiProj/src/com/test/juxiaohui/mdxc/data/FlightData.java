@@ -50,8 +50,8 @@ public class FlightData {
     public String mToCity;
     public String mFromCode;
     public String mToCode;
-    public Date mFromTime;
-    public Date mToTime;
+    public Date mFromTime = new Date();
+    public Date mToTime = new Date();
     public String mDurTime = "60";
     public int mTripType = FlightOrder.TRIP_ONE_WAY;
 

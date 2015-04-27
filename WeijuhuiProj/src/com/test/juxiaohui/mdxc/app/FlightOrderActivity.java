@@ -213,7 +213,7 @@ public class FlightOrderActivity extends Activity implements
 				@Override
 				public void run() {
 					for (String id : ids) {
-						final Passenger passenger = ServerManager.getInstance().getPassenger(
+						final Passenger passenger = UserManager.getInstance().getPassengerById(
 								id);
 						runOnUiThread(new Runnable() {
 							@Override

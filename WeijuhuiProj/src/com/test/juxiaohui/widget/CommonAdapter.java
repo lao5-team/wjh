@@ -24,6 +24,8 @@ public class CommonAdapter<T> extends BaseAdapter {
 		mItem = item;
 	}
 
+
+
 	/**
 	 * 更新数据
 	 * @param dataList

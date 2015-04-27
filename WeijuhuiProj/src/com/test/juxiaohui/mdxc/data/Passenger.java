@@ -49,7 +49,7 @@ public class Passenger implements Comparable,Serializable{
 		passenger.mNationality = "China";
 		passenger.mAgeGroup = "adult";
 		passenger.mGender = "0";
-		passenger.mBirthDay = "19990203";
+		passenger.mBirthDay = "1999-02-03 12:00:00";
 		passenger.mFreqFlyerProgram = "test";
 		passenger.mFreqFlyerNo = "test";
 		return passenger;

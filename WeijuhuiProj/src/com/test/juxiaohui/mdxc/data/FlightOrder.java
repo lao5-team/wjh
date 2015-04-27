@@ -41,22 +41,21 @@ public class FlightOrder {
 
     public FlightOrder(FlightData flightData, ContactUser contactUser, List<Passenger>passengerList)
     {
+        this();
         Assert.assertNotNull(flightData);
 
         Assert.assertNotNull(contactUser);
 
         Assert.assertNotNull(passengerList);
 
-        mFlightdataList.add(FlightData.NULL);
-        mFlightdataList.add(FlightData.NULL);
+
     }
 
     public FlightOrder(int tripType)
     {
-        Assert.assertTrue(tripType>=TRIP_ONE_WAY&&tripType<=TRIP_MULTI_CITY);
+        this();
+        Assert.assertTrue(tripType >= TRIP_ONE_WAY && tripType <= TRIP_MULTI_CITY);
         mTripType = tripType;
-        mFlightdataList.add(FlightData.NULL);
-        mFlightdataList.add(FlightData.NULL);
     }
 
     /**
@@ -210,7 +209,7 @@ public class FlightOrder {
             for(int i=0; i<jTrips.length(); i++){
                 JSONObject jFlightData = jTrips.getJSONObject(i);
                 FlightData flightData = FlightData.fromOrderParam(jFlightData);
-                order.mFlightdataList.add(flightData);
+                order.mFlightdataList.set(0, flightData);
             }
 
         } catch (JSONException e) {
@@ -243,6 +242,7 @@ public class FlightOrder {
 
     private FlightOrder()
     {
-
+        mFlightdataList.add(FlightData.NULL);
+        mFlightdataList.add(FlightData.NULL);
     }
 }

@@ -22,6 +22,8 @@ public class FlightOrderManager {
     IFlightServer mFlightServer = null;
     private static FlightOrderManager mInstance = null;
     private HashMap<String, FlightOrder> mMapOrders = new HashMap<String, FlightOrder>();
+
+    private static boolean isTestMode = true;
     public static FlightOrderManager getInstance()
     {
         if(null == mInstance)
@@ -69,8 +71,15 @@ public class FlightOrderManager {
         }
         else
         {
-            //return mFlightServer.queryOrderList(UserManager.getInstance().getCurrentUser().getId());
-            return mFlightServer.queryOrderList("0");
+            if(isTestMode)
+            {
+                return mFlightServer.queryOrderList("0");
+            }
+            else
+            {
+                return mFlightServer.queryOrderList(UserManager.getInstance().getCurrentUser().getId());
+            }
+
         }
     }
 
