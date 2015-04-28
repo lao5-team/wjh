@@ -53,6 +53,12 @@ public class EntryActivity extends FragmentActivity {
 	public static final int SETTINGS = 105;
 	public static final int FEED_BACK = 106;
 	
+	private static EntryActivity mInstance;
+	
+	public static EntryActivity getInstance()
+	{
+		return mInstance;
+	}
 	
 	public static void startActivity(Context context)
 	{
@@ -76,6 +82,8 @@ public class EntryActivity extends FragmentActivity {
 		setContentView(mRootLayout);
 		addFlightView();
 		addNavigationItem();
+
+		mInstance = this;
 	}
 	
 	 @Override

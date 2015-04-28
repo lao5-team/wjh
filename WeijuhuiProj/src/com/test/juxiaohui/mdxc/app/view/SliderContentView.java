@@ -3,6 +3,7 @@ package com.test.juxiaohui.mdxc.app.view;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.app.EntryActivity;
 import com.test.juxiaohui.mdxc.app.FlightSearchActivity;
+import com.test.juxiaohui.mdxc.widget.CommonTitleBar;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -60,7 +61,7 @@ public class SliderContentView extends RelativeLayout {
 	private Bitmap mScreenShot;
 	private ImageView mTempContentView;
 	
-	private boolean isRoot = true;
+	public boolean isRoot = true;
 	
 	public SliderContentView(Context context) {
 		super(context);
@@ -91,6 +92,8 @@ public class SliderContentView extends RelativeLayout {
 	private void initView()
 	{
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				
+		//add 
 		mFragmentHomeView = new FragmentHomeView(mContext);
 		mLeftDrawer = (ImageView) mFragmentHomeView.findViewById(R.id.rl_left_drawer);
 		mLeftDrawer.setOnClickListener(new OnClickListener() {
@@ -126,6 +129,8 @@ public class SliderContentView extends RelativeLayout {
 			}
 		});
 		mTempContentView.setClickable(false);
+		
+
 
 	}
 	
@@ -251,6 +256,10 @@ public class SliderContentView extends RelativeLayout {
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 		// TODO Auto-generated method stub
+		
+		if(!isRoot)
+			return true;
+			
 		float x = ev.getRawX();
 		if(!init)
 		{
@@ -325,7 +334,16 @@ public class SliderContentView extends RelativeLayout {
 				LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 				mFlightOrdersView.setLayoutParams(params);
 				mFlightOrdersView.setTag(EntryActivity.MY_ODERS);
+				mFlightOrdersView.setTileBarBackIconListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View arg0) {
+						// TODO Auto-generated method stub
+						startContent(EntryActivity.FLIGHT_STATUS);
+					}
+				});
 			}
+			
 			mSelf.addView(mFlightOrdersView);
 			mSelf.layout(0, 0, Math.round(orginWidth), Math.round(orginHeight));
 			isRoot = false;
@@ -357,6 +375,14 @@ public class SliderContentView extends RelativeLayout {
 				LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 				mSettingsView.setLayoutParams(params);
 				mSettingsView.setTag(EntryActivity.SETTINGS);
+				mSettingsView.setTileBarBackIconListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View arg0) {
+						// TODO Auto-generated method stub
+						startContent(EntryActivity.FLIGHT_STATUS);
+					}
+				});
 			}
 			mSelf.addView(mSettingsView);
 			mSelf.layout(0, 0, Math.round(orginWidth), Math.round(orginHeight));
