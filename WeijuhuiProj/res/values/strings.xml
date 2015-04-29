@@ -571,6 +571,7 @@
     <string name="invalid_password">Please provide correct password.</string>
     <string name="invalid_phone_number">Invalid phone number</string>
     <string name="invalid_user_name">Please provide correct email address.</string>
+    <string name="identify">Identify</string>
     <string name="landmark">Landmark</string>
     <string name="language">Language</string>
     <string name="last_name">Last name</string>
