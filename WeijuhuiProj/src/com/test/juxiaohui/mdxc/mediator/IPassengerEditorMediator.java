@@ -16,4 +16,6 @@ public interface IPassengerEditorMediator
 	public void addConfirmView();
 	
 	public void insertOrReplacePassenger(Passenger passenger);
+	
+	public void openCalendar();
 }

@@ -270,7 +270,7 @@
                     android:textColor="@color/color_666666"
                     android:textSize="@dimen/font_size_large" />
 
-<!--                 <ImageButton
+   <!--              <ImageButton
                     android:id="@+id/imageButton_addPassenger"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -312,6 +312,80 @@
 
                 <View style="@style/line_h" />
             </LinearLayout>
+            
+       <RelativeLayout 
+            android:id="@+id/contact_layout" 
+            android:clickable="true" 
+            android:background="@color/color_gray_12"
+            android:layout_width="fill_parent" 
+            android:layout_height="@dimen/view_item_height">
+           
+           <TextView 
+                android:textSize="@dimen/font_size_26" 
+                android:textColor="@color/color_333333" 
+                android:gravity="center_vertical" 
+                android:paddingLeft="@dimen/margin_10" 
+                android:layout_width="fill_parent" 
+                android:layout_height="fill_parent" 
+                android:text="@string/contact" />
+
+        </RelativeLayout>
+        
+        <View
+            style="@style/line_h" />
+        
+        
+       <RelativeLayout
+            android:id="@+id/layout_contact"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/view_item_height"
+            android:background="@drawable/selector_btn_4"
+            android:clickable="true" >
+
+           <LinearLayout 
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                >
+               	<TextView
+                android:id="@+id/tv_contact_name"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/margin_10"
+                android:textColor="@color/color_333333"
+                android:layout_weight="1"
+                android:textSize="@dimen/font_size_20" />
+               	<TextView
+                android:id="@+id/tv_contact_email"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/margin_10"
+                android:textColor="@color/color_333333"
+                android:layout_weight="1"
+                android:textSize="@dimen/font_size_10sp" />
+               	<TextView
+                android:id="@+id/tv_contact_phone"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/margin_10"
+                android:textColor="@color/color_333333"
+                android:layout_weight="1"
+                android:textSize="@dimen/font_size_10sp" />
+           </LinearLayout>
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_marginRight="@dimen/margin_10"
+                android:src="@drawable/icon_right_arrow" />
+        </RelativeLayout>
             <!-- <ctrip.english.views.common.ContactView android:id="@+id/cv_contact" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/margin_10" /> -->
 
             <TextView

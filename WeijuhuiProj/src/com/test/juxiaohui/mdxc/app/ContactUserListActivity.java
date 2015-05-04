@@ -3,17 +3,8 @@ package com.test.juxiaohui.mdxc.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Intent;
-import com.test.juxiaohui.R;
-import com.test.juxiaohui.mdxc.adapter.PassengerListAdapter;
-import com.test.juxiaohui.mdxc.data.Passenger;
-import com.test.juxiaohui.mdxc.manager.ServerManager;
-import com.test.juxiaohui.mdxc.manager.UserManager;
-import com.test.juxiaohui.mdxc.mediator.IPassengerListMediator;
-import com.test.juxiaohui.mdxc.widget.CommonTitleBar;
-
-import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.app.ActionBar.LayoutParams;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,33 +14,34 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-/**
- * @author yh Create at 2015-3-23 passenger select for FlightOrderActivity
- */
-public class PassengerListActivity extends Activity implements
-		IPassengerListMediator {
+import com.test.juxiaohui.R;
+import com.test.juxiaohui.mdxc.adapter.ContactUserListAdapter;
+import com.test.juxiaohui.mdxc.adapter.PassengerListAdapter;
+import com.test.juxiaohui.mdxc.app.PassengerListActivity.PassengerSelector;
+import com.test.juxiaohui.mdxc.data.ContactUser;
+import com.test.juxiaohui.mdxc.data.Passenger;
+import com.test.juxiaohui.mdxc.manager.UserManager;
+import com.test.juxiaohui.mdxc.mediator.IContactUserListMediator;
+import com.test.juxiaohui.mdxc.widget.CommonTitleBar;
+
+public class ContactUserListActivity extends Activity implements
+		IContactUserListMediator {
+	
 	
 	private RelativeLayout mMainView;
 	private CommonTitleBar mTitleBar;
-	private ListView mPassengerListView;
-	private PassengerListAdapter mPassengerListAdapter;
+	private ListView mContactUserListView;
+	private ContactUserListAdapter mContactUserListAdapter;
 	private RelativeLayout mConfirmButtonLayout;
 	private Button mBtnConfirm;
-
+	
 	private Context mContext;
-
-	public static class PassengerSelector {
-		public Passenger mPassenger;
-		public boolean mIsSelected = false;
-	}
-
-	private List<Passenger> mPassengers = new ArrayList<Passenger>();
-	private List<PassengerSelector> mSelectors = new ArrayList<PassengerSelector>();
+	
+	private List<ContactUser> mContactUsers = new ArrayList<ContactUser>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,16 +51,13 @@ public class PassengerListActivity extends Activity implements
 		initView();
 	}
 
-	public void initData() {
-		for (Passenger _p : UserManager.getInstance().getPassengerList()) 
-		{
-			addPassenger(_p);
-		}
+	public void initData() 
+	{
+
 	}
 
 	private void initView()
 	{
-		
 		mMainView = new RelativeLayout(this);
 		
 		RelativeLayout.LayoutParams mainParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -80,7 +69,7 @@ public class PassengerListActivity extends Activity implements
 		titleTextView.setGravity(Gravity.CENTER);
 		titleTextView.setTextColor(getResources().getColor(R.color.white));
 		titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,getResources().getDimension(R.dimen.font_size_36));
-		titleTextView.setText("Passenger info");
+		titleTextView.setText("Contact User");
 		titleTextView.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		mTitleBar.setMarkLayout(titleTextView);
 		mTitleBar.setId(10010);
@@ -92,33 +81,33 @@ public class PassengerListActivity extends Activity implements
 				finish();
 			}
 		});
-		ImageView addPassengersView = new ImageView(mContext);
-		addPassengersView.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_icon_add));
-		addPassengersView.setOnClickListener(new OnClickListener() {
+		ImageView addContactUserView = new ImageView(mContext);
+		addContactUserView.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_icon_add));
+		addContactUserView.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(mContext,PassengerEditorActivity.class);
+				Intent intent = new Intent(mContext,ContactUserEditorActivity.class);
 				startActivityForResult(intent, 0);
 			}
 		});
-		mTitleBar.setTitleIcon(addPassengersView);
+		mTitleBar.setTitleIcon(addContactUserView);
 		mMainView.addView(mTitleBar);
 		
 		
-		mPassengerListView = new ListView(mContext);
-		mPassengerListAdapter = new PassengerListAdapter(mContext , mSelectors, this);
-		mPassengerListView.setAdapter(mPassengerListAdapter);
-		mPassengerListView.setBackgroundColor(getResources().getColor(R.color.color_gray_12));
-		mPassengerListView.setId(10086);
+		mContactUserListView = new ListView(mContext);
+		mContactUserListAdapter = new ContactUserListAdapter(mContext, mContactUsers,this);
+		mContactUserListView.setAdapter(mContactUserListAdapter);
+		mContactUserListView.setBackgroundColor(getResources().getColor(R.color.color_gray_12));
+		mContactUserListView.setId(10086);
 	//	RelativeLayout.LayoutParams listViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		RelativeLayout.LayoutParams listViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		listViewParams.addRule(RelativeLayout.BELOW, mTitleBar.getId());
-		mMainView.addView(mPassengerListView,listViewParams);
+		mMainView.addView(mContactUserListView,listViewParams);
 		
 		RelativeLayout.LayoutParams confirmLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, Math.round(getResources().getDimension(R.dimen.passengerlist_confirmlayout_height)));
-		confirmLayoutParams.addRule(RelativeLayout.BELOW, mPassengerListView.getId());
+		confirmLayoutParams.addRule(RelativeLayout.BELOW, mContactUserListView.getId());
 		confirmLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,RelativeLayout.TRUE);
 		confirmLayoutParams.alignWithParent = true;
 		mConfirmButtonLayout = new RelativeLayout(mContext);
@@ -135,14 +124,6 @@ public class PassengerListActivity extends Activity implements
 		mBtnConfirm.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				ArrayList<String> passengers_ids = new ArrayList<String>();
-				for (Passenger passenger:getSelectedPassengers())
-				{
-					passengers_ids.add(passenger.mId);
-				}
-				Intent intent = new Intent();
-				intent.putStringArrayListExtra("passenger_ids", passengers_ids);
-				setResult(RESULT_OK, intent);
 				finish();
 			}
 		});
@@ -155,77 +136,31 @@ public class PassengerListActivity extends Activity implements
 		
 	}
 	
-
-	@Override
-	public void addPassenger(Passenger passenger) {
-		// TODO Auto-generated method stub
-		mPassengers.add(passenger);
-		PassengerSelector selector = new PassengerSelector();
-		selector.mPassenger = passenger;
-		mSelectors.add(selector);
-	}
-
-	@Override
-	public void editPassenger(Passenger passenger) {
-		// TODO Auto-generated method stub
-		// open Passenger Edit Activity
-		
-		Intent intent = new Intent(mContext,PassengerEditorActivity.class);
-		Bundle bundle = new Bundle();
-		bundle.putSerializable("passenger", passenger);
-		intent.putExtras(bundle);
-		startActivityForResult(intent, 0);
-	}
-
-	@Override
-	public void setPassengerSelect(Passenger passenger, boolean selected) {
-		// TODO Auto-generated method stub
-		for (PassengerSelector selector : mSelectors) {
-			if (passenger.equals(selector.mPassenger)) {
-				selector.mIsSelected = selected;
-			}
-		}
-	}
-
-	@Override
-	public List<Passenger> getSelectedPassengers() {
-		// TODO Auto-generated method stub
-		ArrayList<Passenger> passengers = new ArrayList<Passenger>();
-		for (PassengerSelector selector : mSelectors) {
-			if (selector.mIsSelected == true) {
-				passengers.add(selector.mPassenger);
-			}
-		}
-
-		return passengers;
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		updatePassengerList();
-		mPassengerListAdapter.refresh();
-		super.onActivityResult(requestCode, resultCode, data);
-	}
 	
-	private void updatePassengerList()
-	{
-		mPassengers.clear();
-		mSelectors.clear();
-		initData();
+	@Override
+	public void addContactUser(ContactUser user) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void editContactUser(ContactUser user) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setContactUser(ContactUser user) {
+		// TODO Auto-generated method stub
 		
 	}
-	/*
-	 * public List<PassengerSelector> getPassengerSelector(List<Passenger> list)
-	 * { List<PassengerSelector> ret = new
-	 * ArrayList<PassengerListActivity.PassengerSelector>(); for(Passenger
-	 * data:list) { PassengerSelector p = new PassengerSelector(); p.mPassenger
-	 * = data;
-	 * 
-	 * for(PassengerSelector temp:mSelectors) { if(temp.mPassenger.equals(data))
-	 * p.mIsSelected = true; } ret.add(p); } return ret;
-	 * 
-	 * }
-	 */
+
+	@Override
+	public List<ContactUser> getContactUsers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
 }

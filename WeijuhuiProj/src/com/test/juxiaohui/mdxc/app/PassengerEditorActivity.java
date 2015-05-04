@@ -1,6 +1,9 @@
 package com.test.juxiaohui.mdxc.app;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
@@ -13,6 +16,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,6 +34,8 @@ import com.test.juxiaohui.mdxc.manager.UserManager;
 import com.test.juxiaohui.mdxc.mediator.IPassengerEditorMediator;
 import com.test.juxiaohui.mdxc.mediator.IPassengerListMediator;
 import com.test.juxiaohui.mdxc.widget.CommonTitleBar;
+import com.test.juxiaohui.widget.CalendarActivity;
+import com.test.juxiaohui.widget.CalendarActivity.onDataSelectedListener;
 
 public class PassengerEditorActivity extends Activity implements
 		IPassengerEditorMediator {
@@ -43,7 +49,7 @@ public class PassengerEditorActivity extends Activity implements
 	private ScrollView mScrollView;
 	
 	private EditText mEdtName,mEdtIDNumber;
-	private RelativeLayout mIDTypeLayout,mTvNationalityLayout,mBirthLayout,mGenderLayout;
+	private RelativeLayout mIDTypeLayout,mNationalityLayout,mBirthLayout,mGenderLayout;
 	private TextView mTvIDType,mTvNationality,mTvBirth,mTvGender;
 	
 	
@@ -56,10 +62,17 @@ public class PassengerEditorActivity extends Activity implements
 	private PassengerGenderDialog mPassengerGenderDialog;
 	private PassengerIDTypeDialog mPassengerIDTypeDialog;
 	
+	public final static int NATIONALITY = 0;
+	
+	private SimpleDateFormat mDataFormat = new SimpleDateFormat("yyyy/MM/dd");
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		//设置edittext自动聚焦时不弹出键盘
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED);
 		mContext = this;
 		mInflater = getLayoutInflater();
 		initData();
@@ -253,9 +266,29 @@ public class PassengerEditorActivity extends Activity implements
 		
 		//nationality
 		mTvNationality = (TextView) mContentView.findViewById(R.id.tv_nationality);
+		mNationalityLayout = (RelativeLayout) mContentView.findViewById(R.id.layout_nationality);
+		mNationalityLayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(mContext,NationalitySearchActivity.class);
+				//startActivity(intent);
+				startActivityForResult(intent, NATIONALITY);
+			}
+		});
 		
 		//brith
 		mTvBirth = (TextView) mContentView.findViewById(R.id.tv_birth);
+		mBirthLayout = (RelativeLayout) mContentView.findViewById(R.id.layout_birth);
+		mBirthLayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				openCalendar();
+			}
+		});
 		
 		//gender
 		mTvGender = (TextView) mContentView.findViewById(R.id.tv_gender);
@@ -302,7 +335,7 @@ public class PassengerEditorActivity extends Activity implements
 	
 	public interface IPassengerIDTypeListener
 	{
-		public void onChangePassengerIDType(int tag);
+		public void onChangePassengerIDType(int tag);;
 	};
 	
 	public interface IPassengerGenderListener
@@ -310,6 +343,50 @@ public class PassengerEditorActivity extends Activity implements
 		public void onChangePassengerGender(int tag);
 	};
 	
-	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		switch(requestCode)
+		{
+		case NATIONALITY:
+			if(data != null)
+			{
+				String n = data.getStringExtra("nationality");
+				mTvNationality.setText(n);
+			}
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void openCalendar() {
+		// TODO Auto-generated method stub
+		CalendarActivity.PopupWindows popwindow = new CalendarActivity.PopupWindows(this, getWindow().getDecorView());
+    	popwindow.setDateSelectedListener(new onDataSelectedListener() {
+
+            @Override
+            public void onDateSelected(final String str_date) {
+                // TODO Auto-generated method stub
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            final Date date = mDataFormat.parse(str_date);
+                            String sDate = mDataFormat.format(date);
+                            mTvBirth.setText(sDate);
+                        } catch (ParseException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        });
+		
+	}
 
 }

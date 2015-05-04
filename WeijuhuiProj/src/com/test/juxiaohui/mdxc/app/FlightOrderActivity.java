@@ -41,6 +41,11 @@ public class FlightOrderActivity extends Activity implements
 	private LayoutInflater mInflater;
 	private FlightOrder mFlightOrder;
 	
+	private RelativeLayout mContactLayout;
+	private TextView mContactName,mContactPhone,mContactEmail;
+	
+	private Context mContext;
+	
 	public static void startActivity(String orderId, Context context)
 	{
 		Intent intent = new Intent(context, FlightOrderActivity.class);
@@ -51,14 +56,16 @@ public class FlightOrderActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		mContext = this;
 		mInflater = this.getLayoutInflater();
 		mSelf = (LinearLayout) mInflater.inflate(R.layout.activity_flight_book, null);
 		setFlightOrder(FlightOrderManager.getInstance().getFlightOrderbyId(getIntent().getStringExtra("order_id")));
 		setContentView(mSelf);	
 		addFlightView();
 		addPassengerView();
+		addContactView();
 		addPriceView();
-
+		
 		Button btn_OK = (Button)this.findViewById(R.id.btn_bottom_submit);
 		btn_OK.setOnClickListener(new OnClickListener() {
 			@Override
@@ -132,6 +139,19 @@ public class FlightOrderActivity extends Activity implements
 	@Override
 	public void addContactView() 
 	{
+		mContactLayout = (RelativeLayout)findViewById(R.id.layout_contact);
+		mContactName = (TextView)findViewById(R.id.tv_contact_name);
+		mContactPhone = (TextView)findViewById(R.id.tv_contact_phone);
+		mContactEmail = (TextView)findViewById(R.id.tv_contact_email);
+		
+		mContactLayout.setOnClickListener(new OnClickListener() {	
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(mContext, ContactUserListActivity.class);
+				startActivity(intent);
+			}
+		});
 		
 	}
 

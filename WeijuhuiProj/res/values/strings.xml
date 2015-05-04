@@ -294,6 +294,7 @@
     <string name="convert_currency_tip">Prices in currencies other than CNY are for reference only. Actual price will be calculated based on currency exchange rates on the date of transaction.</string>
     <string name="converted_into">Converted into %1$s %2$s</string>
     <string name="country">Country</string>
+    <string name="country_code">Country Code</string>
     <string name="coupon">C-Money</string>
     <string name="coupon_description">C-Money is credit that can be earned by booking eligible hotels on Ctrip. C-Money can be used for discounts on prepaid hotel bookings. C-Money is valid for three years from the time it is credited to your account.</string>
     <string name="coupons_content">C-Money</string>
@@ -691,6 +692,11 @@
     <string name="review_grade_meh">Meh</string>
     <string name="review_grade_superb">Superb</string>
     <string name="reviews">%1$d review(s)</string>
+    <string name="recipient_info">Recipient Info</string>
+    <string name="recipient">Recipient</string>
+    <string name="recipient_phone">Recipient Phone</string>
+    <string name="recipient_address">Recipient Address</string>
+    <string name="recipient_postal_code">Recipient Postal Code</string>
     <string name="room_max_persons">Max. occupancy:</string>
     <string name="room_s">Room(s)</string>
     <string name="room_size">Room size:</string>
