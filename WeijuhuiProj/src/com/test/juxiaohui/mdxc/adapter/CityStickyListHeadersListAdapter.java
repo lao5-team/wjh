@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.zip.Inflater;
 
 import com.test.juxiaohui.R;
-import com.test.juxiaohui.activity.ShowVideoActivity;
 import com.test.juxiaohui.mdxc.data.CityData;
 import com.test.juxiaohui.mdxc.manager.CityManager;
 import com.test.juxiaohui.mdxc.server.CitySearchServer;
@@ -27,11 +26,11 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 
 	private ArrayList<CityData> mResultCities;
 	private ArrayList<CityData> mNearbyPorts;
-	private ArrayList<CityData> mLastSearchCities;
-	private ArrayList<CityData> mHotCities;
+	private List<CityData> mLastSearchCities;
+	private List<CityData> mHotCities;
 	private SparseIntArray mPositionOfSection;
 	private SparseIntArray mSectionOfPosition;
-	private boolean isShowResult = true;
+	private boolean isShowResult = false;
 	
 	private LayoutInflater mInflater;
 	
@@ -39,12 +38,12 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 	
 	private StickyListHeadersListView mStickHeaderListView;
 	
-	public CityStickyListHeadersListAdapter(ArrayList<CityData> nearbyPorts, ArrayList<CityData> lastSearchCitys, ArrayList<CityData> hotCitys,Context context, StickyListHeadersListView stickHeaderListView)
+	public CityStickyListHeadersListAdapter(ArrayList<CityData> nearbyPorts, List<CityData> lastSearchCitys, List<CityData> hotCitys,Context context, StickyListHeadersListView stickHeaderListView)
 	{
 		mHotCities = hotCitys;
 		mNearbyPorts = nearbyPorts;
 		mLastSearchCities = lastSearchCitys;
-		mResultCities = CityManager.getInstance().getSearchResult("");//CitySearchServer.getInstance().getSearchResult("");
+		//mResultCities = CityManager.getInstance().getSearchResult("");//CitySearchServer.getInstance().getSearchResult("");
 		mInflater = LayoutInflater.from(context);
 		mContext = context;
 		mStickHeaderListView = stickHeaderListView;
@@ -136,7 +135,7 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 		holder.title.setText(data.cityName);
 		holder.subTitle.setText(data.countryName + " - " + data.portName + "(" + data.cityCode + ")");
 		if(mNearbyPorts != null && position < mNearbyPorts.size())
-			holder.distance.setText("" + Float.valueOf(data.distanceFromMe/1000) + "km");
+			holder.distance.setText("" + Float.valueOf(data.distanceFromMe/1000) + mContext.getString(R.string.kilometers));
 
 		return convertView;
 	}
@@ -196,13 +195,13 @@ public class CityStickyListHeadersListAdapter extends BaseAdapter implements Sti
 		switch((int)(getHeaderId(position)))
 		{
 		case 0:
-			((TextView)convertView).setText("附近的机场");
+			((TextView)convertView).setText(mContext.getText(R.string.nearby_airports));
 			break;
 		case 1:
-			((TextView)convertView).setText("最近查看过");
+			((TextView)convertView).setText(mContext.getText(R.string.recently_searched));
 			break;
 		case 2:
-			((TextView)convertView).setText("人气目的地");
+			((TextView)convertView).setText(mContext.getText(R.string.hot_destination));
 			break;
 		}
 		

@@ -35,7 +35,7 @@ public class Passenger implements Comparable,Serializable{
 	public String mIdNo = ""; //"idNo"
 	public String mNationality = ""; //"nationality"
 	public String mAgeGroup = ""; //"age_group"
-	public String mGender = "0"; //"gender" 0 male, 1 female
+	public String mGender = ""; //"gender" 0 male, 1 female
 	public String mBirthDay = ""; //"birthday"
 	public String mFreqFlyerProgram	= ""; //"freqFlyerProgram"
 	public String mFreqFlyerNo = ""; //"freqFlyerNo"

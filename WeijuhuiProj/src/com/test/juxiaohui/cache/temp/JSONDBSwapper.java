@@ -6,7 +6,6 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.test.juxiaohui.data.UserDao;
 
 import android.content.ContentValues;
 import android.content.Context;

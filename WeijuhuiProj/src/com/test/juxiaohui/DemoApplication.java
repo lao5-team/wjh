@@ -18,7 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.test.juxiaohui.common.data.User;
 import com.test.juxiaohui.mdxc.manager.CityManager;
+import com.test.juxiaohui.mdxc.manager.UserManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,15 +44,7 @@ import com.easemob.chat.EMMessage;
 import com.easemob.chat.OnMessageNotifyListener;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.chat.OnNotificationClickListener;
-import com.test.juxiaohui.activity.EntryActivity;
-import com.test.juxiaohui.activity.MainActivity;
-import com.test.juxiaohui.data.ActivityData;
-import com.test.juxiaohui.data.UserDao;
-import com.test.juxiaohui.data.DianpingDao.ComplexBusiness;
-import com.test.juxiaohui.data.message.MyMessage;
-import com.test.juxiaohui.domain.MessageManager;
-import com.test.juxiaohui.domain.User;
-import com.test.juxiaohui.domain.UserManager;
+
 import com.test.juxiaohui.utils.PreferenceUtils;
 //import com.easemob.chatuidemo.activity.ChatActivity;
 //import com.easemob.chatuidemo.activity.MainActivity;
@@ -77,12 +71,6 @@ public class DemoApplication extends Application {
 		String processAppName = getAppName(pid);
 		//如果使用到百度地图或者类似启动remote service的第三方库，这个if判断不能少
 		if (processAppName == null || processAppName.equals("")) {
-			// workaround for baidu location sdk 
-			// 百度定位sdk，定位服务运行在一个单独的进程，每次定位服务启动的时候，都会调用application::onCreate
-			// 创建新的进程。
-			// 但环信的sdk只需要在主进程中初始化一次。 这个特殊处理是，如果从pid 找不到对应的processInfo
-			// processName，
-			// 则此application::onCreate 是被service 调用的，直接返回
 			return;
 		}
 		
@@ -109,56 +97,8 @@ public class DemoApplication extends Application {
 		options.setUseSpeaker(PreferenceUtils.getInstance(applicationContext).getSettingMsgSpeaker());
 		//options.setShowNotificationInBackgroud(true);
 		//设置notification消息点击时，跳转的intent为自定义的intent
-		options.setOnNotificationClickListener(new OnNotificationClickListener() {
-			
-			@Override
-			public Intent onNotificationClick(EMMessage message) {
-				Intent intent = new Intent(applicationContext, EntryActivity.class);
-//				ChatType chatType = message.getChatType();
-//				if(chatType == ChatType.Chat){ //单聊信息
-//					intent.putExtra("userId", message.getFrom());
-//					intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
-//				}else{ //群聊信息
-//					//message.getTo()为群聊id
-//					intent.putExtra("groupId", message.getTo());
-//					intent.putExtra("chatType", ChatActivity.CHATTYPE_GROUP);
-//				}
-				return intent;
-			}
-		});
-		options.setNotifyText(new OnMessageNotifyListener() {
-			
-			@Override
-			public String onNewMessageNotify(EMMessage arg0) {
-				
-				if(arg0.getType() == EMMessage.Type.TXT)
-		        {
-					ActivityData data;
-					ComplexBusiness cb = new ComplexBusiness();
-					try {
-						JSONObject obj = new JSONObject(((TextMessageBody) arg0
-								.getBody()).getMessage());
-						MyMessage msg = MyMessage.fromJSON(obj);
-						MessageManager.getInstance().receiveMessage(msg);
-						showNotification(msg.getNotifyString());
-						return null;
-															// data.mCreator.mName);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						return null;
-					}
-		        }
-				return null;
-				
-			}
-			
-			@Override
-			public String onLatestMessageNotify(EMMessage arg0, int arg1, int arg2) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		});
+
+
 		
 		options.setUseRoster(true);
 		
@@ -201,12 +141,7 @@ public class DemoApplication extends Application {
 	 * @return
 	 */
 	public Map<String, User> getContactList() {
-		if(getUserName() != null &&contactList == null)
-		{
-			UserDao dao = new UserDao(applicationContext);
-			// 获取本地好友user list到内存,方便以后获取好友list
-			contactList = dao.getContactList();
-		}
+
 		return contactList;
 	}
 
@@ -249,7 +184,7 @@ public class DemoApplication extends Application {
 	/**
 	 * 设置用户名
 	 * 
-	 * @param user
+	 * @param
 	 */
 	public void setUserName(String username) {
 		if (username != null) {
@@ -321,13 +256,7 @@ public class DemoApplication extends Application {
 		
 		@Override
 		public void onDisConnected(String errorString) {
-			if (errorString != null && errorString.contains("conflict")) {
-				Intent intent =new Intent(applicationContext, MainActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				intent.putExtra("conflict", true);
-				startActivity(intent);
-			}
-			
+
 		}
 		
 		@Override
@@ -342,20 +271,6 @@ public class DemoApplication extends Application {
 	
 	private void showInvitedNotification(String str)
 	{
-		Notification notification = new Notification(R.drawable.logo_uidemo,
-				"新的好友邀请", System.currentTimeMillis());
-
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				new Intent(this, EntryActivity.class), 0);
-
-		// Set the info for the views that show in the notification panel.
-		notification.setLatestEventInfo(this,
-				"新的好友邀请", String.format("%s请求添加您为好友", str), contentIntent);
-
-		// Send the notification.
-		// We use a string id because it is a unique number. We use it later to
-		// cancel.
-		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
 	}
 	
 	private void showNotification(String notifyString) {

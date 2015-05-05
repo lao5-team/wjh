@@ -177,7 +177,7 @@
     <string name="about_us_9">"Ctrip.com is China's leading online travel agent, serving customers in China and around the world in eight different languages."</string>
     <string name="accept">Accept</string>
     <string name="account">Account</string>
-    <string name="account_hint">Username/Phone number/Email</string>
+    <string name="account_hint">Phone number</string>
     <string name="actual_carrier">● Actual carrier (Codeshare)</string>
     <string name="add_a_passenger">Add a passenger</string>
     <string name="add_a_traveler">Add a traveler</string>
@@ -294,7 +294,6 @@
     <string name="convert_currency_tip">Prices in currencies other than CNY are for reference only. Actual price will be calculated based on currency exchange rates on the date of transaction.</string>
     <string name="converted_into">Converted into %1$s %2$s</string>
     <string name="country">Country</string>
-    <string name="country_code">Country Code</string>
     <string name="coupon">C-Money</string>
     <string name="coupon_description">C-Money is credit that can be earned by booking eligible hotels on Ctrip. C-Money can be used for discounts on prepaid hotel bookings. C-Money is valid for three years from the time it is credited to your account.</string>
     <string name="coupons_content">C-Money</string>
@@ -572,7 +571,6 @@
     <string name="invalid_password">Please provide correct password.</string>
     <string name="invalid_phone_number">Invalid phone number</string>
     <string name="invalid_user_name">Please provide correct email address.</string>
-    <string name="identify">Identify</string>
     <string name="landmark">Landmark</string>
     <string name="language">Language</string>
     <string name="last_name">Last name</string>
@@ -692,11 +690,6 @@
     <string name="review_grade_meh">Meh</string>
     <string name="review_grade_superb">Superb</string>
     <string name="reviews">%1$d review(s)</string>
-    <string name="recipient_info">Recipient Info</string>
-    <string name="recipient">Recipient</string>
-    <string name="recipient_phone">Recipient Phone</string>
-    <string name="recipient_address">Recipient Address</string>
-    <string name="recipient_postal_code">Recipient Postal Code</string>
     <string name="room_max_persons">Max. occupancy:</string>
     <string name="room_s">Room(s)</string>
     <string name="room_size">Room size:</string>
@@ -804,5 +797,16 @@
     <string name="airline_details">Airline details</string>
     <string name="get_checkCode">Send checkcode to your phone</string>
     <string name="CheckCode">CheckCode</string>
-
+    <string name="nearby_airports">Nearby Airports</string>
+    <string name="recently_searched">Recently Searched</string>
+    <string name="hot_destination">Hot Destination</string>
+    <string name="kilometers">km</string>
+    <string name="CNY">CNY</string>
+    <string name="USD">USD</string>
+    <string name="order_submitted">Order submitted!!</string>
+    <string name="depart_time">Depart Time</string>
+    <string name="return_time">Return Time</string>
+    <string name="reg_success">Register Success</string>
+    <string name="reg_fail">Register Fail</string>
+    <string name="select_countryCode">Please select the phone\'s country code</string>
 </resources>

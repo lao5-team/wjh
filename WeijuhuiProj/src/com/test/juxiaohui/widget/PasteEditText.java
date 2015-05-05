@@ -13,8 +13,6 @@
  */
 package com.test.juxiaohui.widget;
 
-import com.test.juxiaohui.activity.AlertDialog;
-import com.test.juxiaohui.activity.ChatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -56,20 +54,6 @@ public class PasteEditText extends EditText{
 	@SuppressWarnings("deprecation")
 	@Override
     public boolean onTextContextMenuItem(int id) {
-        if(id == android.R.id.paste){
-            ClipboardManager clip = (ClipboardManager)getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            String text = clip.getText().toString();
-            if(text.startsWith(ChatActivity.COPY_IMAGE)){
-//                intent.setDataAndType(Uri.fromFile(new File("/sdcard/mn1.jpg")), "image/*");     
-                text = text.replace(ChatActivity.COPY_IMAGE, "");
-                Intent intent = new Intent(context,AlertDialog.class);
-                intent.putExtra("title", "发送以下图片？");
-                intent.putExtra("forwardImage", text);
-                intent.putExtra("cancel", true);
-                ((Activity)context).startActivityForResult(intent,ChatActivity.REQUEST_CODE_COPY_AND_PASTE);
-//                clip.setText("");
-            }
-        }
         return super.onTextContextMenuItem(id);
     }
     
@@ -77,12 +61,7 @@ public class PasteEditText extends EditText{
     
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
-        if(!TextUtils.isEmpty(text) && text.toString().startsWith(ChatActivity.COPY_IMAGE)){
-            setText("");
-        }
-//        else if(!TextUtils.isEmpty(text)){
-//        	setText(SmileUtils.getSmiledText(getContext(), text),BufferType.SPANNABLE);
-//        }
+
         super.onTextChanged(text, start, lengthBefore, lengthAfter);
     }
     

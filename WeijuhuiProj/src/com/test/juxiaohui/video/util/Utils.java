@@ -1,6 +1,5 @@
 package com.test.juxiaohui.video.util;
 
-import com.test.juxiaohui.activity.ImageGridActivity;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
@@ -26,11 +25,11 @@ public class Utils {
                             .detectAll()
                             .penaltyLog();
 
-            if (Utils.hasHoneycomb()) {
-                threadPolicyBuilder.penaltyFlashScreen();
-                vmPolicyBuilder
-                        .setClassInstanceLimit(ImageGridActivity.class, 1);
-            }
+//            if (Utils.hasHoneycomb()) {
+//                threadPolicyBuilder.penaltyFlashScreen();
+//                vmPolicyBuilder
+//                        .setClassInstanceLimit(ImageGridActivity.class, 1);
+//            }
             StrictMode.setThreadPolicy(threadPolicyBuilder.build());
             StrictMode.setVmPolicy(vmPolicyBuilder.build());
 		}

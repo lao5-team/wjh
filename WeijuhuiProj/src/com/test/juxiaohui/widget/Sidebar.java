@@ -27,7 +27,6 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.easemob.util.DensityUtil;
-import com.test.juxiaohui.adapter.ContactAdapter;
 import com.test.juxiaohui.R;
 
 public class Sidebar extends View{

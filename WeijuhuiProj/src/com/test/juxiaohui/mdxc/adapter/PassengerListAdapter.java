@@ -2,7 +2,6 @@ package com.test.juxiaohui.mdxc.adapter;
 
 import java.util.List;
 
-import cn.bmob.v3.listener.GetServerTimeListener;
 
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.adapter.CityStickyListHeadersListAdapter.ItemViewHoler;
@@ -117,11 +116,11 @@ public class PassengerListAdapter extends BaseAdapter {
 		holder.title.setText(data.mName);
 		if(data.mIdType.equals(Passenger.ID_TYPE_ID))
 		{
-			holder.subTitle.setText("ID " + data.mIdNo);
+			holder.subTitle.setText(mContext.getText(R.string.chinese_id_card) + " " + data.mIdNo);
 		}
 		else if(data.mIdType.equals(Passenger.ID_TYPE_PASSPORT))
 		{
-			holder.subTitle.setText("PASSPORT " + data.mIdNo);
+			holder.subTitle.setText(mContext.getText(R.string.passport) + data.mIdNo);
 		}
 		
 		if(mPassengersList.get(position).mIsSelected)

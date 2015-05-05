@@ -1,6 +1,5 @@
 package com.test.juxiaohui.mdxc.adapter;
 
-import com.test.juxiaohui.adapter.CommentAdapter;
 import com.test.juxiaohui.mdxc.data.FlightOrder;
 import com.test.juxiaohui.widget.CommonAdapter;
 import com.test.juxiaohui.widget.IAdapterItem;

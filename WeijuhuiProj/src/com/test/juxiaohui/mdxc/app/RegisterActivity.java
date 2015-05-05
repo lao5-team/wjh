@@ -9,14 +9,17 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.*;
 
 import com.test.juxiaohui.R;
+import com.test.juxiaohui.mdxc.data.CountryCode;
 import com.test.juxiaohui.mdxc.manager.ServerManager;
 import com.test.juxiaohui.mdxc.manager.UserManager;
 import com.test.juxiaohui.mdxc.mediator.IRegisterMediator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegisterActivity extends Activity implements IRegisterMediator {
 
@@ -29,6 +32,9 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 	private Button mCheckcodeButton;
 	private EditText mCheckcodeEditText;
 	private UserManager mUserManager;
+	ExpandableListView mElvCountryCode;
+	private int mSelectedChildPos = -1;
+	private String mCountryCode = "+86";
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -46,6 +52,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 		addConfirmPasswordView();
 		addRegisterButton();
 		addGetCheckcodeView();
+		addCountryCodeView();
 	}
 	
 	@Override
@@ -82,7 +89,93 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 		});
 	}
 
-	
+	/**
+	 * 添加国家代码选择
+	 */
+	@Override
+	public void addCountryCodeView() {
+		final List<String> countryCodeList = CountryCode.convertCodeListToString(CountryCode.getDefaultCodes());
+
+		mElvCountryCode = (ExpandableListView)findViewById(R.id.expandableListView_countryCode);
+		mElvCountryCode.setAdapter(new BaseExpandableListAdapter() {
+
+			@Override
+			public int getGroupCount() {
+				return 1;
+			}
+
+			@Override
+			public int getChildrenCount(int groupPosition) {
+				return countryCodeList.size();
+			}
+
+			@Override
+			public Object getGroup(int groupPosition) {
+				return null;
+			}
+
+			@Override
+			public Object getChild(int groupPosition, int childPosition) {
+				return null;
+			}
+
+			@Override
+			public long getGroupId(int groupPosition) {
+				return 0;
+			}
+
+			@Override
+			public long getChildId(int groupPosition, int childPosition) {
+				return 0;
+			}
+
+			@Override
+			public boolean hasStableIds() {
+				return false;
+			}
+
+			@Override
+			public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+				long pos = mElvCountryCode.getSelectedPosition();
+				View view = getLayoutInflater().inflate(R.layout.item_country_code, null);
+				TextView tv = (TextView) view.findViewById(R.id.textView_country_code);
+				if(mSelectedChildPos >= 0)
+				{
+					tv.setText(countryCodeList.get(mSelectedChildPos));
+				}
+				else
+				{
+					tv.setText(getResources().getText(R.string.select_countryCode));
+				}
+
+				return view;
+			}
+
+			@Override
+			public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+				View view = getLayoutInflater().inflate(R.layout.item_country_code, null);
+				TextView tv = (TextView) view.findViewById(R.id.textView_country_code);
+				tv.setText(countryCodeList.get(childPosition));
+				return view;
+			}
+
+			@Override
+			public boolean isChildSelectable(int groupPosition, int childPosition) {
+				return true;
+			}
+		});
+
+		mElvCountryCode.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+				mSelectedChildPos = childPosition;
+				mElvCountryCode.collapseGroup(0);
+				return false;
+			}
+		});
+	}
+
+
 	@Override
 	public void confirm() {
 		// TODO Auto-generated method stub
@@ -120,7 +213,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 			mRegisterResult = "password_confirm_error";
 			return;
 		}
-		String[] params = {name,password,checkcode};
+		String[] params = {mCountryCode, name,password,checkcode};
 		new RegisterTask().execute(params);
 	}
 	
@@ -131,7 +224,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 		@Override
 		protected String doInBackground(String... arg0) {
 			// TODO Auto-generated method stub
-			return mUserManager.register(arg0[0], arg0[1], arg0[2]);
+			return mUserManager.register(arg0[0], arg0[1], arg0[2], arg0[3]);
 		}
 		
 		@Override
@@ -140,12 +233,12 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 			mRegisterResult = result;
 			if(result.equals("Success"))
 			{
-				showErrorMessage("Register Success!");
+				showErrorMessage(getString(R.string.reg_success));
 				finish();
 			}
 			else
 			{
-				showErrorMessage("Register Fail!");
+				showErrorMessage(getString(R.string.reg_fail));
 			}
 
 			super.onPostExecute(result);
@@ -210,7 +303,7 @@ public class RegisterActivity extends Activity implements IRegisterMediator {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				mUserManager.sendCheckcode(mPhoneNumberEditText.getText().toString());
+				mUserManager.sendCheckcode(mCountryCode, mPhoneNumberEditText.getText().toString());
 			}
 		});
 		t.start();

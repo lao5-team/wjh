@@ -47,7 +47,7 @@ public class SettingsView extends LinearLayout {
 		titleTextView.setGravity(Gravity.CENTER);
 		titleTextView.setTextColor(getResources().getColor(R.color.white));
 		titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,getResources().getDimension(R.dimen.font_size_36));
-		titleTextView.setText("Settings");
+		titleTextView.setText(mContext.getText(R.string.settings));
 		titleTextView.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		mTitleBar.setMarkLayout(titleTextView);
 		this.addView(mTitleBar);

@@ -154,7 +154,6 @@ public class PassengerListActivity extends Activity implements
 		
 		
 	}
-	
 
 	@Override
 	public void addPassenger(Passenger passenger) {
