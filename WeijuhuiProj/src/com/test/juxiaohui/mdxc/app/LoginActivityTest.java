@@ -5,7 +5,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.easemob.chat.EMChat;
 import com.test.juxiaohui.R;
 import com.test.juxiaohui.mdxc.manager.ServerManager;
 import com.test.juxiaohui.mdxc.manager.UserManager;
@@ -34,7 +33,6 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
     protected void setUp() throws Exception {
         super.setUp();
         mActivity = getActivity();
-        EMChat.getInstance().init(mActivity);
         UserManager.getInstance().logout();
         mTvUsername = (TextView) mActivity.findViewById(R.id.textView_username);
         mEtxUsername = (EditText) mActivity.findViewById(R.id.editText_username);

@@ -36,15 +36,6 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.easemob.chat.ConnectionListener;
-import com.easemob.chat.EMChat;
-import com.easemob.chat.EMChatManager;
-import com.easemob.chat.EMChatOptions;
-import com.easemob.chat.EMMessage;
-import com.easemob.chat.OnMessageNotifyListener;
-import com.easemob.chat.TextMessageBody;
-import com.easemob.chat.OnNotificationClickListener;
-
 import com.test.juxiaohui.utils.PreferenceUtils;
 //import com.easemob.chatuidemo.activity.ChatActivity;
 //import com.easemob.chatuidemo.activity.MainActivity;
@@ -79,32 +70,6 @@ public class DemoApplication extends Application {
 		instance = this;
 		// 初始化环信SDK,一定要先调用init()
 		Log.d("EMChat Demo", "initialize EMChat SDK");
-		EMChat.getInstance().init(applicationContext);
-		// debugmode设为true后，就能看到sdk打印的log了
-		EMChat.getInstance().setDebugMode(true);
-
-		// 获取到EMChatOptions对象
-		EMChatOptions options = EMChatManager.getInstance().getChatOptions();
-		// 默认添加好友时，是不需要验证的，改成需要验证
-		options.setAcceptInvitationAlways(false);
-		// 设置收到消息是否有新消息通知，默认为true
-		options.setNotificationEnable(PreferenceUtils.getInstance(applicationContext).getSettingMsgNotification());
-		// 设置收到消息是否有声音提示，默认为true
-		options.setNoticeBySound(PreferenceUtils.getInstance(applicationContext).getSettingMsgSound());
-		// 设置收到消息是否震动 默认为true
-		options.setNoticedByVibrate(PreferenceUtils.getInstance(applicationContext).getSettingMsgVibrate());
-		// 设置语音消息播放是否设置为扬声器播放 默认为true
-		options.setUseSpeaker(PreferenceUtils.getInstance(applicationContext).getSettingMsgSpeaker());
-		//options.setShowNotificationInBackgroud(true);
-		//设置notification消息点击时，跳转的intent为自定义的intent
-
-
-		
-		options.setUseRoster(true);
-		
-		//设置一个connectionlistener监听账户重复登陆
-		EMChatManager.getInstance().addConnectionListener(new MyConnectionListener());
-		EMChat.getInstance().setAppInited();
 
 		//For MDXC
 
@@ -245,30 +210,7 @@ public class DemoApplication extends Application {
 		return processName;
 	}
 	
-	class MyConnectionListener implements ConnectionListener{
-		@Override
-		public void onReConnecting() {
-		}
-		
-		@Override
-		public void onReConnected() {
-		}
-		
-		@Override
-		public void onDisConnected(String errorString) {
 
-		}
-		
-		@Override
-		public void onConnecting(String progress) {
-			
-		}
-		
-		@Override
-		public void onConnected() {
-		}
-	}
-	
 	private void showInvitedNotification(String str)
 	{
 	}
