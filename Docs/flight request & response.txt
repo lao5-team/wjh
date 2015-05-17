@@ -14,7 +14,7 @@ response :
     prices: [ 报价
         {
             currency: "RMB", 币种
-            price: "2788", 销售接个
+            price: "2788", 只用这个即可
             publishPrice: "2840", 原价（航空公司价格）
             taxes: "2701", 税费
             surcharge: "0", 附加税
